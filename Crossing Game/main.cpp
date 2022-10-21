@@ -1,14 +1,12 @@
 ﻿#include <iostream>
 #include "Console.h"
+#include "Game.h"
+
 
 using namespace std;
 
-int main(){
+void main(){
+    ChangeBackground();
     FixConsoleWindow();
-    while (true) {
-        if (KeyHit('a')) {
-            cout << "a";
-        }
-        Sleep(10);
-    }
+    ClearBackground();
 }

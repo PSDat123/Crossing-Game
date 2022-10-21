@@ -14,7 +14,15 @@ void GotoXY(int x, int y) {
 	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
 }
 
-bool KeyHit(int key) {
-	if (_kbhit() && _getch() == key) return true;
-	return false;
+//bool KeyHit(int key) {
+//	if (_kbhit() && _getch() == key) return true;
+//	return false;
+//}
+
+void ChangeBackground() {
+	system("color f0");
+}
+
+void ClearBackground() {
+	system("cls");
 }
