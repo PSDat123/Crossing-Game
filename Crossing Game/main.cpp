@@ -1,11 +1,11 @@
 ﻿#include "Console.h"
 #include "Game.h"
 
-
 using namespace std;
 
-void main(){
-    ChangeBackground();
-    FixConsoleWindow();
-    ClearBackground();
+int main(){
+    Game game;
+    game.startGame();
+
+    
 }
