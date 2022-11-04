@@ -2,7 +2,15 @@
 #pragma execution_character_set( "utf-8" )
 #include "Console.h"
 #include "People.h"
+#include "MainMenu.h"
 using namespace std;
+
+enum GameState {
+	MENUING,
+	RUNNING,
+	PAUSED,
+	EXITED
+};
 
 class Game {
 public:
