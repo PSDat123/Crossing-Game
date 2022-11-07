@@ -23,48 +23,70 @@ void MainMenu::printTitle(int x, int y) {
 }
 
 void menuThread(MainMenu* m) {
-	int w, h, cx, optionY = 13, offsetX = 5;
+	int w, h, cx, optionY = 16, offsetX = 11, roadY;
 	GetConsoleSize(w, h);
+	roadY = h - 10;
 	cx = w / 2;
 	m->printTitle(cx - m->titleSize / 2, 5);
 
+	GotoXY(cx - offsetX, optionY - 2);
+	cout << "█████████████████████╗";
+	GotoXY(cx - offsetX, optionY - 1);
+	cout << "█                   █║";
 	for (int i = 0; i < m->options.size(); i++) {
 		GotoXY(cx - offsetX, optionY + i);
 		switch (m->options[i]) {
 		case OPTIONS::CONTINUE:
-			cout << "Continue";
+			cout << "█      Continue     █║";
 			break;
 		case OPTIONS::NEW_GAME:
-			cout << "New Game";
+			cout << "█      New Game     █║";
 			break;
 		case OPTIONS::LOAD_GAME:
-			cout << "Load Game";
+			cout << "█      Load Game    █║";
 			break;
 		case OPTIONS::SETTINGS:
-			cout << "Settings";
+			cout << "█      Settings     █║";
 			break;
 		case OPTIONS::CREDIT:
-			cout << "Credit";
+			cout << "█      Credit       █║";
 			break;
 		case OPTIONS::EXIT:
-			cout << "Exit";
+			cout << "█      Exit         █║";
 			break;
 		}
 	}
-	GotoXY(cx - offsetX - 3, optionY + m->curSelected);
-	cout << ">> ";
+	GotoXY(cx - offsetX, optionY + m->options.size());
+	cout << "█                   █║";
+	GotoXY(cx - offsetX, optionY + m->options.size() + 1);
+	cout << "█████████████████████║";
+	GotoXY(cx - offsetX, optionY + m->options.size() + 2);
+	cout << "╚════════════════════╝";
+	GotoXY(cx - offsetX + 3, optionY + m->curSelected);
+	cout << "► ";
 
+
+	GotoXY(0, roadY);
+	for (int i = 0; i < w; ++i) {
+		cout << "═";
+	}
+	GotoXY(0, roadY + 6);
+	for (int i = 0; i < w; ++i) {
+		cout << "═";
+	}
+	Vehicle car(0, roadY + 1);
 	do {
 		if (m->curSelected != m->prevSelected) {
-			GotoXY(cx - offsetX - 3, optionY + m->prevSelected);
+			GotoXY(cx - offsetX + 3, optionY + m->prevSelected);
 			cout << "  ";
-			GotoXY(cx - offsetX - 3, optionY + m->curSelected);
-			cout << ">> ";
+			GotoXY(cx - offsetX + 3, optionY + m->curSelected);
+			cout << "► ";
 			m->prevSelected = m->curSelected;
 		}
-
-
-
+		GotoXY(0, roadY + 1);
+		car.draw();
+		car.move(DIRECTION::RIGHT);
+		Sleep(30);
 	} while (m->isRunning);
 }
 
@@ -75,13 +97,13 @@ OPTIONS MainMenu::runMenu() {
 	thread mThread(menuThread, this);
 
 	do {
-		key = _getch();
+		key = toupper(_getch());
 
 		if (key == UP_ARROW) {
 			prevSelected = curSelected;
 			curSelected--;
 			if (curSelected == -1) {
-				curSelected = 4;
+				curSelected = options.size() - 1;
 			}
 		}
 
@@ -92,7 +114,7 @@ OPTIONS MainMenu::runMenu() {
 				curSelected = 0;
 			}
 		}
-
+		Sleep(30);
 	} while (key != ENTER_KEY);
 	isRunning = false;
 	mThread.join();

@@ -1,7 +1,8 @@
 #pragma once
+#include <vector>
 #include "Console.h"
 #include "Macro.h"
-#include <vector>
+#include "Vehicle.h"
 using namespace std;
 
 enum class OPTIONS{

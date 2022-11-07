@@ -62,7 +62,7 @@ void ChangeConsoleFontSize(SHORT h) {
 	cfi.dwFontSize.X = 0;                  
 	cfi.dwFontSize.Y = h;                  
 	cfi.FontFamily = FF_DONTCARE;
-	cfi.FontWeight = FW_NORMAL;
+	cfi.FontWeight = FW_BOLD;
 	wcscpy_s(cfi.FaceName, L"Consolas"); // Choose your font
 	SetCurrentConsoleFontEx(GetStdHandle(STD_OUTPUT_HANDLE), FALSE, &cfi);
 }
