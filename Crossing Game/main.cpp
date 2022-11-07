@@ -4,7 +4,7 @@
 using namespace std;
 
 int main(){
-    // comment
+    // Another comment
     Game game;
     game.startGame();
 
