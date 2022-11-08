@@ -74,6 +74,7 @@ void menuThread(MainMenu* m) {
 	for (int i = 0; i < w; ++i) {
 		cout << "═";
 	}
+
 	Vehicle car(0, roadY + 1);
 	do {
 		if (m->curSelected != m->prevSelected) {
@@ -83,7 +84,7 @@ void menuThread(MainMenu* m) {
 			cout << "► ";
 			m->prevSelected = m->curSelected;
 		}
-		GotoXY(0, roadY + 1);
+
 		car.draw();
 		car.move(DIRECTION::RIGHT);
 		Sleep(30);
@@ -118,7 +119,7 @@ OPTIONS MainMenu::runMenu() {
 	} while (key != ENTER_KEY);
 	isRunning = false;
 	mThread.join();
-	return OPTIONS(curSelected);
+	return this->options[this->curSelected];
 }
 
 MainMenu::~MainMenu() {}

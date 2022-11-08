@@ -13,27 +13,29 @@ void backgroundThread(Game* game, bool* isRunning, bool* isPaused) {
 }
 
 void Game::startGame() {
-	bufferWidth = 150;
-	bufferHeight = 40;
-	MoveConsole(150, 0);
+	bufferWidth = 140;
+	bufferHeight = 50;
+	MoveConsole(100, 0);
 	ChangeConsoleFontSize(18);
 	SetConsoleSize(bufferWidth, bufferHeight);
-	SetScreenBufferSize(bufferWidth, bufferHeight);
 	SetConsoleOutputCP(CP_UTF8);
 	ChangeBackground();
 	FixConsoleWindow();
 	ShowConsoleCursor(false);
 	ClearBackground();
 
-	int width, height;
-	GetConsoleSize(width, height);
-	cout << width << endl << height;
+	//int width, height;
+	//GetConsoleSize(width, height);
+	//cout << width << endl << height;
 	isRunning = true;
 	isPaused = false;
 
 	MainMenu m;
 	OPTIONS opt = m.runMenu();
 	
+	//switch (opt) {
+
+	//}
 	//thread t1(backgroundThread, this, &isRunning, &isPaused);
 	while (true) {
 		int keyInput = toupper(_getch());

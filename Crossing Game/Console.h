@@ -19,9 +19,9 @@ void ShowConsoleCursor(bool);
 
 void GetConsoleSize(int& width, int& height);
 
-void SetConsoleSize(SHORT width, SHORT height);
+void GetMaximumConsoleSize(int& width, int& height);
 
-void SetScreenBufferSize(SHORT width, SHORT height);
+void SetConsoleSize(SHORT width, SHORT height);
 
 void MoveConsole(int X, int Y);
 

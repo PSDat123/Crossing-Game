@@ -11,27 +11,40 @@ void FixConsoleWindow() {
 void GetConsoleSize(int& width, int& height) {
 	CONSOLE_SCREEN_BUFFER_INFO info;
 	GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &info);
+	width = info.dwSize.X;
+	height = info.dwSize.Y;
+}
+
+void GetMaximumConsoleSize(int& width, int& height) {
+	CONSOLE_SCREEN_BUFFER_INFO info;
+	GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &info);
 	width = info.dwMaximumWindowSize.X;
 	height = info.dwMaximumWindowSize.Y;
 }
 
 void SetConsoleSize(SHORT width, SHORT height) {
-	HANDLE hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
-
-	SMALL_RECT WindowSize;
-	WindowSize.Top = 0;
-	WindowSize.Left = 0;
-	WindowSize.Right = width - 1;
-	WindowSize.Bottom = height - 1;
-
-	SetConsoleWindowInfo(hStdout, 1, &WindowSize);
-}
-
-void SetScreenBufferSize(SHORT width, SHORT height) {
+	SMALL_RECT WindowSize = { 0, 0, 1, 1 };
+	HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
 	COORD NewSize;
+
 	NewSize.X = width;
 	NewSize.Y = height;
-	SetConsoleScreenBufferSize(GetStdHandle(STD_OUTPUT_HANDLE), NewSize);
+	SetConsoleWindowInfo(console, TRUE, &WindowSize);
+	int failed = 0;
+	SetConsoleScreenBufferSize(console, NewSize);
+	SetConsoleActiveScreenBuffer(console);
+	WindowSize.Right = width - 1;
+	WindowSize.Bottom = height - 1;
+	if (!SetConsoleWindowInfo(console, TRUE, &WindowSize)) {
+		CONSOLE_SCREEN_BUFFER_INFO info;
+		GetConsoleScreenBufferInfo(console, &info);
+		WindowSize.Right = info.dwMaximumWindowSize.X - 1;
+		WindowSize.Bottom = info.dwMaximumWindowSize.Y - 1;
+		SetConsoleWindowInfo(console, TRUE, &WindowSize);
+		NewSize.X = info.dwMaximumWindowSize.X;
+		NewSize.Y = info.dwMaximumWindowSize.Y;
+		SetConsoleScreenBufferSize(console, NewSize);
+	}
 }
 
 void GotoXY(int x, int y) {

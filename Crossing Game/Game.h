@@ -5,7 +5,7 @@
 #include "MainMenu.h"
 using namespace std;
 
-enum GameState {
+enum class GameState {
 	MENUING,
 	RUNNING,
 	PAUSED,
@@ -26,5 +26,5 @@ public:
 	void exitGame(thread*);
 private:
 	bool isRunning, isPaused;
-	SHORT bufferWidth, bufferHeight;
+	int bufferWidth, bufferHeight;
 };

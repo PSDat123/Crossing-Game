@@ -15,7 +15,7 @@ private:
 	int x, y;
 };
 
-class Car: Vehicle {
+class Car: public Vehicle {
 public:
 	Car();
 private:
