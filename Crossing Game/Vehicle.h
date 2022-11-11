@@ -5,6 +5,10 @@
 class Vehicle {
 public:
 	Vehicle(int x = 0, int y = 0);
+	~Vehicle();
+
+	int getVX();
+	int getVY();
 
 	void move(DIRECTION);
 	void draw();
@@ -16,12 +20,10 @@ private:
 
 class Car : public Vehicle {
 public:
-	Car();
-private:
+	Car(int, int);
 };
 
 class Truck : public Vehicle {
 public:
-	Truck();
-private:
+	Truck(int, int);
 };

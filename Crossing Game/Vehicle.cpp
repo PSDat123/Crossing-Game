@@ -49,10 +49,16 @@ void Vehicle::move(DIRECTION dir) {
 	}
 }
 
-Car::Car() {
-
+int Vehicle::getVX() {
+	return this->x;
 }
 
-Truck::Truck() {
-
+int Vehicle::getVY() {
+	return this->y;
 }
+
+Car::Car(int x, int y) : Vehicle(x,y) {}
+
+Truck::Truck(int x, int y) : Vehicle(x,y) {}
+
+Vehicle::~Vehicle(){}
