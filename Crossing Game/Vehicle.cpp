@@ -52,3 +52,7 @@ void Vehicle::move(DIRECTION dir) {
 Car::Car() {
 
 }
+
+Truck::Truck() {
+
+}
