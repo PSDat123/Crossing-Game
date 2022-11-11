@@ -1,19 +1,8 @@
 #pragma once
 #pragma execution_character_set( "utf-8" )
-#include <vector>
 #include "Console.h"
 #include "Macro.h"
 #include "Vehicle.h"
-using namespace std;
-
-enum class OPTIONS{
-	CONTINUE ,
-	NEW_GAME,
-	LOAD_GAME,
-	SETTINGS,
-	CREDIT,
-	EXIT
-};
 
 class MainMenu {
 public:

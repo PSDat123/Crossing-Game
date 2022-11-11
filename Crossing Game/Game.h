@@ -2,22 +2,17 @@
 #pragma execution_character_set( "utf-8" )
 #include "Console.h"
 #include "People.h"
+#include "Macro.h"
 #include "MainMenu.h"
-using namespace std;
-
-enum class GameState {
-	MENUING,
-	RUNNING,
-	PAUSED,
-	EXITED
-};
 
 class Game {
 public:
-	//Game();
-	//~Game();
+	Game();
+	~Game();
+
+	void setUp();
+
 	void startGame();
-	void exitGame();
 	void drawGame();
 	void saveGame();
 	void loadGame();
@@ -28,3 +23,6 @@ private:
 	bool isRunning, isPaused;
 	int bufferWidth, bufferHeight;
 };
+
+void backgroundThread(Game*, bool*, bool*);
+void soundThread(Game*, bool*, bool*);

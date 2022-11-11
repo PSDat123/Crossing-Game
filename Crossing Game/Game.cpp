@@ -12,9 +12,9 @@ void backgroundThread(Game* game, bool* isRunning, bool* isPaused) {
 	}
 }
 
-void Game::startGame() {
-	bufferWidth = 140;
-	bufferHeight = 50;
+void Game::setUp() {
+	this->bufferWidth = 140;
+	this->bufferHeight = 50;
 	MoveConsole(100, 0);
 	ChangeConsoleFontSize(18);
 	SetConsoleSize(bufferWidth, bufferHeight);
@@ -23,6 +23,10 @@ void Game::startGame() {
 	FixConsoleWindow();
 	ShowConsoleCursor(false);
 	ClearBackground();
+}
+
+void Game::startGame() {
+	setUp();
 
 	//int width, height;
 	//GetConsoleSize(width, height);
@@ -46,3 +50,5 @@ void Game::startGame() {
 		}
 	}
 }
+
+Game::~Game() {}
