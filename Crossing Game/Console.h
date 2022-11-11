@@ -2,7 +2,9 @@
 #include <iostream>
 #include <Windows.h>
 #include <conio.h>
+#include <fstream>
 #include <string>
+#include <vector>
 #include <thread>
 
 using namespace std;
