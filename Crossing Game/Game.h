@@ -13,16 +13,23 @@ public:
 	void setUp();
 
 	void startGame();
+
 	void drawGame();
 	void saveGame();
+
 	void loadGame();
+	void loadGameFile(string file);
+
 	void pauseGame();
 	void resumeGame();
+
 	void exitGame(thread*);
 private:
 	bool isRunning, isPaused;
 	int bufferWidth, bufferHeight;
 };
 
+int printCredit();
+void settings();
 void backgroundThread(Game*, bool*, bool*);
 void soundThread(Game*, bool*, bool*);
