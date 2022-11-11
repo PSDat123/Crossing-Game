@@ -36,12 +36,12 @@ void mapThread(Map* m) {
 	}
 }
 
-void Map::drawMap(int w, int h) {
+/*void Map::drawMap(int w, int h) {
 	ClearBackground();
 	this->isRunning = true;
 	thread mapThread(mapThread, this);
 
 	mapThread.join();
-}
+}*/
 
 Map::~Map() {}

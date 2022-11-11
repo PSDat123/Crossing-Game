@@ -7,6 +7,22 @@ People::People(int cur_x, int cur_y) {
 }
 
 bool People::checkFrame(int a, int b) {
+	return ((0 <= a && a < 42) && (25 <= b && b < 135));
+}
+
+void People::Up() {
+
+}
+
+void People::Down() {
+
+}
+
+void People::Left() {
+
+}
+
+void People::Right() {
 
 }
 

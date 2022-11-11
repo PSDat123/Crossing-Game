@@ -1,8 +1,8 @@
 #pragma once
-#pragma execution_character_set( "utf-8" )
 #include "Console.h"
 #include "Macro.h"
 #include "Vehicle.h"
+#include "Animal.h"
 
 class MainMenu {
 public:

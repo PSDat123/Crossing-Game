@@ -12,8 +12,8 @@ public:
 
 	void move(DIRECTION);
 	void draw();
-	virtual void playSound();
-	virtual int type() = 0; //0 for bird 1 for cow
+	//virtual void playSound();
+	//virtual int type() = 0; //0 for bird 1 for cow
 private:
 	string texture[6];
 	int x, y;
@@ -25,14 +25,14 @@ class Bird : public Animal {
 public:
 	Bird(int, int);
 	~Bird();
-	void playSound();
-	int type();
+	//void playSound();
+	//int type();
 };
 
 class Cow : public Animal {
 public:
 	Cow(int, int);
 	~Cow();
-	void playSound();
-	int type();
+	//void playSound();
+	//int type();
 };
