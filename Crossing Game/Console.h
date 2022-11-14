@@ -23,7 +23,7 @@ void GetConsoleSize(int& width, int& height);
 
 void GetMaximumConsoleSize(int& width, int& height);
 
-void SetConsoleSize(SHORT width, SHORT height);
+void SetConsoleSize(int& width, int& height);
 
 void MoveConsole(int X, int Y);
 

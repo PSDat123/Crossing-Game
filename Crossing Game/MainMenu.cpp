@@ -2,14 +2,13 @@
 
 MainMenu::MainMenu() {
 	this->title = {
-		"████████╗██╗  ██╗███████╗         ██╗ █████╗ ██╗   ██╗██╗    ██╗ █████╗ ██╗     ██╗  ██╗███████╗██████╗ ",
-		"╚══██╔══╝██║  ██║██╔════╝         ██║██╔══██╗╚██╗ ██╔╝██║    ██║██╔══██╗██║     ██║ ██╔╝██╔════╝██╔══██╗",
-		"   ██║   ███████║█████╗           ██║███████║ ╚████╔╝ ██║ █╗ ██║███████║██║     █████╔╝ █████╗  ██████╔╝",
-		"   ██║   ██╔══██║██╔══╝      ██   ██║██╔══██║  ╚██╔╝  ██║███╗██║██╔══██║██║     ██╔═██╗ ██╔══╝  ██╔══██╗",
-		"   ██║   ██║  ██║███████╗    ╚█████╔╝██║  ██║   ██║   ╚███╔███╔╝██║  ██║███████╗██║  ██╗███████╗██║  ██║",
-		"   ╚═╝   ╚═╝  ╚═╝╚══════╝     ╚════╝ ╚═╝  ╚═╝   ╚═╝    ╚══╝╚══╝ ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝"
+		L"████████╗██╗  ██╗███████╗         ██╗ █████╗ ██╗   ██╗██╗    ██╗ █████╗ ██╗     ██╗  ██╗███████╗██████╗ ",
+		L"╚══██╔══╝██║  ██║██╔════╝         ██║██╔══██╗╚██╗ ██╔╝██║    ██║██╔══██╗██║     ██║ ██╔╝██╔════╝██╔══██╗",
+		L"   ██║   ███████║█████╗           ██║███████║ ╚████╔╝ ██║ █╗ ██║███████║██║     █████╔╝ █████╗  ██████╔╝",
+		L"   ██║   ██╔══██║██╔══╝      ██   ██║██╔══██║  ╚██╔╝  ██║███╗██║██╔══██║██║     ██╔═██╗ ██╔══╝  ██╔══██╗",
+		L"   ██║   ██║  ██║███████╗    ╚█████╔╝██║  ██║   ██║   ╚███╔███╔╝██║  ██║███████╗██║  ██╗███████╗██║  ██║",
+		L"   ╚═╝   ╚═╝  ╚═╝╚══════╝     ╚════╝ ╚═╝  ╚═╝   ╚═╝    ╚══╝╚══╝ ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝"
 	};
-	this->titleSize = 105;
 	this->options = { OPTIONS::CONTINUE, OPTIONS::NEW_GAME, OPTIONS::LOAD_GAME, OPTIONS::SETTINGS, OPTIONS::CREDIT, OPTIONS::EXIT};
 	this->curSelected = 0;
 }
@@ -17,9 +16,9 @@ MainMenu::MainMenu() {
 void MainMenu::printTitle(int x, int y) {
 	for (int i = 0; i < this->title.size(); ++i) {
 		GotoXY(x, y + i);
-		cout << this->title[i];
+		wcout << this->title[i];
 	}
-	cout << endl;
+	wcout << endl;
 }
 
 void menuThread(MainMenu* m) {
@@ -27,66 +26,69 @@ void menuThread(MainMenu* m) {
 	GetConsoleSize(w, h);
 	roadY = h - 10;
 	cx = w / 2;
-	m->printTitle(cx - m->titleSize / 2, 5);
+	m->printTitle(cx - m->title[0].size() / 2, 5);
 
 	GotoXY(cx - offsetX, optionY - 2);
-	cout << "█████████████████████╗";
+	wcout << L"█████████████████████╗";
 	GotoXY(cx - offsetX, optionY - 1);
-	cout << "█                   █║";
+	wcout << L"█                   █║";
 	for (int i = 0; i < m->options.size(); i++) {
 		GotoXY(cx - offsetX, optionY + i);
 		switch (m->options[i]) {
 		case OPTIONS::CONTINUE:
-			cout << "█      Continue     █║";
+			wcout << L"█      Continue     █║";
 			break;
 		case OPTIONS::NEW_GAME:
-			cout << "█      New Game     █║";
+			wcout << L"█      New Game     █║";
 			break;
 		case OPTIONS::LOAD_GAME:
-			cout << "█      Load Game    █║";
+			wcout << L"█      Load Game    █║";
 			break;
 		case OPTIONS::SETTINGS:
-			cout << "█      Settings     █║";
+			wcout << L"█      Settings     █║";
 			break;
 		case OPTIONS::CREDIT:
-			cout << "█      Credit       █║";
+			wcout << L"█      Credit       █║";
 			break;
 		case OPTIONS::EXIT:
-			cout << "█      Exit         █║";
+			wcout << L"█      Exit         █║";
 			break;
 		}
 	}
 	GotoXY(cx - offsetX, optionY + m->options.size());
-	cout << "█                   █║";
+	wcout << L"█                   █║";
 	GotoXY(cx - offsetX, optionY + m->options.size() + 1);
-	cout << "█████████████████████║";
+	wcout << L"█████████████████████║";
 	GotoXY(cx - offsetX, optionY + m->options.size() + 2);
-	cout << "╚════════════════════╝";
+	wcout << L"╚════════════════════╝";
 	GotoXY(cx - offsetX + 3, optionY + m->curSelected);
-	cout << "► ";
+	wcout << L"► ";
 
 
 	GotoXY(0, roadY);
 	for (int i = 0; i < w; ++i) {
-		cout << "═";
+		wcout << L"—";
 	}
 	GotoXY(0, roadY + 6);
 	for (int i = 0; i < w; ++i) {
-		cout << "═";
+		wcout << L"—";
 	}
-
-	Vehicle car(0, roadY + 1);
+	srand(time(NULL));
+	Car car(0, roadY + 1);
 	do {
 		if (m->curSelected != m->prevSelected) {
 			GotoXY(cx - offsetX + 3, optionY + m->prevSelected);
-			cout << "  ";
+			wcout << L"  ";
 			GotoXY(cx - offsetX + 3, optionY + m->curSelected);
-			cout << "► ";
+			wcout << L"► ";
 			m->prevSelected = m->curSelected;
 		}
 
 		car.draw();
 		car.move(DIRECTION::RIGHT);
+		if (!car.getState()) {
+			car = Car(0, roadY + 1);
+		}
 		Sleep(30);
 	} while (m->isRunning);
 }
@@ -117,7 +119,7 @@ OPTIONS MainMenu::runMenu() {
 		}
 		Sleep(30);
 	} while (key != ENTER_KEY);
-	isRunning = false;
+	this->isRunning = false;
 	mThread.join();
 	return this->options[this->curSelected];
 }

@@ -29,7 +29,6 @@ private:
 	int bufferWidth, bufferHeight;
 };
 
-int printCredit();
 void settings();
 void backgroundThread(Game*, bool*, bool*);
 void soundThread(Game*, bool*, bool*);

@@ -21,15 +21,14 @@ void GetMaximumConsoleSize(int& width, int& height) {
 	height = info.dwMaximumWindowSize.Y;
 }
 
-void SetConsoleSize(SHORT width, SHORT height) {
+void SetConsoleSize(int& width, int& height) {
 	SMALL_RECT WindowSize = { 0, 0, 1, 1 };
 	HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
 	COORD NewSize;
 
 	NewSize.X = width;
 	NewSize.Y = height;
-	SetConsoleWindowInfo(console, TRUE, &WindowSize);
-	int failed = 0;
+	//SetConsoleWindowInfo(console, TRUE, &WindowSize);
 	SetConsoleScreenBufferSize(console, NewSize);
 	SetConsoleActiveScreenBuffer(console);
 	WindowSize.Right = width - 1;
@@ -40,6 +39,8 @@ void SetConsoleSize(SHORT width, SHORT height) {
 		WindowSize.Right = info.dwMaximumWindowSize.X - 1;
 		WindowSize.Bottom = info.dwMaximumWindowSize.Y - 1;
 		SetConsoleWindowInfo(console, TRUE, &WindowSize);
+		width = info.dwMaximumWindowSize.X;
+		height = info.dwMaximumWindowSize.Y;
 		NewSize.X = info.dwMaximumWindowSize.X;
 		NewSize.Y = info.dwMaximumWindowSize.Y;
 		SetConsoleScreenBufferSize(console, NewSize);

@@ -9,18 +9,26 @@ public:
 
 	int getVX();
 	int getVY();
+	bool getState();
 
 	void move(DIRECTION);
-	void draw();
-private:
+	virtual void draw();
+protected:
+	vector<wstring> sprite;
 	int prev_x, prev_y;
 	int max_x, max_y;
 	int x, y;
+	int speed, length;
+	bool state = true;
 };
 
 class Car : public Vehicle {
 public:
+	static vector<vector<wstring>> spriteSheet;
 	Car(int, int);
+	void draw();
+private:
+	bool wrapAround = true;
 };
 
 class Truck : public Vehicle {

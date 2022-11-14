@@ -39,9 +39,9 @@ void mapThread(Map* m) {
 void Map::drawMap(int w, int h) {
 	ClearBackground();
 	this->isRunning = true;
-	thread mapThread(mapThread, this);
+	thread mapthrd(mapThread, this);
 
-	mapThread.join();
+	mapthrd.join();
 }
 
 Map::~Map() {}

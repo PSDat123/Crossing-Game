@@ -38,29 +38,31 @@ void Game::exitGame(thread* t) {
 	t->join();
 }
 
-int printCredit() {
-	int key = 0;
-	do {
-		key = toupper(_getch());
-		cout << "Made by Group 1: " << endl;
-		cout << "Phùng Siêu Đạt - 21127" << endl;
-		cout << "Đặng Hà Huy - 21127296" << endl;
-		cout << "Quách Tấn Dũng - 21127" << endl;
-		cout << "Nguyễn Cát Huy - 21127" << endl;
-		cout << "Press Enter to return to menu" << endl;
-	} while (key != ENTER_KEY);
-	return key;
+void printCredit(int x=0, int y=0) {
+	x -= 12;
+	y -= 7;
+	GotoXY(x, y);
+	wcout << L"Made by Group 1: " << endl;
+	GotoXY(x, y + 1);
+	wcout << L"Phùng Siêu Đạt - 21127243" << endl;
+	GotoXY(x, y + 2);
+	wcout << L"Đặng Hà Huy - 21127296" << endl;
+	GotoXY(x, y + 3);
+	wcout << L"Quách Tấn Dũng - 21127247" << endl;
+	GotoXY(x, y + 4);
+	wcout << L"Nguyễn Cát Huy - 21127300" << endl;
+	GotoXY(x, y + 5);
+	wcout << L"Press Enter to return to menu" << endl;
 }
 
 void Game::startGame() {
 	setUp();
-	isRunning = true;
-	isPaused = false;
 
 	MainMenu m;
+menu:
 	OPTIONS opt = m.runMenu();
 	
-	/*switch (opt) {
+	switch (opt) {
 	case OPTIONS::CONTINUE:
 		break;
 	case OPTIONS::NEW_GAME:
@@ -70,14 +72,21 @@ void Game::startGame() {
 	case OPTIONS::SETTINGS:
 		break;
 	case OPTIONS::CREDIT:
-		//ClearBackground();
-		//int key = printCredit();
-		//if (key == ENTER_KEY) {}
+	{
+		ClearBackground();
+		printCredit(this->bufferWidth / 2, this->bufferHeight / 2);
+		int key;
+		do {
+			key = toupper(_getch());
+		} while (key != ENTER_KEY);
+		goto menu;
 		break;
+	}
 	case OPTIONS::EXIT:
-		//exitGame();
-		//break;
-	}*/
+		ClearBackground();
+		return;
+		break;
+	}
 
 	//thread t1(backgroundThread, this, &isRunning, &isPaused);
 	while (true) {

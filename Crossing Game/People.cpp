@@ -7,7 +7,7 @@ People::People(int cur_x, int cur_y) {
 }
 
 bool People::checkFrame(int a, int b) {
-
+	return true;
 }
 
 bool People::isFinish() {

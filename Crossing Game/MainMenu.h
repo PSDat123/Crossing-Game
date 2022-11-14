@@ -1,5 +1,4 @@
 #pragma once
-#pragma execution_character_set( "utf-8" )
 #include "Console.h"
 #include "Macro.h"
 #include "Vehicle.h"
@@ -13,8 +12,7 @@ public:
 	friend void menuThread(MainMenu* m);
 private:
 	vector<OPTIONS> options;
-	vector<string> title;
-	int titleSize;
+	vector<wstring> title;
 	int curSelected, prevSelected;
 	bool isRunning;
 	void printTitle(int, int);

@@ -11,9 +11,9 @@ public:
 	int getAY();
 
 	void move(DIRECTION);
-	void draw();
-	virtual void playSound();
-	virtual int type() = 0; //0 for bird 1 for cow
+	//void draw();
+	//virtual void playSound();
+	//virtual int type() = 0; //0 for bird 1 for cow
 private:
 	string texture[6];
 	int x, y;

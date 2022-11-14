@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #define UP_ARROW 72
 #define DOWN_ARROW 80
 #define ENTER_KEY 13
@@ -25,3 +25,6 @@ enum class OPTIONS {
 	CREDIT,
 	EXIT
 };
+
+// (Dung xoa) unicode chars: ─ │
+// https://www.piliapp.com/symbol/line
