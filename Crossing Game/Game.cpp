@@ -13,9 +13,7 @@ void backgroundThread(Game* game, bool* isRunning, bool* isPaused) {
 	}
 }
 
-void soundThread(Game* game, bool* isRunning, bool* isPause) {
-
-}
+//void soundThread(Game* game, bool* isRunning, bool* isPause) {}
 
 void Game::setUp() {
 	MoveConsole(100, 0);
@@ -33,8 +31,8 @@ void Game::setUp() {
 //void Game::pauseGame() {}
 
 void Game::exitGame(thread* t) {
-	system("cls");
-	isRunning = false;
+	ClearBackground();
+	this->isRunning = false;
 	t->join();
 }
 
@@ -91,7 +89,6 @@ menu:
 	//thread t1(backgroundThread, this, &isRunning, &isPaused);
 	while (true) {
 		int keyInput = toupper(_getch());
-
 		if (keyInput == 27) {
 			/*exitGame(&t1);*/
 			return;

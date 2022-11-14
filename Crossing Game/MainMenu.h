@@ -2,6 +2,7 @@
 #include "Console.h"
 #include "Macro.h"
 #include "Vehicle.h"
+#include "Animal.h"
 
 class MainMenu {
 public:

@@ -9,4 +9,5 @@ int wmain(){
     cin.tie(NULL);
     Game game;
     game.startGame();
+    return 0;
 }

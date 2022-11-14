@@ -1,5 +1,6 @@
 #pragma once
 #include "Vehicle.h"
+#include "Animal.h"
 
 class People {
 public:
@@ -15,7 +16,7 @@ public:
 	void Down();
 
 	bool isImpact(Vehicle*);
-	bool isImpact();
+	bool isImpact(Animal*);
 	bool isFinish();
 	bool isDead();
 private:
