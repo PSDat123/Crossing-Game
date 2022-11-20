@@ -4,28 +4,9 @@
 #define ENTER_KEY 13
 #define INTERVAL 42
 
-enum class DIRECTION {
-	UP,
-	DOWN,
-	LEFT,
-	RIGHT
-};
-
-enum class GameState {
-	MENUING,
-	RUNNING,
-	PAUSED,
-	EXITED
-};
-
-enum class OPTIONS {
-	CONTINUE,
-	NEW_GAME,
-	LOAD_GAME,
-	SETTINGS,
-	CREDIT,
-	EXIT
-};
+enum class DIRECTION {UP, DOWN, LEFT, RIGHT};
+enum class GameState {MENUING, RUNNING, PAUSED, EXITED};
+enum class OPTIONS {CONTINUE, NEW_GAME, LOAD_GAME, SETTINGS, CREDIT, EXIT};
 
 // (Dung xoa) unicode chars: ─ │
 // https://www.piliapp.com/symbol/line

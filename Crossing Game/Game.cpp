@@ -11,12 +11,18 @@ void gameThread(Game* g) {
 	Map map(g->bufferWidth, g->bufferHeight);
 	map.drawMap();
 	do{
-		
 		Sleep(INTERVAL);
 	} while (g->isRunning);
 }
 
-//void soundThread(Game* game, bool* isRunning, bool* isPause) {}
+//void soundThread(bool* isRunning, bool* isPause) {
+	//bool sound_menu = PlaySound(_T("Sound/menu_music.wav"), NULL, SND_ASYNC | SND_FILENAME | SND_LOOP);
+//}
+
+void fastIO(){
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+}
 
 void Game::setUp() {
 	MoveConsole(100, 0);
@@ -39,20 +45,28 @@ void Game::exitGame(thread* t) {
 	t->join();
 }
 
-void printCredit(int x=0, int y=0) {
-	x -= 12;
-	y -= 7;
+void printCredit(int x, int y) {
+	GotoXY(x, y++);
+	wcout << L"███████████████████████████████╗";
+	GotoXY(x, y++);
+	wcout << L"█                             █║";
+	GotoXY(x, y++);
+	wcout << L"█       Made by Group 1       █║" << endl;
+	GotoXY(x, y++);;
+	wcout << L"█  Phùng Siêu Đạt - 21127243  █║" << endl;
+	GotoXY(x, y++);
+	wcout << L"█  Đặng Hà Huy    - 21127296  █║" << endl;
+	GotoXY(x, y++);
+	wcout << L"█  Quách Tấn Dũng - 21127247  █║" << endl;
+	GotoXY(x, y++);
+	wcout << L"█  Nguyễn Cát Huy - 21127300  █║" << endl;
+	GotoXY(x, y++);
+	wcout << L"█                             █║";
+	GotoXY(x, y++);
+	wcout << L"███████████████████████████████║";
+	GotoXY(x, y++);
+	wcout << L"╚══════════════════════════════╝";
 	GotoXY(x, y);
-	wcout << L"Made by Group 1: " << endl;
-	GotoXY(x, y + 1);
-	wcout << L"Phùng Siêu Đạt - 21127243" << endl;
-	GotoXY(x, y + 2);
-	wcout << L"Đặng Hà Huy - 21127296" << endl;
-	GotoXY(x, y + 3);
-	wcout << L"Quách Tấn Dũng - 21127247" << endl;
-	GotoXY(x, y + 4);
-	wcout << L"Nguyễn Cát Huy - 21127300" << endl;
-	GotoXY(x, y + 5);
 	wcout << L"Press Enter to return to menu" << endl;
 }
 
@@ -72,10 +86,9 @@ menu:
 		break;
 	case OPTIONS::SETTINGS:
 		break;
-	case OPTIONS::CREDIT:
-	{
+	case OPTIONS::CREDIT:{
 		ClearBackground();
-		printCredit(this->bufferWidth / 2, this->bufferHeight / 2);
+		printCredit((this->bufferWidth / 2) - 10, (this->bufferHeight / 2) - 5);
 		int key;
 		do {
 			key = toupper(_getch());

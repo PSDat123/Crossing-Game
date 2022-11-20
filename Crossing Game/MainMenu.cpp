@@ -73,6 +73,7 @@ void menuThread(MainMenu* m) {
 			wcout << L"  ";
 			GotoXY(cx - offsetX + 3, optionY + m->curSelected);
 			wcout << L"► ";
+			bool sound = PlaySound(_T("Sound/button.wav"), NULL, SND_ASYNC);
 			m->prevSelected = m->curSelected;
 		}
 		if (!qCar.empty()) {

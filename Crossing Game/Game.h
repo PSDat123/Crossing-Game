@@ -33,5 +33,7 @@ private:
 };
 
 void settings();
+void printCredit(int, int);
+void fastIO();
 void backgroundThread(Game*, bool*, bool*);
 void soundThread(Game*, bool*, bool*);

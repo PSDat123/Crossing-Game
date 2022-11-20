@@ -7,8 +7,6 @@ public:
 	~Map();
 
 	friend void mapThread(Map*);
-	void drawSideMenu();
-	void drawLane(int);
 	void drawMap();
 private:
 	int width, height;

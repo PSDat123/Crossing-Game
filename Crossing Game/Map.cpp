@@ -1,4 +1,4 @@
-#include "Map.h"
+﻿#include "Map.h"
 
 Map::Map(int w, int h) {
 	this->width = w;
@@ -6,50 +6,45 @@ Map::Map(int w, int h) {
 	this->isRunning = true;
 }
 
-void Map::drawSideMenu() {
-	for (int i = 3 * (this->width) / 4; i < this->width; ++i) {
-		GotoXY(i,0);
-		wcout << L"_";
-	}
-}
-
-void Map::drawLane(int num_lane) {
-	wstring lane = L"";
-	lane.append(3 * (this->width) / 4, L'_');
-	for (int i = 0; i < num_lane + 1; ++i) {
-		GotoXY(0, i * 5);
-		wcout << lane;
-	}
-}
-
-void mapThread(Map* m) {
-	int w, h;
-	GetConsoleSize(w, h);
-	for (int i = 0; i < (3 * w) / 4; ++i)
-		wcout << L"_";
-	for (int i = 0; i < (3 * w) / 4; ++i) {
-		GotoXY(0, h);
-		wcout << L"_";
-	}
-	for (int j = 0; j < h; ++j) {
-		GotoXY(1, j);
-		wcout << L"|" << endl;
-	}
-}
-
 void Map::drawMap() {
-	drawLane(5);
+	GotoXY(0, 0);
+	wcout << L"╔";
+	for (int i = 0; i < width - 2; ++i) {
+		if (i == (3 * width) / 4) {
+			wcout << L"╦";
+			for (int j = 0; j < height - 2; ++j) {
+				GotoXY(i + 1, j + 1);
+				wcout << L"║" << endl;
+			}
+		}
+		else {
+			GotoXY(i + 1, 0);
+			wcout << L"═";
+		}
+	}
 
-	//for (int i = 0; i < (3 * width) / 4; ++i)
-	//	wcout << L"_";
-	/*for (int i = 0; i < (3 * width) / 4; ++i) {
-		GotoXY(0, height - 2);
-		wcout << L"_";
-	}*/
-	//for (int j = 0; j < height; ++j) {
-	//	GotoXY(1, j);
-	//	wcout << L"|" << endl;
-	//}
+	GotoXY(width - 1, 0);
+	wcout << L"╗";
+	for (int j = 0; j < height - 2; ++j) {
+		GotoXY(0, j + 1);
+		wcout << L"║" << endl;
+		GotoXY(width - 1, j + 1);
+		wcout << L"║" << endl;
+	}
+
+	GotoXY(1, height);
+	wcout << L"╚";
+	for (int i = 0; i < width - 2; ++i) {
+		if (i == (3 * width) / 4) {
+			wcout << L"╩";
+		}
+		else {
+			GotoXY(i + 1, height);
+			wcout << L"═";
+		}
+	}
+	GotoXY(width - 1, height);
+	wcout << L"╝";
 }
 
 Map::~Map() {}

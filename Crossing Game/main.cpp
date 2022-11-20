@@ -5,8 +5,7 @@
 
 int wmain(){
     int _ = _setmode(_fileno(stdout), _O_U16TEXT);
-    ios_base::sync_with_stdio(false);
-    cin.tie(NULL);
+    fastIO();
     Game game;
     game.startGame();
     return 0;
