@@ -9,7 +9,14 @@ MainMenu::MainMenu() {
 		L"   ██║   ██║  ██║███████╗    ╚█████╔╝██║  ██║   ██║   ╚███╔███╔╝██║  ██║███████╗██║  ██╗███████╗██║  ██║",
 		L"   ╚═╝   ╚═╝  ╚═╝╚══════╝     ╚════╝ ╚═╝  ╚═╝   ╚═╝    ╚══╝╚══╝ ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝"
 	};
-	this->options = { OPTIONS::CONTINUE, OPTIONS::NEW_GAME, OPTIONS::LOAD_GAME, OPTIONS::SETTINGS, OPTIONS::CREDIT, OPTIONS::EXIT};
+	this->options = { 
+		{OPTIONS::CONTINUE, L"Continue"},
+		{OPTIONS::NEW_GAME, L"New Game"},
+		{OPTIONS::LOAD_GAME, L"Load Game"},
+		{OPTIONS::SETTINGS, L"Settings"},
+		{OPTIONS::CREDIT, L"Credit"},
+		{OPTIONS::EXIT, L"Exit"}
+	};
 	this->curSelected = 0;
 }
 
@@ -34,26 +41,9 @@ void menuThread(MainMenu* m) {
 	wcout << L"█                   █║";
 	for (int i = 0; i < m->options.size(); i++) {
 		GotoXY(cx - offsetX, optionY + i);
-		switch (m->options[i]) {
-		case OPTIONS::CONTINUE:
-			wcout << L"█      Continue     █║";
-			break;
-		case OPTIONS::NEW_GAME:
-			wcout << L"█      New Game     █║";
-			break;
-		case OPTIONS::LOAD_GAME:
-			wcout << L"█      Load Game    █║";
-			break;
-		case OPTIONS::SETTINGS:
-			wcout << L"█      Settings     █║";
-			break;
-		case OPTIONS::CREDIT:
-			wcout << L"█      Credit       █║";
-			break;
-		case OPTIONS::EXIT:
-			wcout << L"█      Exit         █║";
-			break;
-		}
+		wcout << L"█                   █║";
+		GotoXY(cx - offsetX + 7, optionY + i);
+		wcout << m->options[i].second;
 	}
 	GotoXY(cx - offsetX, optionY + m->options.size());
 	wcout << L"█                   █║";
@@ -74,7 +64,9 @@ void menuThread(MainMenu* m) {
 		wcout << L"—";
 	}
 	srand(time(NULL));
-	Car car(0, roadY + 1);
+	deque<Car> qCar;
+	int count = 0;
+	qCar.push_back(Car(-1, roadY + 1, w, h));
 	do {
 		if (m->curSelected != m->prevSelected) {
 			GotoXY(cx - offsetX + 3, optionY + m->prevSelected);
@@ -83,13 +75,28 @@ void menuThread(MainMenu* m) {
 			wcout << L"► ";
 			m->prevSelected = m->curSelected;
 		}
-
-		car.draw();
-		car.move(DIRECTION::RIGHT);
-		if (!car.getState()) {
-			car = Car(0, roadY + 1);
+		if (!qCar.empty()) {
+			for (Car& car : qCar) {
+				car.draw();
+				car.move(DIRECTION::RIGHT);
+			}
+			++count;
+			if (count > qCar.back().getLength() + 7) {
+				if (!(rand() % 30)) {
+					qCar.push_back(Car(-1, roadY + 1, w, h));
+					count = 0;
+				}
+			}
+			if (!qCar.front().getState()) {
+				qCar.pop_front();
+			}
 		}
-		Sleep(30);
+		else {
+			qCar.push_back(Car(-1, roadY + 1, w, h));
+			count = 0;
+		}
+		
+		Sleep(INTERVAL);
 	} while (m->isRunning);
 }
 
@@ -117,11 +124,11 @@ OPTIONS MainMenu::runMenu() {
 				curSelected = 0;
 			}
 		}
-		Sleep(30);
+		Sleep(INTERVAL);
 	} while (key != ENTER_KEY);
 	this->isRunning = false;
 	mThread.join();
-	return this->options[this->curSelected];
+	return this->options[this->curSelected].first;
 }
 
 MainMenu::~MainMenu() {}

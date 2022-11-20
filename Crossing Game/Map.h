@@ -9,7 +9,7 @@ public:
 	friend void mapThread(Map*);
 	void drawSideMenu();
 	void drawLane(int);
-	void drawMap(int, int);
+	void drawMap();
 private:
 	int width, height;
 	bool isRunning;

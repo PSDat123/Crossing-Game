@@ -7,10 +7,13 @@ Game::Game() {
 	this->isRunning = true;
 }
 
-void backgroundThread(Game* game, bool* isRunning, bool* isPaused) {
-	while (*isRunning) {
-		Sleep(30);
-	}
+void gameThread(Game* g) {
+	Map map(g->bufferWidth, g->bufferHeight);
+	map.drawMap();
+	do{
+		
+		Sleep(INTERVAL);
+	} while (g->isRunning);
 }
 
 //void soundThread(Game* game, bool* isRunning, bool* isPause) {}
@@ -86,11 +89,13 @@ menu:
 		break;
 	}
 
-	//thread t1(backgroundThread, this, &isRunning, &isPaused);
+	ClearBackground();
+	thread t1(gameThread, this);
+	
 	while (true) {
 		int keyInput = toupper(_getch());
 		if (keyInput == 27) {
-			/*exitGame(&t1);*/
+			exitGame(&t1);
 			return;
 		}
 	}
