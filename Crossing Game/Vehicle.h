@@ -9,14 +9,12 @@ public:
 
 	int getVX();
 	int getVY();
-	int getLength();
 	bool getState();
 
 	void move(DIRECTION);
 	virtual void draw();
 protected:
 	vector<wstring> sprite;
-	wstring empty;
 	int prev_x, prev_y;
 	int max_x, max_y;
 	int x, y;
@@ -27,7 +25,7 @@ protected:
 class Car : public Vehicle {
 public:
 	static vector<vector<wstring>> spriteSheet;
-	Car(int, int, int, int);
+	Car(int, int);
 	void draw();
 private:
 	bool wrapAround = true;

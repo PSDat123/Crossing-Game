@@ -102,13 +102,11 @@ menu:
 		break;
 	}
 
-	ClearBackground();
-	thread t1(gameThread, this);
-	
+	//thread t1(backgroundThread, this, &isRunning, &isPaused);
 	while (true) {
 		int keyInput = toupper(_getch());
 		if (keyInput == 27) {
-			exitGame(&t1);
+			/*exitGame(&t1);*/
 			return;
 		}
 	}

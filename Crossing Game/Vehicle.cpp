@@ -81,9 +81,6 @@ bool Vehicle::getState() {
 	return this->state;
 }
 
-int Vehicle::getLength() {
-	return this->length;
-}
 vector<vector<wstring>> Car::spriteSheet = {
 	{
 		L"  _______",
@@ -92,85 +89,45 @@ vector<vector<wstring>> Car::spriteSheet = {
 		L"=`(o)---(o)-J"
 	},
 	{
-		L" _.-.___\\__",
+		L" _.-.___\__",
 		L"|)        _`-.",
 		L"'-(o)----(o)--`"
-	},
-	{
-		L" _______________  _____",
-		L"|               ||___|_\\",
-		L"|===============|| -    |",
-		L"|               ||     (|",
-		L"'==(o)====(o)=======(o)=J "
-	},
-	{
-		L"                  /\\\\      _____   ",
-		L"    ,------      /  \\\\____/__|__\\_ ",
-		L" ,--'---:---`--,/   |)       |   (|",
-		L"==(o)-----(o)==J    `(o)=======(o)J"
-	},
-	{
-		L"  __~@",
-		L"  _`\\<,_",
-		L"(*)/ (*)"
 	}
 };
 
 
-Car::Car(int x, int y, int max_x, int max_y) {
+Car::Car(int x, int y) {
+	int a = rand();
 	this->sprite = spriteSheet[rand() % spriteSheet.size()];
-	this->speed = 1;
-	this->empty = L"";
+	this->x = x;
+	this->y = y;
+	this->prev_x = x;
+	this->prev_y = y;
+	this->speed = 2;
+	GetConsoleSize(this->max_x, this->max_y);
+	if (this->x + this->length < 0 || this->x > this->max_x) this->state = false;
 	this->length = 0;
 	for (wstring& s : sprite) {
 		if (s.size() > this->length) {
 			this->length = s.size();
 		}
 	}
-	this->empty.append(this->speed, L' ');
-
-	if (x > -1) {
-		this->x = x;
-		this->y = y;
-		this->prev_x = x;
-		this->prev_y = y;
-	}
-	else {
-		this->x = -this->length;
-		this->y = y;
-		this->prev_x = -this->length;
-		this->prev_y = y;
-	}
-	this->max_x = max_x;
-	this->max_y = max_y;
-	if (this->x + this->length < 0 || this->x > this->max_x) this->state = false;
 }
 
 void Car::draw() {
-	if (x >= 0) {
-		//for (int i = 0; i < sprite.size(); ++i) {
-		//	
-		//	int j = 0;
-		//	while (this->prev_x + j < this->max_x && j++ < this->speed) wcout << L' ';
-		//}
-		for (int i = 0; i < sprite.size(); ++i) {
-			GotoXY(this->prev_x, this->prev_y + i);
-			wcout << this->empty;
-			GotoXY(this->x, this->y + i);
-			if (this->x + this->length > this->max_x) {
-				wcout << sprite[i].substr(0, this->max_x - this->x);
-			}
-			else {
-				wcout << sprite[i];
-			}
-		}
+	for (int i = 0; i < sprite.size(); ++i) {
+		GotoXY(this->prev_x, this->prev_y + i);
+		int j = 0;
+		while (this->prev_x + j < this->max_x && j++ < this->speed) wcout << ' ';
 	}
-	else {
-		int i = -this->x;
-		for (int j = 0; j < sprite.size(); ++j) {
-			if (i >= sprite[j].size()) continue;
-			GotoXY(0, this->y + j);
-			wcout << sprite[j].substr(i);
+	for (int i = 0; i < sprite.size(); ++i) {
+		GotoXY(this->x, this->y + i);
+		if (this->x + this->length > this->max_x) {
+			int j = 0;
+			while (j < sprite[i].size() && this->x + j < this->max_x) wcout << sprite[i][j++];
+		}
+		else {
+			wcout << sprite[i];
 		}
 	}
 }
