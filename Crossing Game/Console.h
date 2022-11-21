@@ -9,6 +9,7 @@
 #include <string>
 #include <vector>
 #include <thread>
+#include <deque>
 
 using namespace std;
 
@@ -16,17 +17,17 @@ void FixConsoleWindow();
 
 void GotoXY(int, int);
 
-void ChangeBackground();
+void SetColor(int);
 
 void ClearBackground();
 
 void ShowConsoleCursor(bool);
 
-void GetConsoleSize(int& width, int& height);
+void GetConsoleSize(SHORT& width, SHORT& height);
 
-void GetMaximumConsoleSize(int& width, int& height);
+void GetMaximumConsoleSize(SHORT& width, SHORT& height);
 
-void SetConsoleSize(int& width, int& height);
+void SetConsoleSize(SHORT& width, SHORT& height);
 
 void MoveConsole(int X, int Y);
 

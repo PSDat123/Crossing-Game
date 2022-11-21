@@ -8,42 +8,40 @@ Map::Map(int w, int h) {
 void Map::drawMap() {
 	GotoXY(0, 0);
 	wcout << L"╔";
-	for (int i = 0; i < width - 2; ++i) {
-		if (i == (3 * width) / 4) {
-			wcout << L"╦";
-			for (int j = 0; j < height - 2; ++j) {
-				GotoXY(i + 1, j + 1);
-				wcout << L"║" << endl;
-			}
-		}
-		else {
-			GotoXY(i + 1, 0);
-			wcout << L"═";
-		}
+	for (int i = 2; i < width; ++i) {
+		wcout << L"═";
 	}
-
-	GotoXY(width - 1, 0);
 	wcout << L"╗";
-	for (int j = 0; j < height - 2; ++j) {
-		GotoXY(0, j + 1);
+	// Left
+	for (int j = 1; j < height - 1; ++j) {
+		GotoXY(0, j);
 		wcout << L"║" << endl;
-		GotoXY(width - 1, j + 1);
+	}
+	// Middle
+	int off = width - height;
+	GotoXY(off, 0);
+	wcout << L"╦";
+	for (int j = 1; j < height - 1; ++j) {
+		GotoXY(off, j);
+		wcout << L"║" << endl;
+	}
+	// Right
+	for (int j = 1; j < height - 1; ++j) {
+		GotoXY(width - 1, j);
 		wcout << L"║" << endl;
 	}
 
-	GotoXY(1, height);
+	//Bottom
+	GotoXY(0, height - 1);
 	wcout << L"╚";
-	for (int i = 0; i < width - 2; ++i) {
-		if (i == (3 * width) / 4) {
-			wcout << L"╩";
-		}
-		else {
-			GotoXY(i + 1, height);
-			wcout << L"═";
-		}
+	for (int i = 2; i < width; ++i) {
+		wcout << L"═";
 	}
-	GotoXY(width - 1, height);
 	wcout << L"╝";
+
+	GotoXY(off, height - 1);
+	wcout << L"╩";
+	
 }
 
 Map::~Map() {}

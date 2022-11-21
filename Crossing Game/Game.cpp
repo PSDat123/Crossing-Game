@@ -29,7 +29,7 @@ void Game::setUp() {
 	ChangeConsoleFontSize(18);
 	SetConsoleSize(this->bufferWidth, this->bufferHeight);
 	SetConsoleOutputCP(CP_UTF8);
-	ChangeBackground();
+	SetColor(240);
 	FixConsoleWindow();
 	ShowConsoleCursor(false);
 	ClearBackground();
@@ -88,7 +88,8 @@ menu:
 		break;
 	case OPTIONS::CREDIT:{
 		ClearBackground();
-		printCredit((this->bufferWidth / 2) - 10, (this->bufferHeight / 2) - 5);
+		printCredit((this->bufferWidth / 2) - 16, (this->bufferHeight / 2) - 5);
+
 		int key;
 		do {
 			key = toupper(_getch());
@@ -102,11 +103,12 @@ menu:
 		break;
 	}
 
-	//thread t1(backgroundThread, this, &isRunning, &isPaused);
+	ClearBackground();
+	thread t1(gameThread, this);
 	while (true) {
 		int keyInput = toupper(_getch());
 		if (keyInput == 27) {
-			/*exitGame(&t1);*/
+			exitGame(&t1);
 			return;
 		}
 	}

@@ -12,7 +12,7 @@ public:
 	
 	friend void menuThread(MainMenu* m);
 private:
-	vector<OPTIONS> options;
+	vector<pair<OPTIONS, wstring>> options;
 	vector<wstring> title;
 	int curSelected, prevSelected;
 	bool isRunning;

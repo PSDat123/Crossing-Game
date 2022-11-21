@@ -7,29 +7,26 @@ void FixConsoleWindow() {
 	SetWindowLong(consoleWindow, GWL_STYLE, style);
 }
 
-void GetConsoleSize(int& width, int& height) {
+void GetConsoleSize(SHORT& width, SHORT& height) {
 	CONSOLE_SCREEN_BUFFER_INFO info;
 	GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &info);
 	width = info.dwSize.X;
 	height = info.dwSize.Y;
 }
 
-void GetMaximumConsoleSize(int& width, int& height) {
+void GetMaximumConsoleSize(SHORT& width, SHORT& height) {
 	CONSOLE_SCREEN_BUFFER_INFO info;
 	GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &info);
 	width = info.dwMaximumWindowSize.X;
 	height = info.dwMaximumWindowSize.Y;
 }
 
-void SetConsoleSize(int& width, int& height) {
+void SetConsoleSize(SHORT& width, SHORT& height) {
 	SMALL_RECT WindowSize = { 0, 0, 1, 1 };
 	HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
-	COORD NewSize;
 
-	NewSize.X = width;
-	NewSize.Y = height;
 	//SetConsoleWindowInfo(console, TRUE, &WindowSize);
-	SetConsoleScreenBufferSize(console, NewSize);
+	SetConsoleScreenBufferSize(console, {width, height});
 	SetConsoleActiveScreenBuffer(console);
 	WindowSize.Right = width - 1;
 	WindowSize.Bottom = height - 1;
@@ -41,9 +38,7 @@ void SetConsoleSize(int& width, int& height) {
 		SetConsoleWindowInfo(console, TRUE, &WindowSize);
 		width = info.dwMaximumWindowSize.X;
 		height = info.dwMaximumWindowSize.Y;
-		NewSize.X = info.dwMaximumWindowSize.X;
-		NewSize.Y = info.dwMaximumWindowSize.Y;
-		SetConsoleScreenBufferSize(console, NewSize);
+		SetConsoleScreenBufferSize(console, { width, height });
 	}
 }
 
@@ -80,8 +75,8 @@ void ChangeConsoleFontSize(SHORT h) {
 	SetCurrentConsoleFontEx(GetStdHandle(STD_OUTPUT_HANDLE), FALSE, &cfi);
 }
 
-void ChangeBackground() {
-	system("color f0");
+void SetColor(int colorCode) {
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), colorCode);
 }
 
 void ClearBackground() {

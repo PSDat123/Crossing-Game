@@ -159,6 +159,13 @@
     <ClInclude Include="People.h" />
     <ClInclude Include="Vehicle.h" />
   </ItemGroup>
+  <ItemGroup>
+    <Media Include="Sound\bird.wav" />
+    <Media Include="Sound\button.wav" />
+    <Media Include="Sound\car.wav" />
+    <Media Include="Sound\dinosaur.wav" />
+    <Media Include="Sound\truck.wav" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

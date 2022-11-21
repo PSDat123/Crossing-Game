@@ -16,9 +16,9 @@ public:
 	//virtual int type() = 0; //0 for bird 1 for cow
 private:
 	string texture[6];
-	int x, y;
-	int prev_x, prev_y;
-	int max_x, max_y;
+	SHORT x, y;
+	SHORT prev_x, prev_y;
+	SHORT max_x, max_y;
 };
 
 class Bird : public Animal {

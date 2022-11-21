@@ -66,4 +66,21 @@
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <Media Include="Sound\bird.wav">
+      <Filter>Resource Files</Filter>
+    </Media>
+    <Media Include="Sound\button.wav">
+      <Filter>Resource Files</Filter>
+    </Media>
+    <Media Include="Sound\car.wav">
+      <Filter>Resource Files</Filter>
+    </Media>
+    <Media Include="Sound\dinosaur.wav">
+      <Filter>Resource Files</Filter>
+    </Media>
+    <Media Include="Sound\truck.wav">
+      <Filter>Resource Files</Filter>
+    </Media>
+  </ItemGroup>
 </Project>

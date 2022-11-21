@@ -9,7 +9,14 @@ MainMenu::MainMenu() {
 		L"   ██║   ██║  ██║███████╗    ╚█████╔╝██║  ██║   ██║   ╚███╔███╔╝██║  ██║███████╗██║  ██╗███████╗██║  ██║",
 		L"   ╚═╝   ╚═╝  ╚═╝╚══════╝     ╚════╝ ╚═╝  ╚═╝   ╚═╝    ╚══╝╚══╝ ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝"
 	};
-	this->options = { OPTIONS::CONTINUE, OPTIONS::NEW_GAME, OPTIONS::LOAD_GAME, OPTIONS::SETTINGS, OPTIONS::CREDIT, OPTIONS::EXIT};
+	this->options = {
+		{OPTIONS::CONTINUE, L"Continue"},
+		{OPTIONS::NEW_GAME, L"New Game"},
+		{OPTIONS::LOAD_GAME, L"Load Game"},
+		{OPTIONS::SETTINGS, L"Settings"},
+		{OPTIONS::CREDIT, L"Credit"},
+		{OPTIONS::EXIT, L"Exit"}
+	};
 	this->curSelected = 0;
 }
 
@@ -20,40 +27,21 @@ void MainMenu::printTitle(int x, int y) {
 	}
 	wcout << endl;
 }
-
 void menuThread(MainMenu* m) {
-	int w, h, cx, optionY = 16, offsetX = 11, roadY;
+	SHORT w, h, cx, optionY = 16, offsetX = 11, roadY;
 	GetConsoleSize(w, h);
 	roadY = h - 10;
 	cx = w / 2;
 	m->printTitle(cx - m->title[0].size() / 2, 5);
-
 	GotoXY(cx - offsetX, optionY - 2);
 	wcout << L"█████████████████████╗";
 	GotoXY(cx - offsetX, optionY - 1);
 	wcout << L"█                   █║";
 	for (int i = 0; i < m->options.size(); i++) {
 		GotoXY(cx - offsetX, optionY + i);
-		switch (m->options[i]) {
-		case OPTIONS::CONTINUE:
-			wcout << L"█      Continue     █║";
-			break;
-		case OPTIONS::NEW_GAME:
-			wcout << L"█      New Game     █║";
-			break;
-		case OPTIONS::LOAD_GAME:
-			wcout << L"█      Load Game    █║";
-			break;
-		case OPTIONS::SETTINGS:
-			wcout << L"█      Settings     █║";
-			break;
-		case OPTIONS::CREDIT:
-			wcout << L"█      Credit       █║";
-			break;
-		case OPTIONS::EXIT:
-			wcout << L"█      Exit         █║";
-			break;
-		}
+		wcout << L"█                   █║";
+		GotoXY(cx - offsetX + 7, optionY + i);
+		wcout << m->options[i].second;
 	}
 	GotoXY(cx - offsetX, optionY + m->options.size());
 	wcout << L"█                   █║";
@@ -63,8 +51,6 @@ void menuThread(MainMenu* m) {
 	wcout << L"╚════════════════════╝";
 	GotoXY(cx - offsetX + 3, optionY + m->curSelected);
 	wcout << L"► ";
-
-
 	GotoXY(0, roadY);
 	for (int i = 0; i < w; ++i) {
 		wcout << L"—";
@@ -74,23 +60,41 @@ void menuThread(MainMenu* m) {
 		wcout << L"—";
 	}
 	srand(time(NULL));
-	Car car(0, roadY + 1);
+	deque<Car> qCar;
+	int count = 0;
+	qCar.push_back(Car(-1, roadY + 1, w, h));
 	do {
 		if (m->curSelected != m->prevSelected) {
+			PlaySound(_T("Sound/button.wav"), NULL, SND_ASYNC);
+
 			GotoXY(cx - offsetX + 3, optionY + m->prevSelected);
 			wcout << L"  ";
 			GotoXY(cx - offsetX + 3, optionY + m->curSelected);
 			wcout << L"► ";
-			bool sound = PlaySound(_T("Sound/button.wav"), NULL, SND_ASYNC);
 			m->prevSelected = m->curSelected;
 		}
-
-		car.draw();
-		car.move(DIRECTION::RIGHT);
-		if (!car.getState()) {
-			car = Car(0, roadY + 1);
+		if (!qCar.empty()) {
+			for (Car& car : qCar) {
+				car.draw();
+				car.move(DIRECTION::RIGHT);
+			}
+			++count;
+			if (count > qCar.back().getLength() + 7) {
+				if (!(rand() % 30)) {
+					qCar.push_back(Car(-1, roadY + 1, w, h));
+					count = 0;
+				}
+			}
+			if (!qCar.front().getState()) {
+				qCar.pop_front();
+			}
 		}
-		Sleep(30);
+		else {
+			qCar.push_back(Car(-1, roadY + 1, w, h));
+			count = 0;
+		}
+
+		Sleep(INTERVAL);
 	} while (m->isRunning);
 }
 
@@ -99,10 +103,8 @@ OPTIONS MainMenu::runMenu() {
 	ClearBackground();
 	isRunning = true;
 	thread mThread(menuThread, this);
-
 	do {
 		key = toupper(_getch());
-
 		if (key == UP_ARROW) {
 			prevSelected = curSelected;
 			curSelected--;
@@ -110,7 +112,6 @@ OPTIONS MainMenu::runMenu() {
 				curSelected = options.size() - 1;
 			}
 		}
-
 		if (key == DOWN_ARROW) {
 			prevSelected = curSelected;
 			curSelected++;
@@ -118,11 +119,11 @@ OPTIONS MainMenu::runMenu() {
 				curSelected = 0;
 			}
 		}
-		Sleep(30);
+		Sleep(INTERVAL);
 	} while (key != ENTER_KEY);
 	this->isRunning = false;
 	mThread.join();
-	return this->options[this->curSelected];
+	return this->options[this->curSelected].first;
 }
 
 MainMenu::~MainMenu() {}

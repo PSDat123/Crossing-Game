@@ -3,6 +3,7 @@
 #include "Console.h"
 #include "People.h"
 #include "Macro.h"
+#include "Map.h"
 #include "MainMenu.h"
 
 class Game {
@@ -24,9 +25,10 @@ public:
 	void resumeGame();
 
 	void exitGame(thread*);
+	friend void gameThread(Game* g);
 private:
 	bool isRunning, isPaused;
-	int bufferWidth, bufferHeight;
+	SHORT bufferWidth, bufferHeight;
 };
 
 void settings();

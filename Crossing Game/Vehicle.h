@@ -5,19 +5,19 @@
 class Vehicle {
 public:
 	Vehicle(int x = 0, int y = 0);
-	~Vehicle();
+	//~Vehicle();
 
 	int getVX();
 	int getVY();
+	int getLength();
 	bool getState();
 
 	void move(DIRECTION);
 	virtual void draw();
 protected:
 	vector<wstring> sprite;
-	int prev_x, prev_y;
-	int max_x, max_y;
-	int x, y;
+	wstring empty;
+	SHORT x, y, prev_x, prev_y, max_x, max_y;
 	int speed, length;
 	bool state = true;
 };
@@ -25,7 +25,7 @@ protected:
 class Car : public Vehicle {
 public:
 	static vector<vector<wstring>> spriteSheet;
-	Car(int, int);
+	Car(int, int, int, int);
 	void draw();
 private:
 	bool wrapAround = true;
