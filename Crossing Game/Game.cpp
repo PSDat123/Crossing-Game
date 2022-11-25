@@ -20,21 +20,11 @@ void gameThread(Game* g) {
 	//bool sound_menu = PlaySound(_T("Sound/menu_music.wav"), NULL, SND_ASYNC | SND_FILENAME | SND_LOOP);
 //}
 
-void fastIO(){
-	ios_base::sync_with_stdio(false);
-	cin.tie(NULL);
-}
+//void fastIO(){
+//	ios_base::sync_with_stdio(false);
+//	cin.tie(NULL);
+//}
 
-void Game::setUp() {
-	//MoveConsole(100, 0);
-	//ChangeConsoleFontSize(18);
-	//SetConsoleSize(console, this->bufferWidth, this->bufferHeight);
-	//SetConsoleOutputCP(CP_UTF8);
-	//SetColor(240);
-	//FixConsoleWindow();
-	//ShowConsoleCursor(false);
-	//ClearBackground();
-}
 
 //void Game::loadGame() {}
 
@@ -47,29 +37,20 @@ void Game::exitGame(thread* t) {
 	t->join();
 }
 
-void printCredit(int x, int y) {
-	//GotoXY(x, y++);
-	//wcout << L"███████████████████████████████╗";
-	//GotoXY(x, y++);
-	//wcout << L"█                             █║";
-	//GotoXY(x, y++);
-	//wcout << L"█       Made by Group 1       █║" << endl;
-	//GotoXY(x, y++);;
-	//wcout << L"█  Phùng Siêu Đạt - 21127243  █║" << endl;
-	//GotoXY(x, y++);
-	//wcout << L"█  Đặng Hà Huy    - 21127296  █║" << endl;
-	//GotoXY(x, y++);
-	//wcout << L"█  Quách Tấn Dũng - 21127247  █║" << endl;
-	//GotoXY(x, y++);
-	//wcout << L"█  Nguyễn Cát Huy - 21127300  █║" << endl;
-	//GotoXY(x, y++);
-	//wcout << L"█                             █║";
-	//GotoXY(x, y++);
-	//wcout << L"███████████████████████████████║";
-	//GotoXY(x, y++);
-	//wcout << L"╚══════════════════════════════╝";
-	//GotoXY(x, y);
-	//wcout << L"Press Enter to return to menu" << endl;
+void Game::printCredit(int x, int y) {
+	console->DrawString(L"███████████████████████████████╗", x, y++);
+	console->DrawString(L"█                             █║", x, y++);
+	console->DrawString(L"█       Made by Group 1       █║", x, y++);
+	console->DrawString(L"█                             █║", x, y++);
+	console->DrawString(L"█  Phùng Siêu Đạt - 21127243  █║", x, y++);
+	console->DrawString(L"█  Quách Tấn Dũng - 21127247  █║", x, y++);
+	console->DrawString(L"█  Đặng Hà Huy    - 21127296  █║", x, y++);
+	console->DrawString(L"█  Nguyễn Cát Huy - 21127300  █║", x, y++);
+	console->DrawString(L"█                             █║", x, y++);
+	console->DrawString(L"███████████████████████████████║", x, y++);
+	console->DrawString(L"╚══════════════════════════════╝", x, y++);
+	console->DrawString(L"Press Enter to return to menu", x, y);
+	console->UpdateScreen();
 }
 
 void Game::startGame() {

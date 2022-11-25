@@ -1,7 +1,9 @@
 #pragma once
+#include "Macro.h"
 #include "Console.h"
 #include "Vehicle.h"
-#include "Macro.h"
+#include "Car.h"
+#include "Truck.h"
 
 class MainMenu {
 public:

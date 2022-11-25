@@ -11,11 +11,8 @@ public:
 	Game(Console*);
 	~Game();
 
-	void setUp();
-
 	void startGame();
 
-	void drawGame();
 	void saveGame();
 
 	void loadGame();
@@ -25,8 +22,10 @@ public:
 	void resumeGame();
 
 	void exitGame(thread*);
+
+	void printCredit(int, int);
+
 	friend void gameThread(Game* g);
-	friend class MainMenu;
 private:
 	Console* console;
 	SHORT width, height;
@@ -34,8 +33,8 @@ private:
 
 };
 
-void settings();
-void printCredit(int, int);
-void fastIO();
-void backgroundThread(Game*, bool*, bool*);
-void soundThread(Game*, bool*, bool*);
+//void settings();
+//
+//void fastIO();
+//void backgroundThread(Game*, bool*, bool*);
+//void soundThread(Game*, bool*, bool*);

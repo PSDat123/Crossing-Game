@@ -5,7 +5,9 @@
 #include <Windows.h>
 #include <conio.h>
 #include <string>
+#include <tchar.h>
 #include <vector>
+#include <chrono>
 #include <thread>
 #include <deque>
 

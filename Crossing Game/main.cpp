@@ -3,9 +3,9 @@
 #include <io.h>
 #include "Game.h"
 
+
 int main(){
     int _ = _setmode(_fileno(stdout), _O_U16TEXT);
-    fastIO();
     Console screen;
     Game game(&screen);
     game.startGame();

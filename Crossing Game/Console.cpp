@@ -16,7 +16,7 @@ Console::Console() {
 	FixConsoleWindow();
 	ShowConsoleCursor(false);
 	ClearBackground();
-	
+	SetConsoleTitle(L"The Jaywalker");
 }
 
 Console::~Console() {
