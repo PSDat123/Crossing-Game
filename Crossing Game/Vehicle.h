@@ -2,18 +2,17 @@
 #include "Console.h"
 #include "Macro.h"
 
+using namespace std;
+
 class Vehicle {
 public:
-	Vehicle(int x = 0, int y = 0);
-	//~Vehicle();
-
 	int getVX();
 	int getVY();
 	int getLength();
 	bool getState();
 
 	void move(DIRECTION);
-	virtual void draw();
+	virtual void draw(Console*);
 protected:
 	vector<wstring> sprite;
 	wstring empty;
@@ -26,7 +25,6 @@ class Car : public Vehicle {
 public:
 	static vector<vector<wstring>> spriteSheet;
 	Car(int, int, int, int);
-	void draw();
 private:
 	bool wrapAround = true;
 };

@@ -1,16 +1,17 @@
 ﻿#include "Game.h"
 
-Game::Game() {
-	this->bufferWidth = 140;
-	this->bufferHeight = 50;
-	this->isPaused = false;
-	this->isRunning = true;
+Game::Game(Console* screen) {
+	isPaused = false;
+	isRunning = true;
+	console = screen;
+	console->GetConsoleSize(width, height);
 }
 
 void gameThread(Game* g) {
-	Map map(g->bufferWidth, g->bufferHeight);
-	map.drawMap();
+	Map map(g->width, g->height);
+	map.drawOutline(g->console);
 	do{
+		g->console->UpdateScreen();
 		Sleep(INTERVAL);
 	} while (g->isRunning);
 }
@@ -25,14 +26,14 @@ void fastIO(){
 }
 
 void Game::setUp() {
-	MoveConsole(100, 0);
-	ChangeConsoleFontSize(18);
-	SetConsoleSize(this->bufferWidth, this->bufferHeight);
-	SetConsoleOutputCP(CP_UTF8);
-	SetColor(240);
-	FixConsoleWindow();
-	ShowConsoleCursor(false);
-	ClearBackground();
+	//MoveConsole(100, 0);
+	//ChangeConsoleFontSize(18);
+	//SetConsoleSize(console, this->bufferWidth, this->bufferHeight);
+	//SetConsoleOutputCP(CP_UTF8);
+	//SetColor(240);
+	//FixConsoleWindow();
+	//ShowConsoleCursor(false);
+	//ClearBackground();
 }
 
 //void Game::loadGame() {}
@@ -40,40 +41,40 @@ void Game::setUp() {
 //void Game::pauseGame() {}
 
 void Game::exitGame(thread* t) {
-	ClearBackground();
-	this->isRunning = false;
+	console->ClearBackground();
+	console->UpdateScreen();
+	isRunning = false;
 	t->join();
 }
 
 void printCredit(int x, int y) {
-	GotoXY(x, y++);
-	wcout << L"███████████████████████████████╗";
-	GotoXY(x, y++);
-	wcout << L"█                             █║";
-	GotoXY(x, y++);
-	wcout << L"█       Made by Group 1       █║" << endl;
-	GotoXY(x, y++);;
-	wcout << L"█  Phùng Siêu Đạt - 21127243  █║" << endl;
-	GotoXY(x, y++);
-	wcout << L"█  Đặng Hà Huy    - 21127296  █║" << endl;
-	GotoXY(x, y++);
-	wcout << L"█  Quách Tấn Dũng - 21127247  █║" << endl;
-	GotoXY(x, y++);
-	wcout << L"█  Nguyễn Cát Huy - 21127300  █║" << endl;
-	GotoXY(x, y++);
-	wcout << L"█                             █║";
-	GotoXY(x, y++);
-	wcout << L"███████████████████████████████║";
-	GotoXY(x, y++);
-	wcout << L"╚══════════════════════════════╝";
-	GotoXY(x, y);
-	wcout << L"Press Enter to return to menu" << endl;
+	//GotoXY(x, y++);
+	//wcout << L"███████████████████████████████╗";
+	//GotoXY(x, y++);
+	//wcout << L"█                             █║";
+	//GotoXY(x, y++);
+	//wcout << L"█       Made by Group 1       █║" << endl;
+	//GotoXY(x, y++);;
+	//wcout << L"█  Phùng Siêu Đạt - 21127243  █║" << endl;
+	//GotoXY(x, y++);
+	//wcout << L"█  Đặng Hà Huy    - 21127296  █║" << endl;
+	//GotoXY(x, y++);
+	//wcout << L"█  Quách Tấn Dũng - 21127247  █║" << endl;
+	//GotoXY(x, y++);
+	//wcout << L"█  Nguyễn Cát Huy - 21127300  █║" << endl;
+	//GotoXY(x, y++);
+	//wcout << L"█                             █║";
+	//GotoXY(x, y++);
+	//wcout << L"███████████████████████████████║";
+	//GotoXY(x, y++);
+	//wcout << L"╚══════════════════════════════╝";
+	//GotoXY(x, y);
+	//wcout << L"Press Enter to return to menu" << endl;
 }
 
 void Game::startGame() {
-	setUp();
+	MainMenu m(console);
 
-	MainMenu m;
 menu:
 	OPTIONS opt = m.runMenu();
 	
@@ -87,8 +88,8 @@ menu:
 	case OPTIONS::SETTINGS:
 		break;
 	case OPTIONS::CREDIT:{
-		ClearBackground();
-		printCredit((this->bufferWidth / 2) - 16, (this->bufferHeight / 2) - 5);
+		console->ClearBackground();
+		printCredit((width / 2) - 16, (height / 2) - 5);
 
 		int key;
 		do {
@@ -98,12 +99,13 @@ menu:
 		break;
 	}
 	case OPTIONS::EXIT:
-		ClearBackground();
+		console->ClearBackground();
+		console->UpdateScreen();
 		return;
 		break;
 	}
 
-	ClearBackground();
+	console->ClearBackground();
 	thread t1(gameThread, this);
 	while (true) {
 		int keyInput = toupper(_getch());

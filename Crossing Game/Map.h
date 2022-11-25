@@ -5,8 +5,7 @@ class Map {
 public:
 	Map(int, int);
 	~Map();
-
-	void drawMap();
+	void drawOutline(Console*);
 private:
 	int width, height;
 };

@@ -1,6 +1,6 @@
 ﻿#include "MainMenu.h"
 
-MainMenu::MainMenu() {
+MainMenu::MainMenu(Console* screen) {
 	this->title = {
 		L"████████╗██╗  ██╗███████╗         ██╗ █████╗ ██╗   ██╗██╗    ██╗ █████╗ ██╗     ██╗  ██╗███████╗██████╗ ",
 		L"╚══██╔══╝██║  ██║██╔════╝         ██║██╔══██╗╚██╗ ██╔╝██║    ██║██╔══██╗██║     ██║ ██╔╝██╔════╝██╔══██╗",
@@ -18,64 +18,50 @@ MainMenu::MainMenu() {
 		{OPTIONS::EXIT, L"Exit"}
 	};
 	this->curSelected = 0;
+	this->console = screen;
 }
 
 void MainMenu::printTitle(int x, int y) {
 	for (int i = 0; i < this->title.size(); ++i) {
-		GotoXY(x, y + i);
-		wcout << this->title[i];
+		console->DrawString(title[i], x, y + i);
 	}
-	wcout << endl;
 }
 void menuThread(MainMenu* m) {
 	SHORT w, h, cx, optionY = 16, offsetX = 11, roadY;
-	GetConsoleSize(w, h);
+	m->console->GetConsoleSize(w, h);
 	roadY = h - 10;
 	cx = w / 2;
 	m->printTitle(cx - m->title[0].size() / 2, 5);
-	GotoXY(cx - offsetX, optionY - 2);
-	wcout << L"█████████████████████╗";
-	GotoXY(cx - offsetX, optionY - 1);
-	wcout << L"█                   █║";
+	m->console->DrawString(L"█████████████████████╗", cx - offsetX, optionY - 2);
+	m->console->DrawString(L"█                   █║", cx - offsetX, optionY - 1);
 	for (int i = 0; i < m->options.size(); i++) {
-		GotoXY(cx - offsetX, optionY + i);
-		wcout << L"█                   █║";
-		GotoXY(cx - offsetX + 7, optionY + i);
-		wcout << m->options[i].second;
+		m->console->DrawString(L"█                   █║", cx - offsetX, optionY + i);
+		m->console->DrawString(m->options[i].second, cx - offsetX + 7, optionY + i);
 	}
-	GotoXY(cx - offsetX, optionY + m->options.size());
-	wcout << L"█                   █║";
-	GotoXY(cx - offsetX, optionY + m->options.size() + 1);
-	wcout << L"█████████████████████║";
-	GotoXY(cx - offsetX, optionY + m->options.size() + 2);
-	wcout << L"╚════════════════════╝";
-	GotoXY(cx - offsetX + 3, optionY + m->curSelected);
-	wcout << L"► ";
-	GotoXY(0, roadY);
-	for (int i = 0; i < w; ++i) {
-		wcout << L"—";
-	}
-	GotoXY(0, roadY + 6);
-	for (int i = 0; i < w; ++i) {
-		wcout << L"—";
-	}
+	m->console->DrawString(L"█                   █║", cx - offsetX, optionY + m->options.size());
+	m->console->DrawString(L"█████████████████████║", cx - offsetX, optionY + m->options.size() + 1);
+	m->console->DrawString(L"╚════════════════════╝", cx - offsetX, optionY + m->options.size() + 2);
+	m->console->DrawString(L"► ", cx - offsetX + 3, optionY + m->curSelected);
+
+	m->console->DrawHorizontalLine(L'—', roadY);
+	m->console->DrawHorizontalLine(L'—', roadY + 6);
+
+	//wcout << L"► ";
 	srand(time(NULL));
 	deque<Car> qCar;
 	int count = 0;
 	qCar.push_back(Car(-1, roadY + 1, w, h));
+	m->console->UpdateScreen();
 	do {
 		if (m->curSelected != m->prevSelected) {
-			PlaySound(_T("Sound/button.wav"), NULL, SND_ASYNC);
-
-			GotoXY(cx - offsetX + 3, optionY + m->prevSelected);
-			wcout << L"  ";
-			GotoXY(cx - offsetX + 3, optionY + m->curSelected);
-			wcout << L"► ";
+			//PlaySound(_T("Sound/button.wav"), NULL, SND_ASYNC);
+			m->console->DrawString(L"  ", cx - offsetX + 3, optionY + m->prevSelected);
+			m->console->DrawString(L"► ", cx - offsetX + 3, optionY + m->curSelected);
 			m->prevSelected = m->curSelected;
 		}
 		if (!qCar.empty()) {
 			for (Car& car : qCar) {
-				car.draw();
+				car.draw(m->console);
 				car.move(DIRECTION::RIGHT);
 			}
 			++count;
@@ -93,14 +79,14 @@ void menuThread(MainMenu* m) {
 			qCar.push_back(Car(-1, roadY + 1, w, h));
 			count = 0;
 		}
-
+		m->console->UpdateScreen();
 		Sleep(INTERVAL);
 	} while (m->isRunning);
 }
 
 OPTIONS MainMenu::runMenu() {
 	int key = 0;
-	ClearBackground();
+	console->ClearBackground();
 	isRunning = true;
 	thread mThread(menuThread, this);
 	do {

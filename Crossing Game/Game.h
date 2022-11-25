@@ -8,7 +8,7 @@
 
 class Game {
 public:
-	Game();
+	Game(Console*);
 	~Game();
 
 	void setUp();
@@ -26,9 +26,12 @@ public:
 
 	void exitGame(thread*);
 	friend void gameThread(Game* g);
+	friend class MainMenu;
 private:
+	Console* console;
+	SHORT width, height;
 	bool isRunning, isPaused;
-	SHORT bufferWidth, bufferHeight;
+
 };
 
 void settings();

@@ -2,10 +2,8 @@
 #pragma comment (lib, "winmm.lib") // Used to play sound
 #pragma execution_character_set( "utf-8" )
 #include <iostream>
-#include <tchar.h>
 #include <Windows.h>
 #include <conio.h>
-#include <fstream>
 #include <string>
 #include <vector>
 #include <thread>
@@ -13,22 +11,46 @@
 
 using namespace std;
 
-void FixConsoleWindow();
 
-void GotoXY(int, int);
+class Console {
+public:
+	Console();
 
-void SetColor(int);
+	~Console();
 
-void ClearBackground();
+	void FixConsoleWindow();
 
-void ShowConsoleCursor(bool);
+	void GotoXY(int, int);
 
-void GetConsoleSize(SHORT& width, SHORT& height);
+	void ChangeBackgroundColor(int);
 
-void GetMaximumConsoleSize(SHORT& width, SHORT& height);
+	void ClearBackground();
 
-void SetConsoleSize(SHORT& width, SHORT& height);
+	void ShowConsoleCursor(bool);
 
-void MoveConsole(int X, int Y);
+	void GetConsoleSize(SHORT& width, SHORT& height);
 
-void ChangeConsoleFontSize(SHORT);
+	void GetMaximumConsoleSize(SHORT& width, SHORT& height);
+
+	void SetConsoleSize(SHORT& width, SHORT& height);
+
+	void MoveConsole(int X, int Y);
+
+	void ChangeConsoleFontSize(SHORT);
+
+	void UpdateScreen();
+
+	void DrawChar(wchar_t c, int x, int y, short col = 240);
+
+	void DrawString(wstring s, int x, int y, short col = 240);
+
+	void DrawHorizontalLine(wchar_t c, int y, short col = 240);
+
+	void DrawVerticalLine(wchar_t c, int x, short col = 240);
+
+private:
+	SHORT bufferWidth, bufferHeight;
+	CHAR_INFO* buffer;
+	HANDLE handle;
+	SMALL_RECT rectWindow;
+};

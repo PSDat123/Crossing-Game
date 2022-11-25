@@ -5,43 +5,18 @@ Map::Map(int w, int h) {
 	this->height = h;
 }
 
-void Map::drawMap() {
-	GotoXY(0, 0);
-	wcout << L"╔";
-	for (int i = 2; i < width; ++i) {
-		wcout << L"═";
-	}
-	wcout << L"╗";
-	// Left
-	for (int j = 1; j < height - 1; ++j) {
-		GotoXY(0, j);
-		wcout << L"║" << endl;
-	}
-	// Middle
-	int off = width - height;
-	GotoXY(off, 0);
-	wcout << L"╦";
-	for (int j = 1; j < height - 1; ++j) {
-		GotoXY(off, j);
-		wcout << L"║" << endl;
-	}
-	// Right
-	for (int j = 1; j < height - 1; ++j) {
-		GotoXY(width - 1, j);
-		wcout << L"║" << endl;
-	}
-
-	//Bottom
-	GotoXY(0, height - 1);
-	wcout << L"╚";
-	for (int i = 2; i < width; ++i) {
-		wcout << L"═";
-	}
-	wcout << L"╝";
-
-	GotoXY(off, height - 1);
-	wcout << L"╩";
-	
+void Map::drawOutline(Console* c) {
+	c->DrawHorizontalLine(L'═', 0);
+	c->DrawHorizontalLine(L'═', height - 1);
+	c->DrawVerticalLine(L'║', 0);
+	c->DrawVerticalLine(L'║', width - height);
+	c->DrawVerticalLine(L'║', width - 1);
+	c->DrawChar(L'╔', 0, 0);
+	c->DrawChar(L'╗', width - 1, 0);
+	c->DrawChar(L'╦', width - height, 0);
+	c->DrawChar(L'╚', 0, height - 1);
+	c->DrawChar(L'╩', width - height, height - 1);
+	c->DrawChar(L'╝', width - 1, height - 1);
 }
 
 Map::~Map() {}

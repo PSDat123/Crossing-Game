@@ -1,15 +1,14 @@
 #pragma once
 #include "Console.h"
-#include "Macro.h"
 #include "Vehicle.h"
-#include "Animal.h"
+#include "Macro.h"
 
 class MainMenu {
 public:
-	MainMenu();
+	MainMenu(Console*);
 	~MainMenu();
 	OPTIONS runMenu();
-	
+	 
 	friend void menuThread(MainMenu* m);
 private:
 	vector<pair<OPTIONS, wstring>> options;
@@ -17,4 +16,5 @@ private:
 	int curSelected, prevSelected;
 	bool isRunning;
 	void printTitle(int, int);
+	Console* console;
 };

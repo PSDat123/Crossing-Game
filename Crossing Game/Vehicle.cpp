@@ -1,52 +1,5 @@
 #include "Vehicle.h"
 
-Vehicle::Vehicle(int x, int y) {
-	/*this->sprite = {
-		"  _______",
-		" /|_||_\\ \\__",
-		"|)         (\\",
-		"=`(o)---(o)-J"
-	};*/
-	//this->sprite = {
-	//	" _______________  _____",
-	//	"|               ||___|_\\",
-	//	"|===============|| -    |",
-	//	"|               ||     (|",
-	//	"'==(o)====(o)=======(o)=J "
-	//};
-	this->x = x;
-	this->y = y;
-	this->prev_x = x;
-	this->prev_y = y;
-	this->speed = 1;
-	GetConsoleSize(this->max_x, this->max_y);
-	this->length = 0;
-	for (wstring& s : sprite) {
-		if (s.size() > this->length) {
-			this->length = s.size();
-		}
-	} 
-}
-
-void Vehicle::draw() {
-	//GotoXY(this->prev_x, this->prev_y);
-	//cout << "       ";
-	//GotoXY(this->prev_x, this->prev_y + 1);
-	//cout << "       ";
-	//GotoXY(this->prev_x, this->prev_y + 2);
-	//cout << "       ";
-	//GotoXY(this->prev_x, this->prev_y + 3);
-	//cout << "       ";
-
-	//GotoXY(this->x, this->y);
-	//cout << "  _______";
-	//GotoXY(this->x, this->y + 1);
-	//cout << " /|_||_\\ \\__";
-	//GotoXY(this->x, this->y + 2);
-	//cout << "|)         (\\";
-	//GotoXY(this->x, this->y + 3);
-	//cout << "=`(o)---(o)-J";
-}
 
 void Vehicle::move(DIRECTION dir) {
 	switch (dir){
@@ -86,6 +39,27 @@ int Vehicle::getLength() {
 	return this->length;
 }
 
+void Vehicle::draw(Console* c) {
+	if (x >= 0) {
+		for (int i = 0; i < sprite.size(); ++i) {
+			c->DrawString(empty, prev_x, prev_y + i);
+			if (x + length > max_x) {
+				c->DrawString(sprite[i].substr(0, max_x - x), x, y + i);
+			}
+			else {
+				c->DrawString(sprite[i], x, y + i);
+			}
+		}
+	}
+	else {
+		int i = -x;
+		for (int j = 0; j < sprite.size(); ++j) {
+			if (i >= sprite[j].size()) continue;
+			c->DrawString(sprite[j].substr(i), 0, y + j);
+		}
+	}
+}
+
 vector<vector<wstring>> Car::spriteSheet = {
 	{
 		L"  _______",
@@ -98,19 +72,19 @@ vector<vector<wstring>> Car::spriteSheet = {
 		L"|)        _`-.",
 		L"'-(o)----(o)--`"
 	},
-	//{
-	//	L" _______________  _____",
-	//	L"|               ||___|_\\",
-	//	L"|===============|| -    |",
-	//	L"|               ||     (|",
-	//	L"'==(o)====(o)=======(o)=J "
-	//},
-	//{
-	//	L"                  /\\\\      _____   ",
-	//	L"    ,------      /  \\\\____/__|__\\_ ",
-	//	L" ,--'---:---`--,/   |)       |   (|",
-	//	L"==(o)-----(o)==J    `(o)=======(o)J"
-	//},
+	{
+		L" _______________  _____",
+		L"|               ||___|_\\",
+		L"|===============|| -    |",
+		L"|               ||     (|",
+		L"'==(o)====(o)=======(o)=J "
+	},
+	{
+		L"                  /\\\\      _____   ",
+		L"    ,------      /  \\\\____/__|__\\_ ",
+		L" ,--'---:---`--,/   |)       |   (|",
+		L"==(o)-----(o)==J    `(o)=======(o)J"
+	},
 	{
 		L"  __~@",
 		L"  _`\\<,_",
@@ -146,28 +120,4 @@ Car::Car(int x, int y, int max_x, int max_y) {
 	this->max_x = max_x;
 	this->max_y = max_y;
 	if (this->x + this->length < 0 || this->x > this->max_x) this->state = false;
-}
-
-void Car::draw() {
-	if (x >= 0) {
-		for (int i = 0; i < sprite.size(); ++i) {
-			GotoXY(prev_x, prev_y + i);
-			wcout << empty;
-			GotoXY(x, y + i);
-			if (x + length > max_x) {
-				wcout << sprite[i].substr(0, this->max_x - this->x);
-			}
-			else {
-				wcout << sprite[i];
-			}
-		}
-	}
-	else {
-		int i = -this->x;
-		for (int j = 0; j < sprite.size(); ++j) {
-			if (i >= sprite[j].size()) continue;
-			GotoXY(0, this->y + j);
-			wcout << sprite[j].substr(i);
-		}
-	}
 }

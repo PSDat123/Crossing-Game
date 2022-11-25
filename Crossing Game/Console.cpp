@@ -1,69 +1,94 @@
 #include "Console.h"
 
-void FixConsoleWindow() {
+Console::Console() {
+	bufferWidth = 140;
+	bufferHeight = 50;
+	handle = GetStdHandle(STD_OUTPUT_HANDLE);
+
+	buffer = new CHAR_INFO[bufferWidth * bufferHeight];
+	memset(buffer, 0, sizeof(CHAR_INFO) * bufferWidth * bufferHeight);
+
+	MoveConsole(100, 0);
+	ChangeConsoleFontSize(18);
+	SetConsoleSize(bufferWidth, bufferHeight);
+	SetConsoleOutputCP(CP_UTF8);
+	ChangeBackgroundColor(240);
+	FixConsoleWindow();
+	ShowConsoleCursor(false);
+	ClearBackground();
+	
+}
+
+Console::~Console() {
+	delete[] buffer;
+}
+
+void Console::FixConsoleWindow() {
 	HWND consoleWindow = GetConsoleWindow();
 	LONG style = GetWindowLong(consoleWindow, GWL_STYLE);
 	style = style & ~(WS_MAXIMIZEBOX) & ~(WS_THICKFRAME);
 	SetWindowLong(consoleWindow, GWL_STYLE, style);
 }
 
-void GetConsoleSize(SHORT& width, SHORT& height) {
-	CONSOLE_SCREEN_BUFFER_INFO info;
-	GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &info);
-	width = info.dwSize.X;
-	height = info.dwSize.Y;
+void Console::GetConsoleSize(SHORT& width, SHORT& height) {
+	width = bufferWidth;
+	height = bufferHeight;
+	//CONSOLE_SCREEN_BUFFER_INFO info;
+	//GetConsoleScreenBufferInfo(console, &info);
+	//width = info.dwSize.X;
+	//height = info.dwSize.Y;
 }
 
-void GetMaximumConsoleSize(SHORT& width, SHORT& height) {
+void Console::GetMaximumConsoleSize(SHORT& width, SHORT& height) {
 	CONSOLE_SCREEN_BUFFER_INFO info;
-	GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &info);
+	GetConsoleScreenBufferInfo(handle, &info);
 	width = info.dwMaximumWindowSize.X;
 	height = info.dwMaximumWindowSize.Y;
 }
 
-void SetConsoleSize(SHORT& width, SHORT& height) {
+void Console::SetConsoleSize(SHORT& width, SHORT& height) {
 	SMALL_RECT WindowSize = { 0, 0, 1, 1 };
-	HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
 
 	//SetConsoleWindowInfo(console, TRUE, &WindowSize);
-	SetConsoleScreenBufferSize(console, {width, height});
-	SetConsoleActiveScreenBuffer(console);
+	SetConsoleScreenBufferSize(handle, {width, height});
+	SetConsoleActiveScreenBuffer(handle);
 	WindowSize.Right = width - 1;
 	WindowSize.Bottom = height - 1;
-	if (!SetConsoleWindowInfo(console, TRUE, &WindowSize)) {
+	rectWindow = WindowSize;
+	if (!SetConsoleWindowInfo(handle, TRUE, &WindowSize)) {
 		CONSOLE_SCREEN_BUFFER_INFO info;
-		GetConsoleScreenBufferInfo(console, &info);
+		GetConsoleScreenBufferInfo(handle, &info);
 		WindowSize.Right = info.dwMaximumWindowSize.X - 1;
 		WindowSize.Bottom = info.dwMaximumWindowSize.Y - 1;
-		SetConsoleWindowInfo(console, TRUE, &WindowSize);
+		rectWindow = WindowSize;
+		SetConsoleWindowInfo(handle, TRUE, &WindowSize);
 		width = info.dwMaximumWindowSize.X;
 		height = info.dwMaximumWindowSize.Y;
-		SetConsoleScreenBufferSize(console, { width, height });
+		SetConsoleScreenBufferSize(handle, { width, height });
 	}
 }
 
-void GotoXY(int x, int y) {
+void Console::GotoXY(int x, int y) {
 	COORD coord;
 	coord.X = x;
 	coord.Y = y;
-	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
+	SetConsoleCursorPosition(handle, coord);
 }
 
-void ShowConsoleCursor(bool show){
-	HANDLE out = GetStdHandle(STD_OUTPUT_HANDLE);
+void Console::ShowConsoleCursor(bool show){
 	CONSOLE_CURSOR_INFO cursorInfo;
 
-	GetConsoleCursorInfo(out, &cursorInfo);
+	GetConsoleCursorInfo(handle, &cursorInfo);
 	cursorInfo.bVisible = show;
-	SetConsoleCursorInfo(out, &cursorInfo);
+	SetConsoleCursorInfo(handle, &cursorInfo);
 }
 
-void MoveConsole(int x, int y) {
+void Console::MoveConsole(int x, int y) {
 	HWND consoleWindow = GetConsoleWindow();
 	SetWindowPos(consoleWindow, 0, x, y, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
 }
 
-void ChangeConsoleFontSize(SHORT h) {
+void Console::ChangeConsoleFontSize(SHORT h) {
 	CONSOLE_FONT_INFOEX cfi;
 	cfi.cbSize = sizeof(cfi);
 	cfi.nFont = 0;
@@ -72,13 +97,50 @@ void ChangeConsoleFontSize(SHORT h) {
 	cfi.FontFamily = FF_DONTCARE;
 	cfi.FontWeight = FW_BOLD;
 	wcscpy_s(cfi.FaceName, L"Consolas"); // Choose your font
-	SetCurrentConsoleFontEx(GetStdHandle(STD_OUTPUT_HANDLE), FALSE, &cfi);
+	SetCurrentConsoleFontEx(handle, FALSE, &cfi);
 }
 
-void SetColor(int colorCode) {
-	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), colorCode);
+void Console::ChangeBackgroundColor(int colorCode) {
+	int n = bufferWidth * bufferHeight;
+	for (int i = 0; i < n; ++i) {
+		buffer[i].Attributes = colorCode;
+	}
+	//SetConsoleTextAttribute(handle, colorCode);
 }
 
-void ClearBackground() {
-	system("cls");
+void Console::ClearBackground() {
+	int n = bufferWidth * bufferHeight;
+	for (int i = 0; i < n; ++i) {
+		buffer[i].Char.UnicodeChar = 0;
+	}
+}
+
+void Console::UpdateScreen() {
+	WriteConsoleOutput(handle, buffer, { bufferWidth, bufferHeight }, { 0,0 }, &rectWindow);
+}
+
+void Console::DrawChar(wchar_t c, int x, int y, short col) {
+	buffer[y * bufferWidth + x].Char.UnicodeChar = c;
+	buffer[y * bufferWidth + x].Attributes = col;
+}
+
+void Console::DrawString(wstring s, int x, int y, short col) {
+	for (size_t i = 0; i < s.size(); ++i) {
+		buffer[y * bufferWidth + x + i].Char.UnicodeChar = s[i];
+		buffer[y * bufferWidth + x + i].Attributes = col;
+	}
+}
+
+void Console::DrawHorizontalLine(wchar_t c, int y, short col) {
+	for (size_t i = 0; i < bufferWidth; ++i) {
+		buffer[y * bufferWidth + i].Char.UnicodeChar = c;
+		buffer[y * bufferWidth + i].Attributes = col;
+	}
+}
+
+void Console::DrawVerticalLine(wchar_t c, int x, short col) {
+	for (size_t i = 0; i < bufferHeight; ++i) {
+		buffer[i * bufferWidth + x].Char.UnicodeChar = c;
+		buffer[i * bufferWidth + x].Attributes = col;
+	}
 }
