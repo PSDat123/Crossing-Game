@@ -1,8 +1,6 @@
-﻿#include <ctime>
-#include <fcntl.h>
+﻿#include <fcntl.h>
 #include <io.h>
 #include "Game.h"
-
 
 int main(){
     int _ = _setmode(_fileno(stdout), _O_U16TEXT);

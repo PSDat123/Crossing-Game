@@ -16,20 +16,6 @@ void gameThread(Game* g) {
 	} while (g->isRunning);
 }
 
-//void soundThread(bool* isRunning, bool* isPause) {
-	//bool sound_menu = PlaySound(_T("Sound/menu_music.wav"), NULL, SND_ASYNC | SND_FILENAME | SND_LOOP);
-//}
-
-//void fastIO(){
-//	ios_base::sync_with_stdio(false);
-//	cin.tie(NULL);
-//}
-
-
-//void Game::loadGame() {}
-
-//void Game::pauseGame() {}
-
 void Game::exitGame(thread* t) {
 	console->ClearBackground();
 	console->UpdateScreen();

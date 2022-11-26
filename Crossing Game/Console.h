@@ -4,6 +4,7 @@
 #include <iostream>
 #include <Windows.h>
 #include <conio.h>
+#include <ctime>
 #include <string>
 #include <tchar.h>
 #include <vector>
@@ -46,7 +47,7 @@ public:
 
 	void DrawString(wstring s, int x, int y, short col = 240);
 
-	void DrawHorizontalLine(wchar_t c, int y, short col = 240);
+	void DrawHorizontalLine(wchar_t c, int start_x, int stop_x, int y, short col = 240);
 
 	void DrawVerticalLine(wchar_t c, int x, short col = 240);
 

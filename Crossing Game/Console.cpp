@@ -131,10 +131,10 @@ void Console::DrawString(wstring s, int x, int y, short col) {
 	}
 }
 
-void Console::DrawHorizontalLine(wchar_t c, int y, short col) {
-	for (size_t i = 0; i < bufferWidth; ++i) {
-		buffer[y * bufferWidth + i].Char.UnicodeChar = c;
-		buffer[y * bufferWidth + i].Attributes = col;
+void Console::DrawHorizontalLine(wchar_t c, int start_x, int stop_x, int y, short col) {
+	for (size_t i = 0; i < bufferWidth - stop_x; ++i) {
+		buffer[y * bufferWidth + start_x + i].Char.UnicodeChar = c;
+		buffer[y * bufferWidth + start_x + i].Attributes = col;
 	}
 }
 

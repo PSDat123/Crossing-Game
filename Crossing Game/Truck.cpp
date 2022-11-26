@@ -28,7 +28,7 @@ Truck::Truck(int x, int y, int max_x, int max_y) {
 	length = 0;
 	for (wstring& s : sprite) {
 		if ((int)s.size() > length) {
-			length = s.size();
+			length = (int)s.size();
 		}
 	}
 	empty.append(speed, L' ');

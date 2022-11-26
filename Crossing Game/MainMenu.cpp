@@ -23,7 +23,7 @@ MainMenu::MainMenu(Console* screen) {
 
 void MainMenu::printTitle(int x, int y) {
 	for (size_t i = 0; i < this->title.size(); ++i) {
-		console->DrawString(title[i], x, y + i);
+		console->DrawString(title[i], x, y + (int)i);
 	}
 }
 
@@ -40,22 +40,22 @@ void menuThread(MainMenu* m) {
 	m->console->GetConsoleSize(w, h);
 	roadY = h - 10;
 	cx = w / 2;
-	m->printTitle(cx - m->title[0].size() / 2, 5);
+	m->printTitle(cx - (int)m->title[0].size() / 2, 5);
 	m->console->DrawString(L"█████████████████████╗", cx - offsetX, optionY - 2);
 	m->console->DrawString(L"█                   █║", cx - offsetX, optionY - 1);
 	for (size_t i = 0; i < m->options.size(); i++) {
-		m->console->DrawString(L"█                   █║", cx - offsetX, optionY + i);
-		m->console->DrawString(m->options[i].second, cx - offsetX + 7, optionY + i);
+		m->console->DrawString(L"█                   █║", cx - offsetX, optionY + (int)i);
+		m->console->DrawString(m->options[i].second, cx - offsetX + 7, optionY + (int)i);
 	}
-	m->console->DrawString(L"█                   █║", cx - offsetX, optionY + m->options.size());
-	m->console->DrawString(L"█████████████████████║", cx - offsetX, optionY + m->options.size() + 1);
-	m->console->DrawString(L"╚════════════════════╝", cx - offsetX, optionY + m->options.size() + 2);
+	m->console->DrawString(L"█                   █║", cx - offsetX, optionY + (int)m->options.size());
+	m->console->DrawString(L"█████████████████████║", cx - offsetX, optionY + (int)m->options.size() + 1);
+	m->console->DrawString(L"╚════════════════════╝", cx - offsetX, optionY + (int)m->options.size() + 2);
 	m->console->DrawString(L"► ", cx - offsetX + 3, optionY + m->curSelected);
 
-	m->console->DrawHorizontalLine(L'—', roadY);
-	m->console->DrawHorizontalLine(L'—', roadY + 6);
+	m->console->DrawHorizontalLine(L'—', 0, 0, roadY);
+	m->console->DrawHorizontalLine(L'—', 0, 0, roadY + 6);
 
-	srand((int)time(NULL));
+	srand(static_cast<unsigned int>(time(NULL)));
 	deque<Vehicle> qVehicle;
 	int count = 0;
 	qVehicle.push_back(getRandomVehicle(-1, roadY + 1, w, h));
@@ -113,7 +113,7 @@ OPTIONS MainMenu::runMenu() {
 			prevSelected = curSelected;
 			curSelected--;
 			if (curSelected == -1) {
-				curSelected = options.size() - 1;
+				curSelected = (int)options.size() - 1;
 			}
 		}
 		if (key == DOWN_ARROW || key == S) {
