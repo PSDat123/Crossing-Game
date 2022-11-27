@@ -144,6 +144,7 @@
     <ClCompile Include="Car.cpp" />
     <ClCompile Include="Console.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="Lane.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainMenu.cpp" />
     <ClCompile Include="Map.cpp" />
@@ -155,6 +156,7 @@
     <ClInclude Include="Animal.h" />
     <ClInclude Include="Car.h" />
     <ClInclude Include="Console.h" />
+    <ClInclude Include="Lane.h" />
     <ClInclude Include="Macro.h" />
     <ClInclude Include="MainMenu.h" />
     <ClInclude Include="Game.h" />

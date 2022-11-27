@@ -1,9 +1,7 @@
 #pragma once
 #include "Macro.h"
 #include "Console.h"
-#include "Vehicle.h"
-#include "Car.h"
-#include "Truck.h"
+#include "Lane.h"
 
 class MainMenu {
 public:
@@ -12,7 +10,9 @@ public:
 	OPTIONS runMenu();
 	 
 	friend void menuThread(MainMenu* m);
+	friend void animateExit(MainMenu* m);
 private:
+	SHORT width, height;
 	vector<pair<OPTIONS, wstring>> options;
 	vector<wstring> title;
 	int curSelected, prevSelected;

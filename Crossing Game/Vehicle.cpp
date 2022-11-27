@@ -41,9 +41,11 @@ int Vehicle::getLength() {
 }
 
 void Vehicle::draw(Console* c) {
-	if (x >= 0) {
+	if (x > 0) {
 		for (size_t i = 0; i < sprite.size(); ++i) {
-			c->DrawString(empty, prev_x, prev_y + i);
+			for(int j = prev_x; j <= x; ++j)
+				c->DrawChar(L' ', j, prev_y + i);
+			//c->DrawString(empty, prev_x, prev_y + i);
 			if (x + length > max_x) {
 				c->DrawString(sprite[i].substr(0, max_x - x), x, y + i);
 			}

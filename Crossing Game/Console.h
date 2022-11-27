@@ -10,6 +10,7 @@
 #include <chrono>
 #include <thread>
 #include <deque>
+#include <map>
 
 using namespace std;
 
@@ -50,6 +51,7 @@ public:
 
 	void DrawVerticalLine(wchar_t c, int x, short col = 240);
 
+	void ShiftUp(SMALL_RECT rect);
 private:
 	SHORT bufferWidth, bufferHeight;
 	CHAR_INFO* buffer;

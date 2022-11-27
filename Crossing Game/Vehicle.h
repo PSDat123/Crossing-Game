@@ -6,18 +6,18 @@ using namespace std;
 
 class Vehicle {
 public:
+	virtual ~Vehicle();
 	int getVX();
 	int getVY();
 	int getLength();
 	bool getState();
 
 	void move(DIRECTION);
-	virtual ~Vehicle();
+
 	virtual void draw(Console*);
 protected:
 	vector<wstring> sprite;
-	wstring empty;
-	SHORT x, y, prev_x, prev_y, max_x, max_y;
+	SHORT x, y, prev_x, prev_y, max_x;
 	int speed, length;
 	bool state = true;
 };

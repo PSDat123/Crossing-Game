@@ -19,6 +19,7 @@ MainMenu::MainMenu(Console* screen) {
 	};
 	this->curSelected = 0;
 	this->console = screen;
+	this->console->GetConsoleSize(width, height);
 }
 
 void MainMenu::printTitle(int x, int y) {
@@ -27,19 +28,10 @@ void MainMenu::printTitle(int x, int y) {
 	}
 }
 
-Vehicle getRandomVehicle(int x, int y, int max_x, int max_y) {
-	int r = rand() % 10;
-	if (r == 0) {
-		return Truck(x, y, max_x, max_y);
-	}
-	return Car(x, y, max_x, max_y);
-}
-
 void menuThread(MainMenu* m) {
-	SHORT w, h, cx, optionY = 16, offsetX = 11, roadY;
-	m->console->GetConsoleSize(w, h);
-	roadY = h - 10;
-	cx = w / 2;
+	SHORT cx, optionY = 16, offsetX = 11, roadY;
+	roadY = m->height - 10;
+	cx = m->width / 2;
 	m->printTitle(cx - m->title[0].size() / 2, 5);
 	m->console->DrawString(L"█████████████████████╗", cx - offsetX, optionY - 2);
 	m->console->DrawString(L"█                   █║", cx - offsetX, optionY - 1);
@@ -52,17 +44,14 @@ void menuThread(MainMenu* m) {
 	m->console->DrawString(L"╚════════════════════╝", cx - offsetX, optionY + m->options.size() + 2);
 	m->console->DrawString(L"► ", cx - offsetX + 3, optionY + m->curSelected);
 
-	m->console->DrawHorizontalLine(L'—', roadY);
-	m->console->DrawHorizontalLine(L'—', roadY + 6);
 
 	srand((int)time(NULL));
-	deque<Vehicle> qVehicle;
-	int count = 0;
-	qVehicle.push_back(getRandomVehicle(-1, roadY + 1, w, h));
-	m->console->UpdateScreen();
+	Lane lane(0, roadY, m->width, 5);
+	lane.drawLane(m->console);
 
 	auto t1 = chrono::system_clock::now();
 	auto t2 = t1;
+	
 	do {
 		t1 = chrono::system_clock::now();
 
@@ -72,26 +61,9 @@ void menuThread(MainMenu* m) {
 			m->console->DrawString(L"► ", cx - offsetX + 3, optionY + m->curSelected);
 			m->prevSelected = m->curSelected;
 		}
-		if (!qVehicle.empty()) {
-			for (Vehicle& car : qVehicle) {
-				car.draw(m->console);
-				car.move(DIRECTION::RIGHT);
-			}
-			++count;
-			if (count > qVehicle.back().getLength() + 7) {
-				if (!(rand() % 30)) {
-					qVehicle.push_back(getRandomVehicle(-1, roadY + 1, w, h));
-					count = 0;
-				}
-			}
-			if (!qVehicle.front().getState()) {
-				qVehicle.pop_front();
-			}
-		}
-		else {
-			qVehicle.push_back(getRandomVehicle(-1, roadY + 1, w, h));
-			count = 0;
-		}
+		
+		lane.updateVehicles(m->console);
+		lane.drawVehicles(m->console);
 		m->console->UpdateScreen();
 
 		t2 = std::chrono::system_clock::now();
@@ -100,6 +72,17 @@ void menuThread(MainMenu* m) {
 
 		this_thread::sleep_for(chrono::milliseconds(INTERVAL - (int)deltaTime));
 	} while (m->isRunning);
+}
+
+void animateExit(MainMenu* m) {
+	//short offset = 5;
+	//short h = m->title.size();
+	//for (short i = 0; i < offset + h; ++i) {
+	//	m->console->ShiftUp({ 0, (short)(offset - i), (short)(m->width - 1),  (short)(offset + h - 1 - i) });
+	//	m->console->UpdateScreen();
+	//	Sleep(INTERVAL);
+
+	//}
 }
 
 OPTIONS MainMenu::runMenu() {
@@ -127,6 +110,7 @@ OPTIONS MainMenu::runMenu() {
 	} while (key != ENTER_KEY);
 	this->isRunning = false;
 	mThread.join();
+	animateExit(this);
 	return this->options[this->curSelected].first;
 }
 
