@@ -12,7 +12,6 @@ public:
 	~Game();
 
 	void startGame();
-
 	void saveGame();
 
 	void loadGame();
@@ -22,7 +21,6 @@ public:
 	void resumeGame();
 
 	void exitGame(thread*);
-
 	void printCredit(int, int);
 
 	friend void gameThread(Game* g);
@@ -30,7 +28,8 @@ private:
 	Console* console;
 	SHORT width, height;
 	bool isRunning, isPaused;
-
+	int level = 1;
+	int score = 0;
 };
 
 //void settings();

@@ -131,8 +131,8 @@ void Console::DrawString(wstring s, int x, int y, short col) {
 	}
 }
 
-void Console::DrawHorizontalLine(wchar_t c, int y, short col) {
-	for (SHORT i = 0; i < bufferWidth; ++i) {
+void Console::DrawHorizontalLine(wchar_t c, int start_x, int end_x, int y, short col) {
+	for (SHORT i = start_x; i <= end_x; ++i) {
 		buffer[y * bufferWidth + i].Char.UnicodeChar = c;
 		buffer[y * bufferWidth + i].Attributes = col;
 	}
@@ -153,5 +153,5 @@ void Console::ShiftUp(SMALL_RECT rect) {
 			buffer[(i - 1) * bufferWidth + j] = buffer[i * bufferWidth + j];
 		}
 	}
-	DrawHorizontalLine(L' ', --i);
+	DrawHorizontalLine(L' ', rect.Left, rect.Right, --i);
 }

@@ -45,7 +45,7 @@ void menuThread(MainMenu* m) {
 	m->console->DrawString(L"► ", cx - offsetX + 3, optionY + m->curSelected);
 
 
-	srand(static_cast<unsigned int>(time(NULL)))
+	srand(static_cast<unsigned int>(time(NULL)));
 	Lane lane(0, roadY, m->width, 5);
 	lane.drawLane(m->console);
 

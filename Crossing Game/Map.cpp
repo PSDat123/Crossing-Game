@@ -1,131 +1,149 @@
 ﻿#include "Map.h"
 
-Map::Map(int w, int h) {
+Map::Map(int w, int h, int num_lane,  int* level, int* score) {
 	this->width = w;
 	this->height = h;
+	this->cur_level = level;
+	this->cur_score = score;
+	side_x = width * 0.7;
+}
+vector<vector<wstring>> Map::digits = {
+	{   
+		L"╔═══╗",
+		L"║ ║ ║",
+		L"║ ║ ║",
+		L"║ ║ ║",
+		L"╚═══╝"
+	},
+	{	
+		L"╔══╗",
+		L"╚╗ ║",
+		L" ║ ║",
+		L" ║ ║",
+		L" ╚═╝"
+	},
+	{	
+		L"╔═══╗",
+		L"╚═╗ ║",
+		L"╔═══╝",
+		L"║ ╚═╗",
+		L"╚═══╝"
+	},
+	{	
+		L"╔═══╗",
+		L"╚═╗ ║",
+		L" ═══╣",
+		L"╔═╝ ║",
+		L"╚═══╝"
+	},
+};
+
+vector<wstring> numToAsciiDigits(int n) {
+	vector<wstring> res(5);
+	string s = to_string(n);
+	for (char& c : s) {
+		for (int i = 0; i < 5; ++i) {
+			res[i] += Map::digits[c - '0'][i] + L' ';
+		}
+	}
+	for (int i = 0; i < 5; ++i) {
+		res[i].pop_back();
+	}
+	return res;
 }
 
 void Map::drawOutline(Console* c) {
 	vector<wstring> score_text = {
 		L"╔═══╗╔═══╗╔═══╗╔═══╗╔═══╗",
-		L"║    ║    ║   ║║   ║║",
-		L"╚═══╗║    ║   ║╠══╦╝╠═══",
-		L"    ║║    ║   ║║  ║ ║",
+		L"║    ║    ║   ║║   ║║    ",
+		L"╚═══╗║    ║   ║╠══╦╝╠═══ ",
+		L"    ║║    ║   ║║  ║ ║    ",
 		L"╚═══╝╚═══╝╚═══╝╝  ╚═╚═══╝",
 	};
 
 	vector<wstring> lv_text = {
-		L"╔    ╔═══╗╔   ╗╔═══╗╔      ",
+		L"╔    ╔═══╗╔   ╗╔═══╗╔       ",
 		L"║    ║    ║   ║║    ║      □",
-		L"║    ╠═══ ║   ║╠═══ ║      ",
+		L"║    ╠═══ ║   ║╠═══ ║       ",
 		L"║    ║    ╚╗ ╔╝║    ║      □",
-		L"╚═══╝╚═══╝ ╚═╝ ╚═══╝╚═══╝  "
+		L"╚═══╝╚═══╝ ╚═╝ ╚═══╝╚═══╝   "
 	};
-	vector<wstring> car = {
-		L" _.-.___\\__",
-		L"|)        _`-.",
-		L"'-(o)----(o)--`"
-	};
+	vector<wstring> car = Car::spriteSheet[DIRECTION::RIGHT][1];
 
-	vector<vector<wstring>> num = {
-	{   L"╔═══╗",
-		L"║ ║ ║",
-		L"║ ║ ║",
-		L"║ ║ ║",
-		L"╚═══╝"},
-	{	L"╔══╗",
-		L"╚╗ ║",
-		L" ║ ║",
-		L" ║ ║",
-		L" ╚═╝"},
-	{	L"╔═══╗",
-		L"╚═╗ ║",
-		L"╔═══╝",
-		L"║ ╚═╗",
-		L"╚═══╝"},
-	{	L"╔═══╗",
-		L"╚═╗ ║",
-		L" ═══╣",
-		L"╔═╝ ║",
-		L"╚═══╝"},
-	};
-	int off = width - height - 3, num_lane = 0, controlY = 31;
+	
+	int controlY = 31, m;
+	if (width - side_x < 43) side_x = width - 43;
 	string lv_unit = "1";
-	string lv_tenth = "0"
-		;
+	string lv_tenth = "0";
 	string hundred = "1";
 	string tenth = "2";
 	string unit = "3";
 	//Top and bottom line
-	c->DrawHorizontalLine(L'═', 0, 0, 0);
-	c->DrawHorizontalLine(L'═', 0, 0, height - 1);
+	c->DrawHorizontalLine(L'═', 0, width - 1, 0);
+	c->DrawHorizontalLine(L'═', 0, width - 1, height - 1);
 
 	c->DrawVerticalLine(L'║', 0); // Left col
-	c->DrawVerticalLine(L'║', off); // Mid col
+	c->DrawVerticalLine(L'║', side_x); // Mid col
 	c->DrawVerticalLine(L'║', width - 1); //Right col
-	for (int i = height - 6; i > 0; i -= 6) {
-		if (i == height - 6 || num_lane == 4) {
-			c->DrawHorizontalLine(L'═', 0, height + 3, i);
-			c->DrawChar(L'╠', 0, i);
-			c->DrawChar(L'╣', off, i);
-		}
-		else if (num_lane < 5) {
-			num_lane++;
-			c->DrawHorizontalLine(L'─', 0, height + 3, i);
-			c->DrawChar(L'╟', 0, i);
-			c->DrawChar(L'╢', off, i);
-		}
-	}
 
 	//Small title (Top panel)
-	c->DrawString(L"============== THE JAYWALKER =============", off + 1, 1);
-	c->DrawString(L"MADE BY GROUP 1 - 21CLC05", off + 10, 2);
-	c->DrawString(L"╔═══ PLAYER NAME ═══╗ ", off + 12, 3);
-	c->DrawString(L"║                   ║ ", off + 12, 4);
-	c->DrawString(L"╚═══════════════════╝ ", off + 12, 5);
+	m = width + side_x;
+	c->DrawHorizontalLine(L'=', side_x + 1, width - 2, 1);
+	c->DrawString(L" THE JAYWALKER ", (m - 15) / 2, 1);
+	c->DrawString(L"MADE BY GROUP 1 - 21CLC05", (m - 25) / 2, 2);
+	c->DrawString(L"╔═══ PLAYER NAME ═══╗", (m - 21) / 2, 3);
+	c->DrawString(L"║                   ║", (m - 21) / 2, 4);
+	c->DrawString(L"╚═══════════════════╝", (m - 21) / 2, 5);
 	for (int i = 0; i < car.size(); ++i) {
-		c->DrawString(car[i], off + 15, 6 + i);
-	}
-	for (int i = 0; i < lv_text.size(); ++i) {
-		c->DrawString(lv_text[i], off + 2, 10 + i);
-		c->DrawString(num[stoi(lv_tenth)][i], off + 33, 10 + i);
-		c->DrawString(num[stoi(lv_unit)][i], off + 38, 10 + i);
+		c->DrawString(car[i], (m - car[0].size()) / 2, i + 6);
 	}
 
+	vector<wstring> level = numToAsciiDigits(*cur_level);
+	m = (width + side_x - lv_text[0].size() - level[0].size() - 1) / 2;
+	for (int i = 0; i < lv_text.size(); ++i) {
+		c->DrawString(lv_text[i], m, i + 10);
+	}
+	for (int i = 0; i < level.size() ;++i) {
+		c->DrawString(level[i], m + lv_text[0].size() + 1, i + 10);
+	}
 	//Score box
-	c->DrawHorizontalLine(L'═', off, off + 1, 15);
-	c->DrawChar(L'╠', off, 15);
+	c->DrawHorizontalLine(L'═', side_x + 1, width - 2, 15);
+	c->DrawChar(L'╠', side_x, 15);
 	c->DrawChar(L'╣', width - 1, 15);
 
+	
 	//Score panel (Middle panel)
+	vector<wstring> score = numToAsciiDigits(*cur_score);
+	m = (width + side_x - score_text[0].size()) / 2;
 	for (int i = 0; i < score_text.size(); ++i) {
-		c->DrawString(score_text[i], off + 9, 17 + i);
-		c->DrawString(num[stoi(hundred)][i], off + 14, 23 + i);
-		c->DrawString(num[stoi(tenth)][i], off + 19, 23 + i);
-		c->DrawString(num[stoi(unit)][i], off + 24, 23 + i);
+		c->DrawString(score_text[i], m, i + 17);
+	}
+	m = (width + side_x - score[0].size()) / 2;
+	for (int i = 0; i < score.size(); ++i) {
+		c->DrawString(score[i], m, i + 23);
 	}
 
 	//Center box
-	c->DrawHorizontalLine(L'═', off, off + 1, 30);
-	c->DrawChar(L'╠', off, 30);
+	c->DrawHorizontalLine(L'═', side_x + 1, width - 2, 30);
+	c->DrawChar(L'╠', side_x, 30);
 	c->DrawChar(L'╣', width - 1, 30);
 
 	//Keyboard control (Bottom panel)
-	c->DrawString(L"KEYBOARD CONTROL", off + 1, controlY++);
-	c->DrawString(L"W to go up", off + 1, controlY++);
-	c->DrawString(L"S to go down", off + 1, controlY++);
-	c->DrawString(L"A to go left", off + 1, controlY++);
-	c->DrawString(L"D to go right", off + 1, controlY++);
-	c->DrawString(L"P to pause/unpause game", off + 1, controlY++);
-	c->DrawString(L"S to save game", off + 1, controlY++);
-	c->DrawString(L"L to load game", off + 1, controlY++);
-
+	m = width + side_x;
+	c->DrawString(L"KEYBOARD CONTROL", (m - 16) / 2, controlY++);
+	c->DrawString(L"W to go up", (m - 10) / 2, controlY++);
+	c->DrawString(L"S to go down", (m - 12) / 2, controlY++);
+	c->DrawString(L"A to go left", (m - 12) / 2, controlY++);
+	c->DrawString(L"D to go right", (m - 13) / 2, controlY++);
+	c->DrawString(L"P to pause/unpause game", (m - 23) / 2, controlY++);
+	c->DrawString(L"S to save game", (m - 14) / 2, controlY++);
+	c->DrawString(L"L to load game", (m - 14) / 2, controlY++);
 	//Corner and T pieces
 	c->DrawChar(L'╔', 0, 0);
 	c->DrawChar(L'╗', width - 1, 0);
-	c->DrawChar(L'╦', off, 0);
+	c->DrawChar(L'╦', side_x, 0);
 	c->DrawChar(L'╚', 0, height - 1);
-	c->DrawChar(L'╩', off, height - 1);
+	c->DrawChar(L'╩', side_x, height - 1);
 	c->DrawChar(L'╝', width - 1, height - 1);
 }
 

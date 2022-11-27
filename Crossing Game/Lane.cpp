@@ -47,6 +47,6 @@ void Lane::drawVehicles(Console* console) {
 }
 
 void Lane::drawLane(Console* console) {
-	console->DrawHorizontalLine(L'—', y);
-	console->DrawHorizontalLine(L'—', y + height + 1);
+	console->DrawHorizontalLine(L'—', x, x + width, y);
+	console->DrawHorizontalLine(L'—', x, x + width, y + height + 1);
 }

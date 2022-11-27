@@ -8,7 +8,7 @@ Game::Game(Console* screen) {
 }
 
 void gameThread(Game* g) {
-	Map map(g->width, g->height);
+	Map map(g->width, g->height, 5, &g->level, &g->score);
 	map.drawOutline(g->console);
 	do{
 		g->console->UpdateScreen();
