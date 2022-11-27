@@ -24,7 +24,7 @@ MainMenu::MainMenu(Console* screen) {
 
 void MainMenu::printTitle(int x, int y) {
 	for (size_t i = 0; i < this->title.size(); ++i) {
-		console->DrawString(title[i], x, y + i);
+		console->DrawString(title[i], x, y + (int)i);
 	}
 }
 
@@ -36,16 +36,16 @@ void menuThread(MainMenu* m) {
 	m->console->DrawString(L"█████████████████████╗", cx - offsetX, optionY - 2);
 	m->console->DrawString(L"█                   █║", cx - offsetX, optionY - 1);
 	for (size_t i = 0; i < m->options.size(); i++) {
-		m->console->DrawString(L"█                   █║", cx - offsetX, optionY + i);
-		m->console->DrawString(m->options[i].second, cx - offsetX + 7, optionY + i);
+		m->console->DrawString(L"█                   █║", cx - offsetX, optionY + (int)i);
+		m->console->DrawString(m->options[i].second, cx - offsetX + 7, optionY + (int)i);
 	}
-	m->console->DrawString(L"█                   █║", cx - offsetX, optionY + m->options.size());
-	m->console->DrawString(L"█████████████████████║", cx - offsetX, optionY + m->options.size() + 1);
-	m->console->DrawString(L"╚════════════════════╝", cx - offsetX, optionY + m->options.size() + 2);
+	m->console->DrawString(L"█                   █║", cx - offsetX, optionY + (int)m->options.size());
+	m->console->DrawString(L"█████████████████████║", cx - offsetX, optionY + (int)m->options.size() + 1);
+	m->console->DrawString(L"╚════════════════════╝", cx - offsetX, optionY + (int)m->options.size() + 2);
 	m->console->DrawString(L"► ", cx - offsetX + 3, optionY + m->curSelected);
 
 
-	srand((int)time(NULL));
+	srand(static_cast<unsigned int>(time(NULL)))
 	Lane lane(0, roadY, m->width, 5);
 	lane.drawLane(m->console);
 
@@ -96,7 +96,7 @@ OPTIONS MainMenu::runMenu() {
 			prevSelected = curSelected;
 			curSelected--;
 			if (curSelected == -1) {
-				curSelected = options.size() - 1;
+				curSelected = (int)options.size() - 1;
 			}
 		}
 		if (key == DOWN_ARROW || key == S) {

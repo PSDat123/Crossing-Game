@@ -44,7 +44,7 @@ Truck::Truck(int x, int y, int max_x, DIRECTION dir) {
 	length = 0;
 	for (wstring& s : sprite) {
 		if ((int)s.size() > length) {
-			length = s.size();
+			length = (int)s.size();
 		}
 	}
 

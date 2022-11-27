@@ -47,10 +47,10 @@ void Vehicle::draw(Console* c) {
 				c->DrawChar(L' ', j, prev_y + i);
 			//c->DrawString(empty, prev_x, prev_y + i);
 			if (x + length > max_x) {
-				c->DrawString(sprite[i].substr(0, max_x - x), x, y + i);
+				c->DrawString(sprite[i].substr(0, max_x - x), x, y + (int)i);
 			}
 			else {
-				c->DrawString(sprite[i], x, y + i);
+				c->DrawString(sprite[i], x, y + (int)i);
 			}
 		}
 	}
@@ -58,7 +58,7 @@ void Vehicle::draw(Console* c) {
 		size_t i = -x;
 		for (size_t j = 0; j < sprite.size(); ++j) {
 			if (i >= sprite[j].size()) continue;
-			c->DrawString(sprite[j].substr(i), 0, y + j);
+			c->DrawString(sprite[j].substr(i), 0, y + (int)j);
 		}
 	}
 }
