@@ -46,8 +46,8 @@ map<DIRECTION, vector<vector<wstring>>> Car::spriteSheet= {
 };
 
 
-Car::Car(int x, int y, int max_x, DIRECTION dir) {
-	sprite = spriteSheet[dir][rand() % spriteSheet.size()];
+Car::Car(int x, int y, int max_x, int min_x, DIRECTION dir) {
+	sprite = spriteSheet[dir][rand() % spriteSheet[dir].size()];
 	speed = 1;
 	length = 0;
 	for (wstring& s : sprite) {
@@ -63,13 +63,15 @@ Car::Car(int x, int y, int max_x, DIRECTION dir) {
 		prev_y = y;
 	}
 	else {
-		this->x = -length;
+		this->x = min_x-length;
 		this->y = y;
-		prev_x = -length;
+		prev_x = min_x -length;
 		prev_y = y;
 	}
 	this->max_x = max_x;
-	if (this->x + length < 0 || this->x > this->max_x) state = false;
+	this->min_x = min_x;
+	this->dir = dir;
+	if (this->x + length < this->min_x || this->x > this->max_x) state = false;
 }
 
 Car::~Car() {}

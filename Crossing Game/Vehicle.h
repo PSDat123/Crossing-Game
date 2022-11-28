@@ -17,7 +17,8 @@ public:
 	virtual void draw(Console*);
 protected:
 	vector<wstring> sprite;
-	SHORT x, y, prev_x, prev_y, max_x;
+	SHORT x, y, prev_x, prev_y, max_x, min_x;
 	int speed, length;
+	DIRECTION dir;
 	bool state = true;
 };
