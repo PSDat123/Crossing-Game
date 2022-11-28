@@ -10,15 +10,17 @@ Lane::Lane(SHORT x, SHORT y, SHORT width, SHORT height, DIRECTION dir) {
 
 Lane::Lane() : Lane(0, 0, 100, 5) {}
 
-Vehicle getRandomVehicle(int x, int y, int max_x, DIRECTION dir=DIRECTION::RIGHT) {
+Vehicle getRandomVehicle(int x, int y, int max_x, int min_x, DIRECTION dir=DIRECTION::RIGHT) {
 	int r = rand() % 10;
 	if (r == 0) {
-		return Truck(x, y, max_x, dir);
+		return Truck(x, y, max_x, min_x, dir);
 	}
-	return Car(x, y, max_x, dir);
+	return Car(x, y, max_x, min_x, dir);
 }
 
-void Lane::updateVehicles(Console* console) {
+void Lane::updateVehicles() {
+	int start_x = -1;
+	if (dir == DIRECTION::LEFT) start_x = x + width;
 	if (!qVehicle.empty()) {
 		for (Vehicle& car : qVehicle) {
 			car.move(dir);
@@ -26,7 +28,7 @@ void Lane::updateVehicles(Console* console) {
 		++frameSinceLastVehicle;
 		if (frameSinceLastVehicle > qVehicle.back().getLength() + 7) {
 			if (!(rand() % 30)) {
-				qVehicle.push_back(getRandomVehicle(-1, y + 1, width));
+				qVehicle.push_back(getRandomVehicle(start_x, y + 1, x + width, x, dir));
 				frameSinceLastVehicle = 0;
 			}
 		}
@@ -35,7 +37,7 @@ void Lane::updateVehicles(Console* console) {
 		}
 	}
 	else {
-		qVehicle.push_back(getRandomVehicle(-1, y + 1, width));
+		qVehicle.push_back(getRandomVehicle(start_x, y + 1, x + width, x, dir));
 		frameSinceLastVehicle = 0;
 	}
 }
@@ -47,6 +49,6 @@ void Lane::drawVehicles(Console* console) {
 }
 
 void Lane::drawLane(Console* console) {
-	console->DrawHorizontalLine(L'—', x, x + width, y);
-	console->DrawHorizontalLine(L'—', x, x + width, y + height + 1);
+	console->DrawHorizontalLine(L'—', x, x + width - 1, y);
+	console->DrawHorizontalLine(L'—', x, x + width - 1, y + height + 1);
 }

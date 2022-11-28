@@ -6,6 +6,10 @@ Map::Map(int w, int h, int num_lane,  int* level, int* score) {
 	this->cur_level = level;
 	this->cur_score = score;
 	side_x = width * 0.7;
+	if (width - side_x < 43) side_x = width - 43;
+	for (int i = 0; i < num_lane; ++i) {
+		lanes.push_back(Lane(1, 4 + i * 6, side_x - 1, 5, (i & 1 ? DIRECTION::LEFT : DIRECTION::RIGHT)));
+	}
 }
 vector<vector<wstring>> Map::digits = {
 	{   
@@ -36,6 +40,42 @@ vector<vector<wstring>> Map::digits = {
 		L"╔═╝ ║",
 		L"╚═══╝"
 	},
+	{	L"╔═╦═╗",
+		L"║ ║ ║",
+		L"╚═╗ ║",
+		L"  ║ ║",
+		L"  ╚═╝"
+	},
+	{	L"╔═══╗",
+		L"║ ╔═╝",
+		L"╚═══╗",
+		L"╔═╝ ║",
+		L"╚═══╝"
+	},
+	{	L"╔═══╗",
+		L"║ ╔═╝",
+		L"║ ╠═╗",
+		L"║ ╚ ║",
+		L"╚═══╝"
+	},
+	{	L"╔═══╗",
+		L"╚═╗ ║",
+		L" ═╬═╣",
+		L"  ║ ║",
+		L"  ╚═╝"
+	},
+	{   L"╔═══╗",
+		L"║ ╦ ║",
+		L"╠═╬═╣",
+		L"║ ╩ ║",
+		L"╚═══╝"
+	},
+	{   L"╔═══╗",
+		L"║ ╦ ║",
+		L"╚═╗ ║",
+		L"╔═╝ ║",
+		L"╚═══╝"
+	}
 };
 
 vector<wstring> numToAsciiDigits(int n) {
@@ -72,12 +112,6 @@ void Map::drawOutline(Console* c) {
 
 	
 	int controlY = 31, m;
-	if (width - side_x < 43) side_x = width - 43;
-	string lv_unit = "1";
-	string lv_tenth = "0";
-	string hundred = "1";
-	string tenth = "2";
-	string unit = "3";
 	//Top and bottom line
 	c->DrawHorizontalLine(L'═', 0, width - 1, 0);
 	c->DrawHorizontalLine(L'═', 0, width - 1, height - 1);
@@ -145,6 +179,24 @@ void Map::drawOutline(Console* c) {
 	c->DrawChar(L'╚', 0, height - 1);
 	c->DrawChar(L'╩', side_x, height - 1);
 	c->DrawChar(L'╝', width - 1, height - 1);
+
+	for (Lane& lane : lanes) {
+		lane.drawLane(c);
+	}
 }
+
+void Map::updateMain() {
+	for (Lane& lane : lanes) {
+		lane.updateVehicles();
+	}
+}
+
+
+void Map::drawMain(Console* c) {
+	for (Lane& lane : lanes) {
+		lane.drawVehicles(c);
+	}
+}
+
 
 Map::~Map() {}

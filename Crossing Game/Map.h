@@ -8,6 +8,8 @@ public:
 	Map(int w, int h, int num_lane, int* level, int* score);
 	~Map();
 	void drawOutline(Console*);
+	void drawMain(Console*);
+	void updateMain();
 private:
 	int side_x;
 	int width, height;

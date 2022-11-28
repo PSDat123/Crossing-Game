@@ -29,6 +29,7 @@ void MainMenu::printTitle(int x, int y) {
 }
 
 void menuThread(MainMenu* m) {
+	srand(static_cast<unsigned int>(time(NULL)));
 	SHORT cx, optionY = 16, offsetX = 11, roadY;
 	roadY = m->height - 10;
 	cx = m->width / 2;
@@ -44,9 +45,7 @@ void menuThread(MainMenu* m) {
 	m->console->DrawString(L"╚════════════════════╝", cx - offsetX, optionY + (int)m->options.size() + 2);
 	m->console->DrawString(L"► ", cx - offsetX + 3, optionY + m->curSelected);
 
-
-	srand(static_cast<unsigned int>(time(NULL)));
-	Lane lane(0, roadY, m->width, 5);
+	Lane lane(0, roadY, m->width, 5, DIRECTION::RIGHT);
 	lane.drawLane(m->console);
 
 	auto t1 = chrono::system_clock::now();
@@ -62,7 +61,7 @@ void menuThread(MainMenu* m) {
 			m->prevSelected = m->curSelected;
 		}
 		
-		lane.updateVehicles(m->console);
+		lane.updateVehicles();
 		lane.drawVehicles(m->console);
 		m->console->UpdateScreen();
 

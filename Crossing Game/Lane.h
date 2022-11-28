@@ -10,7 +10,7 @@ public:
 	Lane(SHORT x, SHORT y, SHORT width, SHORT height, DIRECTION dir=DIRECTION::RIGHT);
 	//void update();
 	void drawLane(Console* console);
-	void updateVehicles(Console* console);
+	void updateVehicles();
 	void drawVehicles(Console* console);
 private:
 	deque<Vehicle> qVehicle;

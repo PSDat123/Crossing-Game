@@ -8,9 +8,12 @@ Game::Game(Console* screen) {
 }
 
 void gameThread(Game* g) {
+	srand(static_cast<unsigned int>(time(NULL)));
 	Map map(g->width, g->height, 5, &g->level, &g->score);
 	map.drawOutline(g->console);
 	do{
+		map.updateMain();
+		map.drawMain(g->console);
 		g->console->UpdateScreen();
 		Sleep(INTERVAL);
 	} while (g->isRunning);
