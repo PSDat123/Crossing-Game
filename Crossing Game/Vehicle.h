@@ -6,19 +6,24 @@ using namespace std;
 
 class Vehicle {
 public:
+	Vehicle();
+	Vehicle(float x, float y, SHORT min_x, SHORT max_x, vector<wstring> sprite, DIRECTION dir=DIRECTION::RIGHT);
 	virtual ~Vehicle();
+	void setVX(SHORT);
+	void setVY(SHORT);
+
 	int getVX();
 	int getVY();
 	int getLength();
+	int getHeight();
 	bool getState();
-
-	void move(DIRECTION);
-
-	virtual void draw(Console*);
+	void update();
+	void draw(Console*);
 protected:
 	vector<wstring> sprite;
-	SHORT x, y, prev_x, prev_y, max_x, min_x;
-	int speed, length;
+	float x, y, speed;
+	SHORT max_x, min_x;
+	int prev_x, length;
 	DIRECTION dir;
 	bool state = true;
 };

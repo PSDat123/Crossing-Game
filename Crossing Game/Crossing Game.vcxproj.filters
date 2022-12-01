@@ -48,6 +48,9 @@
     <ClCompile Include="Lane.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Bike.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Console.h">
@@ -81,6 +84,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Lane.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Bike.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

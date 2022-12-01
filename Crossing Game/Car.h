@@ -7,6 +7,4 @@ public:
 	Car(int x, int y, int max_x, int min_x=0, DIRECTION dir=DIRECTION::RIGHT);
 	~Car();
 	string className();
-private:
-	bool wrapAround = true;
 };

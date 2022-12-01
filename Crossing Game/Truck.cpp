@@ -1,4 +1,4 @@
-#include "Truck.h"
+﻿#include "Truck.h"
 
 string Truck::className() {
 	return "Truck";
@@ -9,17 +9,38 @@ map<DIRECTION, vector<vector<wstring>>> Truck::spriteSheet = {
 	DIRECTION::RIGHT,
 	{
 		{
-			L" _______________  _____",
-			L"|               ||___|_\\",
-			L"|===============|| -    |",
-			L"|               ||     (|",
-			L"'==(o)====(o)=======(o)=J "
+			L"┌―――――――――――――――┐┌―――╥―┐ ",
+			L"|               │├―――╨―┴┐",
+			L"╞═══════════════╡│ -   (│",
+			L"│               ││      │",
+			L"╘══(O)════(O)═══╧╧══(O)═╛ "
+		},
+		{
+			L"              ____  ",
+			L"             ║    \\ ",
+			L"  ┌――――――――――╨―――――\\",
+			L"  │            -  (│",
+			L" ═╧(o)════════(o)══╛"
 		},
 		{
 			L"                  /\\\\      _____   ",
-			L"    ,------      /  \\\\____/__|__\\_ ",
-			L" ,--'---:---`--,/   |)       |   (|",
-			L"==(o)-----(o)==J    `(o)=======(o)J"
+			L"    ,――――――      /  \\\\____/__│__\\_ ",
+			L" ,--┴---:---`--,/   |)       │   (│",
+			L"══(O)═════(O)══╛    ╘(O)═══════(O)╛"
+		},
+		{
+			L" _______0=0_____  ",
+			L"│            │  \\ ",
+			L"│  ambulance └―――┤",
+			L"╞═══════════════(│",
+			L"╘══(O)══════(O)══╛"
+		},
+		{
+			L" ________________________   ",
+			L"│     │ │    │     │     \\  ",
+			L"├――――-┼―┼―――-┼―――――┼-―――――\\ ",
+			L"│)                    -   (\\",
+			L"╘═════(O)═════════(O)══════╛"
 		}
 	}
 },
@@ -27,41 +48,34 @@ map<DIRECTION, vector<vector<wstring>>> Truck::spriteSheet = {
 	DIRECTION::LEFT,
 	{
 		{
+			L"    _____     //\\                 ",
+			L" __/__│__\\___//  \\    ,―――――――,   ",
+			L"|)    │      (│   \\,------:---┴--,",
+			L"╘(O)═══════(O)╛    ╘═(o)═════(o)══"
+		},
+		{
 			 L"   ________________________ ",
-			 L"  /   | |    |     |       |",
-			 L" /----|_|----|-----|-------|",
-			 L"/)  -        |     |      (|",
-			 L"\'=====(O)===========(O)====\'"
+			 L"  /   │ │    │     │       │",
+			 L" /―――-┼―┼―――-┼―――――┼-――――――┤",
+			 L"/)  -                     (│",
+			 L"╘═════(O)════════════(O)═══╛"
+		},
+		{
+			L"  ______0=0______ ",
+			L" /   │           │",
+			L"├――――┘ ambulance │",
+			L"│)═══════════════╡",
+			L"╘══(O)══════(O)══╛"
+		},
+		{
+			L" __________________ ",
+			L"|[_][_][_][_][_][_]|",
+			L"|o _         _  _  |",
+			L" `(_)-------(_)(_)-\""
 		}
 	}
 }		 	 
 };		 
 
 
-Truck::Truck(int x, int y, int max_x, int min_x, DIRECTION dir) {
-	sprite = spriteSheet[dir][rand() % spriteSheet[dir].size()];
-	speed = 1;
-	length = 0;
-	for (wstring& s : sprite) {
-		if ((int)s.size() > length) {
-			length = (int)s.size();
-		}
-	}
-
-	if (x > -1) {
-		this->x = x;
-		this->y = y;
-		prev_x = x;
-		prev_y = y;
-	}
-	else {
-		this->x = min_x - length;
-		this->y = y;
-		prev_x = min_x - length;
-		prev_y = y;
-	}
-	this->max_x = max_x;
-	this->min_x = min_x;
-	this->dir = dir;
-	if (this->x + length < this->min_x || this->x > this->max_x) state = false;
-}
+Truck::Truck(int x, int y, int max_x, int min_x, DIRECTION dir) : Vehicle(x, y, min_x, max_x, spriteSheet[dir][rand() % spriteSheet[dir].size()], dir) {}
