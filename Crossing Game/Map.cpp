@@ -1,14 +1,15 @@
 ﻿#include "Map.h"
 
-Map::Map(int w, int h, int num_lane,  int* level, int* score) {
+Map::Map(int w, int h, int num_lane, People* character, int* level, int* score) {
 	this->width = w;
 	this->height = h;
+	this->character = character;
 	this->cur_level = level;
 	this->cur_score = score;
-	side_x = width * 0.7;
+	side_x = int(width * 0.7f);
 	if (width - side_x < 43) side_x = width - 43;
 	for (int i = 0; i < num_lane; ++i) {
-		lanes.push_back(Lane(1, 4 + i * 6, side_x - 1, 5, (i & 1 ? DIRECTION::LEFT : DIRECTION::RIGHT)));
+		lanes.push_back(Lane(1, 4 + i * 6, side_x - 1, 5, 10, (i & 1 ? DIRECTION::LEFT : DIRECTION::RIGHT)));
 	}
 }
 vector<vector<wstring>> Map::digits = {
@@ -134,10 +135,10 @@ void Map::drawOutline(Console* c) {
 
 	vector<wstring> level = numToAsciiDigits(*cur_level);
 	m = (width + side_x - lv_text[0].size() - level[0].size() - 1) / 2;
-	for (int i = 0; i < lv_text.size(); ++i) {
+	for (size_t i = 0; i < lv_text.size(); ++i) {
 		c->DrawString(lv_text[i], m, i + 10);
 	}
-	for (int i = 0; i < level.size() ;++i) {
+	for (size_t i = 0; i < level.size() ;++i) {
 		c->DrawString(level[i], m + lv_text[0].size() + 1, i + 10);
 	}
 	//Score box
@@ -149,11 +150,11 @@ void Map::drawOutline(Console* c) {
 	//Score panel (Middle panel)
 	vector<wstring> score = numToAsciiDigits(*cur_score);
 	m = (width + side_x - score_text[0].size()) / 2;
-	for (int i = 0; i < score_text.size(); ++i) {
+	for (size_t i = 0; i < score_text.size(); ++i) {
 		c->DrawString(score_text[i], m, i + 17);
 	}
 	m = (width + side_x - score[0].size()) / 2;
-	for (int i = 0; i < score.size(); ++i) {
+	for (size_t i = 0; i < score.size(); ++i) {
 		c->DrawString(score[i], m, i + 23);
 	}
 
@@ -198,5 +199,9 @@ void Map::drawMain(Console* c) {
 	}
 }
 
+void Map::resetCharacter() {
+	character->setPos((side_x - character->getWidth()) / 2, height - character->getHeight() - 3);
+	character->setBound({ 1, 1, SHORT(side_x), SHORT(height - 1)});
+}
 
 Map::~Map() {}

@@ -5,17 +5,21 @@ Game::Game(Console* screen) {
 	isRunning = true;
 	console = screen;
 	console->GetConsoleSize(width, height);
+	character = People(0, 0, {0, 0, SHORT(width - 1), SHORT(height - 1)});
 }
 
 void gameThread(Game* g) {
 	srand(static_cast<unsigned int>(time(NULL)));
-	Map map(g->width, g->height, 5, &g->level, &g->score);
+	Map map(g->width, g->height, 5, &g->character, &g->level, &g->score);
 	map.drawOutline(g->console);
+	map.resetCharacter();
+	g->character.draw(g->console);
 	do{
 		map.updateMain();
 		map.drawMain(g->console);
+		g->character.draw(g->console);
 		g->console->UpdateScreen();
-		Sleep(INTERVAL);
+		this_thread::sleep_for(chrono::milliseconds(INTERVAL));
 	} while (g->isRunning);
 }
 
@@ -78,11 +82,24 @@ menu:
 	console->ClearBackground();
 	thread t1(gameThread, this);
 	while (true) {
-		int keyInput = toupper(_getch());
-		if (keyInput == 27) {
+		int key = toupper(_getch());
+		if (key == W) {
+			this->character.move(DIRECTION::UP);
+		}
+		if (key == S) {
+			this->character.move(DIRECTION::DOWN);
+		}
+		if (key == A) {
+			this->character.move(DIRECTION::LEFT);
+		}
+		if (key == D) {
+			this->character.move(DIRECTION::RIGHT);
+		}
+		if (key == ESC) {
 			exitGame(&t1);
 			return;
 		}
+		this_thread::sleep_for(chrono::milliseconds(INTERVAL));
 	}
 }
 

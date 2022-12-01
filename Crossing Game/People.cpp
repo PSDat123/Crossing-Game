@@ -1,14 +1,85 @@
 #include "People.h"
 
-People::People(int cur_x, int cur_y) {
+vector<wstring> People::sprite = {
+	L" o ",
+	L"/X\\",
+	L" A "
+};
+
+People::People(int cur_x, int cur_y, SMALL_RECT bounds) {
 	this->x = cur_x;
 	this->y = cur_y;
-	this->state = false;
+	this->prev_x = x;
+	this->prev_y = y;
+	this->state = true;
+	this->bounds = bounds;
+	this->height = sprite.size();
+
+	this->width = 0;
+	for (wstring& s : sprite) {
+		if ((int)s.size() > width) {
+			width = (int)s.size();
+		}
+	}
+	this->speed = sprite.size();
 }
 
-bool People::checkFrame(int a, int b) {
-	return true;
+People::People() : People(0, 0, {0, 0, 0, 0}) {}
+//bool People::checkFrame(int a, int b) {
+//	return true;
+//}
+
+void People::setPos(int x, int y) {
+	this->x = x;
+	this->y = y;
+	this->prev_x = x;
+	this->prev_y = y;
 }
+
+void People::setBound(SMALL_RECT bounds) {
+	this->bounds = bounds;
+}
+
+void People::move(DIRECTION dir) {
+	switch (dir){
+	case DIRECTION::UP:
+		prev_x = x;
+		prev_y = y;
+		y -= speed;
+		if (y < bounds.Top) y = bounds.Top;
+		break;
+	case DIRECTION::DOWN:
+		prev_x = x;
+		prev_y = y;
+		y += speed;
+		if (y > bounds.Bottom - height) y = bounds.Bottom - height;
+		break;
+	case DIRECTION::LEFT:
+		prev_x = x;
+		prev_y = y;
+		x -= speed;
+		if (x < bounds.Left) x = bounds.Left;
+		break;
+	case DIRECTION::RIGHT:
+		prev_x = x;
+		prev_y = y;
+		x += speed;
+		if (x > bounds.Right - width) x = bounds.Right - width;
+		break;
+	default:
+		break;
+	}
+}
+
+void People::draw(Console* c) {
+	for (size_t i = 0; i < height; ++i) {
+		c->DrawHorizontalLine(L' ', prev_x, prev_x + width - 1, prev_y + i);
+	}
+	for (size_t i = 0; i < height; ++i) {
+		c->DrawString(sprite[i], x, y + i);
+	}
+}
+
 
 bool People::isFinish() {
 	return (x == 0);
@@ -20,6 +91,14 @@ int People::getX() {
 
 int People::getY() {
 	return this->y;
+}
+
+int People::getHeight() {
+	return this->height;
+}
+
+int People::getWidth() {
+	return this->width;
 }
 
 People::~People() {}

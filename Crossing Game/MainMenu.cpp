@@ -45,17 +45,14 @@ void menuThread(MainMenu* m) {
 	m->console->DrawString(L"╚════════════════════╝", cx - offsetX, optionY + (int)m->options.size() + 2);
 	m->console->DrawString(L"► ", cx - offsetX + 3, optionY + m->curSelected);
 
-	Lane lane(0, roadY, m->width, 5, DIRECTION::RIGHT);
+	Lane lane(0, roadY, m->width, 5, 10, DIRECTION::RIGHT);
 	lane.drawLane(m->console);
 
 	auto t1 = chrono::system_clock::now();
 	auto t2 = t1;
 	
 	do {
-		t1 = chrono::system_clock::now();
-
 		if (m->curSelected != m->prevSelected) {
-			PlaySound(_T("Sound/button.wav"), NULL, SND_ASYNC);
 			m->console->DrawString(L"  ", cx - offsetX + 3, optionY + m->prevSelected);
 			m->console->DrawString(L"► ", cx - offsetX + 3, optionY + m->curSelected);
 			m->prevSelected = m->curSelected;
@@ -65,11 +62,7 @@ void menuThread(MainMenu* m) {
 		lane.drawVehicles(m->console);
 		m->console->UpdateScreen();
 
-		t2 = std::chrono::system_clock::now();
-		chrono::duration<float> delta = t2 - t1;
-		float deltaTime = delta.count() * 1000.0f;
-
-		this_thread::sleep_for(chrono::milliseconds(INTERVAL - (int)deltaTime));
+		this_thread::sleep_for(chrono::milliseconds(INTERVAL));
 	} while (m->isRunning);
 }
 
@@ -92,6 +85,8 @@ OPTIONS MainMenu::runMenu() {
 	do {
 		key = toupper(_getch());
 		if (key == UP_ARROW || key == W) {
+			PlaySound(_T("Sound/button.wav"), NULL, SND_ASYNC);
+
 			prevSelected = curSelected;
 			curSelected--;
 			if (curSelected == -1) {
@@ -99,6 +94,7 @@ OPTIONS MainMenu::runMenu() {
 			}
 		}
 		if (key == DOWN_ARROW || key == S) {
+			PlaySound(_T("Sound/button.wav"), NULL, SND_ASYNC);
 			prevSelected = curSelected;
 			curSelected++;
 			if (curSelected == options.size()) {

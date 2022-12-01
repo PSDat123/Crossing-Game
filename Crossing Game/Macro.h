@@ -1,10 +1,11 @@
 ﻿#pragma once
-#define INTERVAL 16
+#define INTERVAL 17
 
 enum KEY {
 	ENTER_KEY = 13,
 	UP_ARROW = 72,
 	DOWN_ARROW = 80,
+	ESC = 27,
 	W = 87,
 	A = 65,
 	S = 83,
