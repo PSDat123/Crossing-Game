@@ -48,7 +48,7 @@ public:
 
 	void DrawString(wstring s, int x, int y, short col = 240);
 
-	void DrawHorizontalLine(wchar_t c, int start_x, int stop_x, int y, short col = 240);
+	void DrawHorizontalLine(wchar_t c, int start_x, int end_x, int y, short col = 240);
 
 	void DrawVerticalLine(wchar_t c, int x, short col = 240);
 
