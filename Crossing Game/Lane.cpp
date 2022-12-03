@@ -1,30 +1,38 @@
 #include "Lane.h"
 
-Lane::Lane(SHORT x, SHORT y, SHORT width, SHORT height, SHORT minDist, DIRECTION dir) {
+Lane::Lane(SHORT x, SHORT y, SHORT width, SHORT height) {
 	this->x = x;
 	this->y = y;
 	this->width = width;
 	this->height = height;
-	this->dir = dir;
-	this->minDist = minDist;
 }
 
-Lane::Lane() : Lane(0, 0, 100, 10, 5) {}
+Lane::Lane() : Lane(0, 0, 100, 5) {}
 
-Vehicle getRandomVehicle(int x, int y, int min_x, int max_x, int max_y, DIRECTION dir = DIRECTION::RIGHT) {
+void Lane::setDirection(DIRECTION dir) {
+	this->dir = dir;
+}
+void Lane::setMinDist(SHORT minDist) {
+	this->minDist = minDist;
+}
+void Lane::setSpeed(float speed) {
+	this->speed = speed;
+}
+
+Vehicle Lane::getRandomVehicle(int x, int y) {
 	int r = rand() % 10;
 	if (r < 2) {
-		Truck t = Truck(x, y, max_x, min_x, dir);
-		t.setVY(t.getVY() + rand() % (max_y - t.getHeight() + 1));
+		Truck t = Truck(x, y, this->x, this->x + width, this->speed, this->dir);
+		t.setVY(t.getVY() + rand() % (this->height - t.getHeight() + 1));
 		return t;
 	}
 	if (r < 4) {
-		Bike b = Bike(x, y, max_x, min_x, dir);
-		b.setVY(b.getVY() + rand() % (max_y - b.getHeight() + 1));
+		Bike b = Bike(x, y, this->x, this->x + width, this->speed, this->dir);
+		b.setVY(b.getVY() + rand() % (this->height - b.getHeight() + 1));
 		return b;
 	}
-	Car c = Car(x, y, max_x, min_x, dir);
-	c.setVY(c.getVY() + rand() % (max_y - c.getHeight() + 1));
+	Car c = Car(x, y, this->x, this->x + width, this->speed, this->dir);
+	c.setVY(c.getVY() + rand() % (this->height - c.getHeight() + 1));
 	return c;
 }
 
@@ -37,12 +45,12 @@ void Lane::updateVehicles() {
 		}
 		if (dir == DIRECTION::RIGHT && qVehicle.back().getVX() > start_x + minDist) {
 			if (!(rand() % 30)) {
-				qVehicle.push_back(getRandomVehicle(start_x, y + 1, x, x + width, height, dir));
+				qVehicle.push_back(getRandomVehicle(start_x, y + 1));
 			}
 		}
 		else if (dir == DIRECTION::LEFT && qVehicle.back().getVX() + qVehicle.back().getLength() < start_x - minDist) {
 			if (!(rand() % 30)) {
-				qVehicle.push_back(getRandomVehicle(start_x, y + 1, x, x + width, height, dir));
+				qVehicle.push_back(getRandomVehicle(start_x, y + 1));
 			}
 		}
 		if (!qVehicle.front().getState()) {
@@ -50,7 +58,7 @@ void Lane::updateVehicles() {
 		}
 	}
 	else {
-		qVehicle.push_back(getRandomVehicle(start_x, y + 1, x, x + width, height, dir));
+		qVehicle.push_back(getRandomVehicle(start_x, y + 1));
 		frameSinceLastVehicle = 0;
 	}
 
@@ -65,4 +73,17 @@ void Lane::drawVehicles(Console* console) {
 void Lane::drawLane(Console* console) {
 	console->DrawHorizontalLine(L'—', x, x + width - 1, y);
 	console->DrawHorizontalLine(L'—', x, x + width - 1, y + height + 1);
+}
+
+bool Lane::isInLane(People* p) {
+	int pos = p->getY() + p->getHeight() - 1;
+	if (pos > this->y && pos <= this->y + this->height) return true;
+	return false;
+}
+
+bool Lane::checkCollison(People* p) {
+	for (Vehicle& v : qVehicle) {
+		if (v.checkCollision(p)) return true;
+	}
+	return false;
 }

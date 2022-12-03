@@ -16,8 +16,10 @@ public:
 
 	void setPos(int x, int y);
 	void setBound(SMALL_RECT);
+	void setState(bool);
 
 	void move(DIRECTION);
+	void update();
 	void draw(Console*);
 
 	//bool isImpact(Vehicle*);

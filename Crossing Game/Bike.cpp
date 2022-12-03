@@ -38,7 +38,7 @@ map<DIRECTION, vector<vector<wstring>>> Bike::spriteSheet = {
 };
 
 
-Bike::Bike(int x, int y, int max_x, int min_x, DIRECTION dir) : 
-	Vehicle(x, y, min_x, max_x, spriteSheet[dir][rand() % spriteSheet[dir].size()],  dir) {}
+Bike::Bike(float x, float y, int min_x, int max_x, float speed, DIRECTION dir) : 
+	Vehicle(x, y, min_x, max_x, speed, spriteSheet[dir][rand() % spriteSheet[dir].size()],  dir) {}
 
 Bike::~Bike() {}

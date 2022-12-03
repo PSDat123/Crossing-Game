@@ -40,6 +40,10 @@ void People::setBound(SMALL_RECT bounds) {
 	this->bounds = bounds;
 }
 
+void People::setState(bool state) {
+	this->state = state;
+}
+
 void People::move(DIRECTION dir) {
 	switch (dir){
 	case DIRECTION::UP:
@@ -69,6 +73,10 @@ void People::move(DIRECTION dir) {
 	default:
 		break;
 	}
+}
+void People::update() {
+	prev_x = x;
+	prev_y = y;
 }
 
 void People::draw(Console* c) {
@@ -104,5 +112,5 @@ int People::getWidth() {
 People::~People() {}
 
 bool People::isDead() {
-	return state;
+	return !state;
 }

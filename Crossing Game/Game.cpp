@@ -17,8 +17,17 @@ void gameThread(Game* g) {
 	do{
 		map.updateMain();
 		map.drawMain(g->console);
-		g->character.draw(g->console);
+		if (!g->character.isDead()) {
+			g->character.draw(g->console);
+			g->character.update();
+		}
+
 		g->console->UpdateScreen();
+
+		if (map.checkCollision(&g->character)) {
+			g->character.setState(false);
+		}
+
 		this_thread::sleep_for(chrono::milliseconds(INTERVAL));
 	} while (g->isRunning);
 }
@@ -86,20 +95,20 @@ menu:
 		if (key == W) {
 			this->character.move(DIRECTION::UP);
 		}
-		if (key == S) {
+		else if (key == S) {
 			this->character.move(DIRECTION::DOWN);
 		}
-		if (key == A) {
+		else if (key == A) {
 			this->character.move(DIRECTION::LEFT);
 		}
-		if (key == D) {
+		else if (key == D) {
 			this->character.move(DIRECTION::RIGHT);
 		}
 		if (key == ESC) {
 			exitGame(&t1);
 			return;
 		}
-		this_thread::sleep_for(chrono::milliseconds(INTERVAL));
+		this_thread::sleep_for(chrono::milliseconds(INTERVAL + 10));
 	}
 }
 

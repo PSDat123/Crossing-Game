@@ -78,4 +78,5 @@ map<DIRECTION, vector<vector<wstring>>> Truck::spriteSheet = {
 };		 
 
 
-Truck::Truck(int x, int y, int max_x, int min_x, DIRECTION dir) : Vehicle(x, y, min_x, max_x, spriteSheet[dir][rand() % spriteSheet[dir].size()], dir) {}
+Truck::Truck(int x, int y, int min_x, int max_x, float speed, DIRECTION dir) : 
+	Vehicle(x, y, min_x, max_x, speed, spriteSheet[dir][rand() % spriteSheet[dir].size()], dir) {}

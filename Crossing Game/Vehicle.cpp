@@ -1,11 +1,12 @@
 #include "Vehicle.h"
 
-Vehicle::Vehicle() : Vehicle(0, 0, 0, 0, {}) {}
+Vehicle::Vehicle() : Vehicle(0, 0, 0, 0, 0, {}) {}
 
-Vehicle::Vehicle(float x, float y, SHORT min_x, SHORT max_x, vector<wstring> sprite, DIRECTION dir) {
+Vehicle::Vehicle(float x, float y, SHORT min_x, SHORT max_x, float speed, vector<wstring> sprite, DIRECTION dir) {
 	this->sprite = sprite;
-	speed = 1;
+	this->speed = speed;
 	length = 0;
+	this->height = sprite.size();
 	for (wstring& s : sprite) {
 		if ((int)s.size() > length) {
 			length = (int)s.size();
@@ -15,7 +16,7 @@ Vehicle::Vehicle(float x, float y, SHORT min_x, SHORT max_x, vector<wstring> spr
 	if (x > -1) {
 		this->x = x;
 		this->y = y;
-		prev_x = x;
+		prev_x = (int)x;
 	}
 	else {
 		this->x = min_x - length;
@@ -33,23 +34,23 @@ Vehicle::~Vehicle() {}
 void Vehicle::update() {
 	switch (dir){
 	case DIRECTION::LEFT:
-		prev_x = ceil(x);
+		prev_x = x;
 		x -= speed;
 		break;
 	case DIRECTION::RIGHT:
-		prev_x = floor(x);
+		prev_x = x;
 		x += speed;
 		break;
 	default:
 		break;
 	}
-	if (x + length < min_x || x  > max_x) state = false;
+	if (floor(x) + length < min_x || int(x)  > max_x) state = false;
 }
 
 void Vehicle::setVX(SHORT x) {
 	this->prev_x = this->x;
 	this->x = x;
-	if (this->x + this->length < this->min_x || this->x  > this->max_x)
+	if (floor(this->x) + this->length < this->min_x || int(this->x)  > this->max_x)
 		this->state = false;
 }
 
@@ -66,7 +67,7 @@ int Vehicle::getVY() {
 }
 
 int Vehicle::getHeight() {
-	return this->sprite.size();
+	return this->height;
 }
 
 bool Vehicle::getState() {
@@ -80,11 +81,11 @@ int Vehicle::getLength() {
 
 void Vehicle::draw(Console* c) {
 	if (dir == DIRECTION::RIGHT) {
-		if (x > min_x) {
-			for (size_t i = 0; i < sprite.size(); ++i) {
+		if (int(x) > min_x) {
+			for (size_t i = 0; i < height; ++i) {
 				c->DrawHorizontalLine(L' ', prev_x, x - 1, y + i);
-				if (x + sprite[i].size() > max_x) {
-					c->DrawString(sprite[i].substr(0, max_x - x), x, y + (int)i);
+				if (int(x) + sprite[i].size() > max_x) {
+					c->DrawString(sprite[i].substr(0, max_x - floor(x)), x, y + (int)i);
 				}
 				else {
 					c->DrawString(sprite[i], x, y + (int)i);
@@ -92,19 +93,19 @@ void Vehicle::draw(Console* c) {
 			}
 			return;
 		}
-		size_t i = min_x - x;
-		for (size_t j = 0; j < sprite.size(); ++j) {
-			if (i >= sprite[j].size()) continue;
+		size_t i = min_x - floor(x);
+		for (size_t j = 0; j < height; ++j) {
+			if (i > sprite[j].size()) continue;
 			c->DrawString(sprite[j].substr(i), min_x, y + (int)j);
 		}
 		return;
 	}
-	if(x + length < max_x){
-		for (size_t i = 0; i < sprite.size(); ++i) {
+	if(floor(x) + length < max_x){
+		for (size_t i = 0; i < height; ++i) {
 			int l = sprite[i].size();
 			c->DrawHorizontalLine(L' ', x + l, prev_x + l - 1, y + i);
-			if (x < min_x) {
-				c->DrawString(sprite[i].substr(min_x - x), min_x, y + (int)i);
+			if (floor(x) < min_x) {
+				c->DrawString(sprite[i].substr(min_x - floor(x)), min_x, y + (int)i);
 			}
 			else {
 				c->DrawString(sprite[i], x, y + (int)i);
@@ -112,10 +113,22 @@ void Vehicle::draw(Console* c) {
 		}
 		return;
 	}
-	size_t i = max_x - x;
-	for (size_t j = 0; j < sprite.size(); ++j) {
-		if (i >= sprite[j].size()) continue;
+	size_t i = max_x - int(x);
+	for (size_t j = 0; j < height; ++j) {
+		if (i > sprite[j].size()) continue;
 		c->DrawString(sprite[j].substr(0, i), x, y + (int)j);
 	}
 	
+}
+
+bool Vehicle::checkCollision(People* p) {
+	if (
+		this->x < p->getX() + p->getWidth() &&
+		this->x + this->length > p->getX() &&
+		this->y < p->getY() + p->getHeight() &&
+		this->height + this->y > p->getY()
+		) {
+		return true;
+	}
+	return false;
 }

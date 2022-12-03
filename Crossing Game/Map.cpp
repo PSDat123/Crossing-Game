@@ -9,7 +9,10 @@ Map::Map(int w, int h, int num_lane, People* character, int* level, int* score) 
 	side_x = int(width * 0.7f);
 	if (width - side_x < 43) side_x = width - 43;
 	for (int i = 0; i < num_lane; ++i) {
-		lanes.push_back(Lane(1, 4 + i * 6, side_x - 1, 5, 10, (i & 1 ? DIRECTION::LEFT : DIRECTION::RIGHT)));
+		lanes.push_back(Lane(1, 4 + i * 6, side_x - 1, 5));
+		lanes[i].setDirection((i & 1 ? DIRECTION::LEFT : DIRECTION::RIGHT));
+		lanes[i].setMinDist(10);
+		lanes[i].setSpeed(0.3);
 	}
 }
 vector<vector<wstring>> Map::digits = {
@@ -195,6 +198,7 @@ void Map::updateMain() {
 
 void Map::drawMain(Console* c) {
 	for (Lane& lane : lanes) {
+		lane.drawLane(c);
 		lane.drawVehicles(c);
 	}
 }
@@ -202,6 +206,13 @@ void Map::drawMain(Console* c) {
 void Map::resetCharacter() {
 	character->setPos((side_x - character->getWidth()) / 2, height - character->getHeight() - 3);
 	character->setBound({ 1, 1, SHORT(side_x), SHORT(height - 1)});
+}
+
+bool Map::checkCollision(People* p) {
+	for (Lane& lane : lanes) {
+		if (lane.isInLane(p) && lane.checkCollison(p)) return true;
+	}
+	return false;
 }
 
 Map::~Map() {}

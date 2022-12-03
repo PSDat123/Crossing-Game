@@ -1,5 +1,6 @@
 #pragma once
 #include "Console.h"
+#include "People.h"
 #include "Macro.h"
 
 using namespace std;
@@ -7,7 +8,7 @@ using namespace std;
 class Vehicle {
 public:
 	Vehicle();
-	Vehicle(float x, float y, SHORT min_x, SHORT max_x, vector<wstring> sprite, DIRECTION dir=DIRECTION::RIGHT);
+	Vehicle(float x, float y, SHORT min_x, SHORT max_x, float speed, vector<wstring> sprite, DIRECTION dir=DIRECTION::RIGHT);
 	virtual ~Vehicle();
 	void setVX(SHORT);
 	void setVY(SHORT);
@@ -19,11 +20,12 @@ public:
 	bool getState();
 	void update();
 	void draw(Console*);
+	bool checkCollision(People*);
 protected:
 	vector<wstring> sprite;
 	float x, y, speed;
 	SHORT max_x, min_x;
-	int prev_x, length;
+	int prev_x, length, height;
 	DIRECTION dir;
 	bool state = true;
 };

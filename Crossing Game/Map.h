@@ -12,6 +12,7 @@ public:
 	void drawMain(Console*);
 	void updateMain();
 	void resetCharacter();
+	bool checkCollision(People*);
 private:
 	int side_x;
 	int width, height;

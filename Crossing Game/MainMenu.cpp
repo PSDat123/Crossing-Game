@@ -45,7 +45,7 @@ void menuThread(MainMenu* m) {
 	m->console->DrawString(L"╚════════════════════╝", cx - offsetX, optionY + (int)m->options.size() + 2);
 	m->console->DrawString(L"► ", cx - offsetX + 3, optionY + m->curSelected);
 
-	Lane lane(0, roadY, m->width, 5, 10, DIRECTION::RIGHT);
+	Lane lane(0, roadY, m->width, 5);
 	lane.drawLane(m->console);
 
 	auto t1 = chrono::system_clock::now();
