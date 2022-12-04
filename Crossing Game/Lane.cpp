@@ -18,6 +18,33 @@ void Lane::setMinDist(SHORT minDist) {
 void Lane::setSpeed(float speed) {
 	this->speed = speed;
 }
+SHORT Lane::getX() {
+	return this->x;
+}
+SHORT Lane::getY() {
+	return this->y;
+}
+SHORT Lane::getHeight() {
+	return this->height;
+}
+void Lane::move(DIRECTION dir) {
+	switch (dir)
+	{
+	case DIRECTION::UP: {
+		break;
+	}
+
+	case DIRECTION::DOWN: {
+		this->y += 1;
+		for (Vehicle& v : qVehicle) {
+			v.setVY(v.getVY() + 1);
+		}
+		break;
+	}
+	default:
+		break;
+	}
+}
 
 Vehicle Lane::getRandomVehicle(int x, int y) {
 	int r = rand() % 10;

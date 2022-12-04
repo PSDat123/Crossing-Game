@@ -147,11 +147,22 @@ void Console::DrawVerticalLine(wchar_t c, int x, short col) {
 
 void Console::ShiftUp(SMALL_RECT rect) {
 	SHORT i = rect.Top;
-	if (rect.Top - 1 < 0) i = 1;
-	for (; i <= rect.Bottom; ++i) {
+	//if (rect.Top - 1 < 0) i = 1;
+	for (; i < rect.Bottom; ++i) {
 		for (SHORT j = rect.Left; j <= rect.Right; ++j) {
-			buffer[(i - 1) * bufferWidth + j] = buffer[i * bufferWidth + j];
+			buffer[i * bufferWidth + j] = buffer[(i + 1) * bufferWidth + j];
 		}
 	}
-	DrawHorizontalLine(L' ', rect.Left, rect.Right, --i);
+	DrawHorizontalLine(L' ', rect.Left, rect.Right, i);
+}
+
+void Console::ShiftDown(SMALL_RECT rect) {
+	SHORT i = rect.Bottom;
+	/*if (rect.Bottom + 1 >= bufferHeight) i = 1;*/
+	for (; i > rect.Top; --i) {
+		for (SHORT j = rect.Left; j <= rect.Right; ++j) {
+			buffer[i * bufferWidth + j] = buffer[(i - 1) * bufferWidth + j];
+		}
+	}
+	DrawHorizontalLine(L' ', rect.Left, rect.Right, i);
 }

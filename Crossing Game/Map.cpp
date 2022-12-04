@@ -3,16 +3,19 @@
 Map::Map(int w, int h, int num_lane, People* character, int* level, int* score) {
 	this->width = w;
 	this->height = h;
+	this->num_lane = num_lane;
 	this->character = character;
 	this->cur_level = level;
 	this->cur_score = score;
+	this->temp_score = *score;
 	side_x = int(width * 0.7f);
 	if (width - side_x < 43) side_x = width - 43;
-	for (int i = 0; i < num_lane; ++i) {
+	for (int i = num_lane - 1; i >= 0; --i) {
 		lanes.push_back(Lane(1, 4 + i * 6, side_x - 1, 5));
-		lanes[i].setDirection((i & 1 ? DIRECTION::LEFT : DIRECTION::RIGHT));
-		lanes[i].setMinDist(10);
-		lanes[i].setSpeed(0.3);
+		lanes.back().setDirection((i & 1 ? DIRECTION::LEFT : DIRECTION::RIGHT));
+		lanes.back().setMinDist(10);
+		lanes.back().setSpeed(0.3);
+		visited.push_back(false);
 	}
 }
 vector<vector<wstring>> Map::digits = {
@@ -24,11 +27,11 @@ vector<vector<wstring>> Map::digits = {
 		L"╚═══╝"
 	},
 	{	
-		L"╔══╗",
-		L"╚╗ ║",
-		L" ║ ║",
-		L" ║ ║",
-		L" ╚═╝"
+		L"╔══╗ ",
+		L"╚╗ ║ ",
+		L" ║ ║ ",
+		L" ║ ║ ",
+		L" ╚═╝ "
 	},
 	{	
 		L"╔═══╗",
@@ -82,6 +85,22 @@ vector<vector<wstring>> Map::digits = {
 	}
 };
 
+vector<wstring> Map::score_text = {
+		L"╔═══╗╔═══╗╔═══╗╔═══╗╔═══╗",
+		L"║    ║    ║   ║║   ║║    ",
+		L"╚═══╗║    ║   ║╠══╦╝╠═══ ",
+		L"    ║║    ║   ║║  ║ ║    ",
+		L"╚═══╝╚═══╝╚═══╝╝  ╚═╚═══╝",
+};
+
+vector<wstring> Map::level_text = {
+		L"╔    ╔═══╗╔   ╗╔═══╗╔       ",
+		L"║    ║    ║   ║║    ║      □",
+		L"║    ╠═══ ║   ║╠═══ ║       ",
+		L"║    ║    ╚╗ ╔╝║    ║      □",
+		L"╚═══╝╚═══╝ ╚═╝ ╚═══╝╚═══╝   "
+	};
+
 vector<wstring> numToAsciiDigits(int n) {
 	vector<wstring> res(5);
 	string s = to_string(n);
@@ -97,21 +116,6 @@ vector<wstring> numToAsciiDigits(int n) {
 }
 
 void Map::drawOutline(Console* c) {
-	vector<wstring> score_text = {
-		L"╔═══╗╔═══╗╔═══╗╔═══╗╔═══╗",
-		L"║    ║    ║   ║║   ║║    ",
-		L"╚═══╗║    ║   ║╠══╦╝╠═══ ",
-		L"    ║║    ║   ║║  ║ ║    ",
-		L"╚═══╝╚═══╝╚═══╝╝  ╚═╚═══╝",
-	};
-
-	vector<wstring> lv_text = {
-		L"╔    ╔═══╗╔   ╗╔═══╗╔       ",
-		L"║    ║    ║   ║║    ║      □",
-		L"║    ╠═══ ║   ║╠═══ ║       ",
-		L"║    ║    ╚╗ ╔╝║    ║      □",
-		L"╚═══╝╚═══╝ ╚═╝ ╚═══╝╚═══╝   "
-	};
 	vector<wstring> car = Car::spriteSheet[DIRECTION::RIGHT][1];
 
 	
@@ -137,12 +141,12 @@ void Map::drawOutline(Console* c) {
 	}
 
 	vector<wstring> level = numToAsciiDigits(*cur_level);
-	m = (width + side_x - lv_text[0].size() - level[0].size() - 1) / 2;
-	for (size_t i = 0; i < lv_text.size(); ++i) {
-		c->DrawString(lv_text[i], m, i + 10);
+	m = (width + side_x - level_text[0].size() - level[0].size() - 1) / 2;
+	for (size_t i = 0; i < level_text.size(); ++i) {
+		c->DrawString(level_text[i], m, i + 10);
 	}
 	for (size_t i = 0; i < level.size() ;++i) {
-		c->DrawString(level[i], m + lv_text[0].size() + 1, i + 10);
+		c->DrawString(level[i], m + level_text[0].size() + 1, i + 10);
 	}
 	//Score box
 	c->DrawHorizontalLine(L'═', side_x + 1, width - 2, 15);
@@ -151,7 +155,7 @@ void Map::drawOutline(Console* c) {
 
 	
 	//Score panel (Middle panel)
-	vector<wstring> score = numToAsciiDigits(*cur_score);
+	vector<wstring> score = numToAsciiDigits(temp_score);
 	m = (width + side_x - score_text[0].size()) / 2;
 	for (size_t i = 0; i < score_text.size(); ++i) {
 		c->DrawString(score_text[i], m, i + 17);
@@ -191,15 +195,21 @@ void Map::drawOutline(Console* c) {
 
 void Map::updateMain() {
 	for (Lane& lane : lanes) {
-		lane.updateVehicles();
+		if(lane.getY() + lane.getHeight() < height - 1)
+			lane.updateVehicles();
+	}
+	if (!lanes.empty() && lanes.front().getY() >= height - 1) {
+		lanes.pop_front();
+		visited.pop_front();
 	}
 }
 
-
 void Map::drawMain(Console* c) {
 	for (Lane& lane : lanes) {
-		lane.drawLane(c);
-		lane.drawVehicles(c);
+		if (lane.getY() + lane.getHeight() < height - 2) {
+			lane.drawLane(c);
+			lane.drawVehicles(c);
+		}
 	}
 }
 
@@ -215,4 +225,71 @@ bool Map::checkCollision(People* p) {
 	return false;
 }
 
+bool Map::updateScore() {
+	for (int i = 0; i < visited.size(); ++i) {
+		if (visited[i]) continue;
+		if (lanes[i].isInLane(this->character)) {
+			visited[i] = true;
+			temp_score += 1;
+			return true;
+		}
+		return false;
+	}
+	return false;
+}
+
+void Map::drawScoreText(Console* c) {
+	vector<wstring> score = numToAsciiDigits(temp_score);
+	int m = (width + side_x - score[0].size()) / 2;
+	for (size_t i = 0; i < score.size(); ++i) {
+		c->DrawString(score[i], m, i + 23);
+	}
+}
+
+bool Map::checkFinished(People* p) {
+	if (p->getY() + p->getHeight() - 1 < lanes.back().getY()) return true;
+	return false;
+}
+
+void Map::saveScore() {
+	*this->cur_score = this->temp_score;
+}
+
+void Map::drawLevelText(Console* c) {
+	vector<wstring> level = numToAsciiDigits(*cur_level);
+	int m = (width + side_x - level_text[0].size() - level[0].size() - 1) / 2;
+	for (size_t i = 0; i < level_text.size(); ++i) {
+		c->DrawString(level_text[i], m, i + 10);
+	}
+	for (size_t i = 0; i < level.size(); ++i) {
+		c->DrawString(level[i], m + level_text[0].size() + 1, i + 10);
+	}
+}
+
+void Map::nextLevel(Console* c) {
+
+	this_thread::sleep_for(chrono::milliseconds(INTERVAL * 3));
+	for (int i = 0; i < height - 2 - this->character->getHeight(); ++i) {
+		c->ShiftDown({ 1, 1, SHORT(side_x - 1), SHORT(height - 2) });
+		for (Lane& lane : lanes) {
+			lane.move(DIRECTION::DOWN);
+		}
+		character->setPos(character->getX(), character->getY() + 1);
+		updateMain();
+		drawMain(c);
+		c->UpdateScreen();
+		this_thread::sleep_for(chrono::milliseconds(INTERVAL));
+	}
+	for (int i = num_lane - 1; i >= 0; --i) {
+		lanes.push_back(Lane(1, 4 + i * 6, side_x - 1, 5));
+		lanes.back().setDirection((i & 1 ? DIRECTION::LEFT : DIRECTION::RIGHT));
+		lanes.back().setMinDist(10);
+		lanes.back().setSpeed(0.3);
+		visited.push_back(false);
+	}
+	
+	//if (lanes.size() == 0) {
+	//	this_thread::sleep_for(chrono::milliseconds(INTERVAL));
+	//}
+}
 Map::~Map() {}

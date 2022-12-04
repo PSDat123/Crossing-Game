@@ -27,7 +27,7 @@ public:
 private:
 	Console* console;
 	SHORT width, height;
-	bool isRunning, isPaused;
+	bool isRunning, isPaused, isAnimating = false;
 	People character;
 	int level = 1;
 	int score = 0;

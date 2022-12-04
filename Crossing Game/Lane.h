@@ -14,6 +14,11 @@ public:
 	void setDirection(DIRECTION);
 	void setMinDist(SHORT);
 	void setSpeed(float);
+	void move(DIRECTION);
+	
+	SHORT getX();
+	SHORT getY();
+	SHORT getHeight();
 	//void update();
 	void drawLane(Console* console);
 	void updateVehicles();

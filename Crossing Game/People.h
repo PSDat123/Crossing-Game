@@ -21,14 +21,14 @@ public:
 	void move(DIRECTION);
 	void update();
 	void draw(Console*);
-
+	void removeLife();
 	//bool isImpact(Vehicle*);
 	//bool isImpact(Animal*);
 	bool isFinish();
 	bool isDead();
 private:
 	int x, y, prev_x, prev_y, speed;
-	int height, width;
+	int height, width, life=3;
 	SMALL_RECT bounds;
 	bool state; // dead/alive
 	//bool checkFrame(int, int);

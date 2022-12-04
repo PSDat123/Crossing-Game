@@ -53,6 +53,9 @@ public:
 	void DrawVerticalLine(wchar_t c, int x, short col = 240);
 
 	void ShiftUp(SMALL_RECT rect);
+
+	void ShiftDown(SMALL_RECT rect);
+
 private:
 	SHORT bufferWidth, bufferHeight;
 	CHAR_INFO* buffer;

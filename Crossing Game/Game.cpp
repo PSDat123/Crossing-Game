@@ -21,11 +21,29 @@ void gameThread(Game* g) {
 			g->character.draw(g->console);
 			g->character.update();
 		}
+		else {
+			// Game over!
+		}
+
+		if (map.updateScore()) {
+			map.drawScoreText(g->console);
+		}
 
 		g->console->UpdateScreen();
 
+		if (map.checkFinished(&g->character)) {
+			map.saveScore();
+			g->level += 1;
+			map.drawLevelText(g->console);
+			g->isAnimating = true;
+			map.nextLevel(g->console);
+			g->isAnimating = false;
+			//g->isRunning = false;
+		}
+
 		if (map.checkCollision(&g->character)) {
-			g->character.setState(false);
+			g->character.removeLife();
+			map.resetCharacter();
 		}
 
 		this_thread::sleep_for(chrono::milliseconds(INTERVAL));
@@ -92,6 +110,7 @@ menu:
 	thread t1(gameThread, this);
 	while (true) {
 		int key = toupper(_getch());
+		if (isAnimating) continue;
 		if (key == W) {
 			this->character.move(DIRECTION::UP);
 		}

@@ -67,13 +67,17 @@ void menuThread(MainMenu* m) {
 }
 
 void animateExit(MainMenu* m) {
-	//short offset = 5;
+	//short offset = 4;
 	//short h = m->title.size();
-	//for (short i = 0; i < offset + h; ++i) {
-	//	m->console->ShiftUp({ 0, (short)(offset - i), (short)(m->width - 1),  (short)(offset + h - 1 - i) });
+	//for (short i = 0; i <= offset; ++i) {
+	//	m->console->ShiftUp({ 0, (short)(offset - i), (short)(m->width - 1),  (short)(offset + h - i) });
 	//	m->console->UpdateScreen();
 	//	Sleep(INTERVAL);
-
+	//}
+	//for (short i = 0; i <= h; ++i) {
+	//	m->console->ShiftUp({ 0, 0, (short)(m->width - 1),  (short)(h - i) });
+	//	m->console->UpdateScreen();
+	//	Sleep(INTERVAL);
 	//}
 }
 

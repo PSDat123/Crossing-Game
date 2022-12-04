@@ -114,3 +114,8 @@ People::~People() {}
 bool People::isDead() {
 	return !state;
 }
+
+void People::removeLife() {
+	this->life--;
+	if (!life) this->state = false;
+}
