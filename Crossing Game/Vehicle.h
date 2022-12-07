@@ -19,6 +19,7 @@ public:
 	int getHeight();
 	bool getState();
 	void update();
+	void clear(Console*);
 	void draw(Console*);
 	bool checkCollision(People*);
 protected:

@@ -13,8 +13,8 @@ Map::Map(int w, int h, int num_lane, People* character, int* level, int* score) 
 	for (int i = num_lane - 1; i >= 0; --i) {
 		lanes.push_back(Lane(1, 4 + i * 6, side_x - 1, 5));
 		lanes.back().setDirection((i & 1 ? DIRECTION::LEFT : DIRECTION::RIGHT));
-		lanes.back().setMinDist(10);
-		lanes.back().setSpeed(0.3);
+		lanes.back().setMinDist(1 + (60 / (*cur_level + 1)));
+		lanes.back().setSpeed(0.2 + 0.1 * *cur_level);
 		visited.push_back(false);
 	}
 }
@@ -27,11 +27,11 @@ vector<vector<wstring>> Map::digits = {
 		L"╚═══╝"
 	},
 	{	
-		L"╔══╗ ",
-		L"╚╗ ║ ",
-		L" ║ ║ ",
-		L" ║ ║ ",
-		L" ╚═╝ "
+		L" ╔══╗",
+		L" ╚╗ ║",
+		L"  ║ ║",
+		L"  ║ ║",
+		L"  ╚═╝"
 	},
 	{	
 		L"╔═══╗",
@@ -193,10 +193,10 @@ void Map::drawOutline(Console* c) {
 	}
 }
 
-void Map::updateMain() {
+void Map::updateMain(Console* console) {
 	for (Lane& lane : lanes) {
-		if(lane.getY() + lane.getHeight() < height - 1)
-			lane.updateVehicles();
+		if(lane.getY() > 0 && lane.getY() + lane.getHeight() < height - 1)
+			lane.updateVehicles(console);
 	}
 	if (!lanes.empty() && lanes.front().getY() >= height - 1) {
 		lanes.pop_front();
@@ -267,7 +267,13 @@ void Map::drawLevelText(Console* c) {
 }
 
 void Map::nextLevel(Console* c) {
-
+	for (int i = 0; i < num_lane; ++i) {
+		lanes.push_back(Lane(1, -10 - i * 6, side_x - 1, 5));
+		lanes.back().setDirection((i & 1 ? DIRECTION::LEFT : DIRECTION::RIGHT));
+		lanes.back().setMinDist(1 + (60 / (*cur_level + 1)));
+		lanes.back().setSpeed(0.2 + 0.1 * *cur_level);
+		visited.push_back(false);
+	}
 	this_thread::sleep_for(chrono::milliseconds(INTERVAL * 3));
 	for (int i = 0; i < height - 2 - this->character->getHeight(); ++i) {
 		c->ShiftDown({ 1, 1, SHORT(side_x - 1), SHORT(height - 2) });
@@ -275,18 +281,12 @@ void Map::nextLevel(Console* c) {
 			lane.move(DIRECTION::DOWN);
 		}
 		character->setPos(character->getX(), character->getY() + 1);
-		updateMain();
+		updateMain(c);
 		drawMain(c);
 		c->UpdateScreen();
 		this_thread::sleep_for(chrono::milliseconds(INTERVAL));
 	}
-	for (int i = num_lane - 1; i >= 0; --i) {
-		lanes.push_back(Lane(1, 4 + i * 6, side_x - 1, 5));
-		lanes.back().setDirection((i & 1 ? DIRECTION::LEFT : DIRECTION::RIGHT));
-		lanes.back().setMinDist(10);
-		lanes.back().setSpeed(0.3);
-		visited.push_back(false);
-	}
+
 	
 	//if (lanes.size() == 0) {
 	//	this_thread::sleep_for(chrono::milliseconds(INTERVAL));

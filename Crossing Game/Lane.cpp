@@ -1,4 +1,4 @@
-#include "Lane.h"
+ï»¿#include "Lane.h"
 
 Lane::Lane(SHORT x, SHORT y, SHORT width, SHORT height) {
 	this->x = x;
@@ -63,30 +63,30 @@ Vehicle Lane::getRandomVehicle(int x, int y) {
 	return c;
 }
 
-void Lane::updateVehicles() {
+void Lane::updateVehicles(Console* console) {
 	int start_x = -1;
 	if (dir == DIRECTION::LEFT) start_x = x + width;
 	if (!qVehicle.empty()) {
 		for (Vehicle& car : qVehicle) {
 			car.update();
 		}
-		if (dir == DIRECTION::RIGHT && qVehicle.back().getVX() > start_x + minDist) {
+		if (dir == DIRECTION::RIGHT && qVehicle.back().getVX() >= start_x + minDist) {
 			if (!(rand() % 30)) {
 				qVehicle.push_back(getRandomVehicle(start_x, y + 1));
 			}
 		}
-		else if (dir == DIRECTION::LEFT && qVehicle.back().getVX() + qVehicle.back().getLength() < start_x - minDist) {
+		else if (dir == DIRECTION::LEFT && qVehicle.back().getVX() + qVehicle.back().getLength() <= start_x - minDist) {
 			if (!(rand() % 30)) {
 				qVehicle.push_back(getRandomVehicle(start_x, y + 1));
 			}
 		}
 		if (!qVehicle.front().getState()) {
+			qVehicle.front().clear(console);
 			qVehicle.pop_front();
 		}
 	}
 	else {
 		qVehicle.push_back(getRandomVehicle(start_x, y + 1));
-		frameSinceLastVehicle = 0;
 	}
 
 }
@@ -98,8 +98,8 @@ void Lane::drawVehicles(Console* console) {
 }
 
 void Lane::drawLane(Console* console) {
-	console->DrawHorizontalLine(L'—', x, x + width - 1, y);
-	console->DrawHorizontalLine(L'—', x, x + width - 1, y + height + 1);
+	if (this->y > 1) console->DrawHorizontalLine(L'â€”', x, x + width - 1, y);
+	if (this->y + height > 0) console->DrawHorizontalLine(L'â€”', x, x + width - 1, y + height + 1);
 }
 
 bool Lane::isInLane(People* p) {

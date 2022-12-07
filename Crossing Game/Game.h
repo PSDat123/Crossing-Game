@@ -27,14 +27,8 @@ public:
 private:
 	Console* console;
 	SHORT width, height;
-	bool isRunning, isPaused, isAnimating = false;
+	bool isRunning, isPaused, isTransition = false;
 	People character;
 	int level = 1;
 	int score = 0;
 };
-
-//void settings();
-//
-//void fastIO();
-//void backgroundThread(Game*, bool*, bool*);
-//void soundThread(Game*, bool*, bool*);

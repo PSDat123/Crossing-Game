@@ -15,7 +15,7 @@ void gameThread(Game* g) {
 	map.resetCharacter();
 	g->character.draw(g->console);
 	do{
-		map.updateMain();
+		map.updateMain(g->console);
 		map.drawMain(g->console);
 		if (!g->character.isDead()) {
 			g->character.draw(g->console);
@@ -29,15 +29,14 @@ void gameThread(Game* g) {
 			map.drawScoreText(g->console);
 		}
 
-		g->console->UpdateScreen();
 
 		if (map.checkFinished(&g->character)) {
 			map.saveScore();
 			g->level += 1;
 			map.drawLevelText(g->console);
-			g->isAnimating = true;
+			g->isTransition = true;
 			map.nextLevel(g->console);
-			g->isAnimating = false;
+			g->isTransition = false;
 			//g->isRunning = false;
 		}
 
@@ -45,6 +44,9 @@ void gameThread(Game* g) {
 			g->character.removeLife();
 			map.resetCharacter();
 		}
+
+		g->console->UpdateScreen();
+
 
 		this_thread::sleep_for(chrono::milliseconds(INTERVAL));
 	} while (g->isRunning);
@@ -110,7 +112,7 @@ menu:
 	thread t1(gameThread, this);
 	while (true) {
 		int key = toupper(_getch());
-		if (isAnimating) continue;
+		if (isTransition) continue;
 		if (key == W) {
 			this->character.move(DIRECTION::UP);
 		}

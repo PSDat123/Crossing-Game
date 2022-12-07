@@ -21,7 +21,7 @@ public:
 	SHORT getHeight();
 	//void update();
 	void drawLane(Console* console);
-	void updateVehicles();
+	void updateVehicles(Console* console);
 	void drawVehicles(Console* console);
 
 	bool isInLane(People*);
@@ -33,5 +33,4 @@ private:
 	DIRECTION dir = DIRECTION::RIGHT;
 	SHORT minDist = 10; // minimun distance between 2 vehichles
 	float speed = 1;
-	int frameSinceLastVehicle = 0;
 };

@@ -13,7 +13,7 @@ public:
 	~Map();
 	void drawOutline(Console*);
 	void drawMain(Console*);
-	void updateMain();
+	void updateMain(Console*);
 	void resetCharacter();
 	bool checkCollision(People*);
 	bool checkFinished(People*);

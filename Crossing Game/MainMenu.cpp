@@ -58,7 +58,7 @@ void menuThread(MainMenu* m) {
 			m->prevSelected = m->curSelected;
 		}
 		
-		lane.updateVehicles();
+		lane.updateVehicles(m->console);
 		lane.drawVehicles(m->console);
 		m->console->UpdateScreen();
 

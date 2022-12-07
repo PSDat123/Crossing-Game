@@ -44,7 +44,8 @@ void Vehicle::update() {
 	default:
 		break;
 	}
-	if (floor(x) + length < min_x || int(x)  > max_x) state = false;
+	if (floor(x) + length < min_x || int(x)  > max_x)
+		state = false;
 }
 
 void Vehicle::setVX(SHORT x) {
@@ -79,11 +80,28 @@ int Vehicle::getLength() {
 	return this->length;
 }
 
+void Vehicle::clear(Console* c) {
+	if (dir == DIRECTION::RIGHT) {
+		for (size_t i = 0; i < height; ++i) {
+			if (this->state) c->DrawHorizontalLine(L' ', prev_x, x - 1, y + i);
+			else c->DrawHorizontalLine(L' ', prev_x, max_x - 1, y + i);
+		}
+		return;
+	}
+	for (size_t i = 0; i < height; ++i) {
+		int l = sprite[i].size();
+		if (this->state) c->DrawHorizontalLine(L' ', x + l, prev_x + l - 1, y + i);
+		else c->DrawHorizontalLine(L' ', min_x, prev_x + l - 1, y + i);
+		
+	}
+}
+
 void Vehicle::draw(Console* c) {
 	if (dir == DIRECTION::RIGHT) {
 		if (int(x) > min_x) {
 			for (size_t i = 0; i < height; ++i) {
-				c->DrawHorizontalLine(L' ', prev_x, x - 1, y + i);
+				if(prev_x < min_x) c->DrawHorizontalLine(L' ', min_x, x - 1, y + i);
+				else c->DrawHorizontalLine(L' ', prev_x, x - 1, y + i);
 				if (int(x) + sprite[i].size() > max_x) {
 					c->DrawString(sprite[i].substr(0, max_x - floor(x)), x, y + (int)i);
 				}
@@ -103,7 +121,8 @@ void Vehicle::draw(Console* c) {
 	if(floor(x) + length < max_x){
 		for (size_t i = 0; i < height; ++i) {
 			int l = sprite[i].size();
-			c->DrawHorizontalLine(L' ', x + l, prev_x + l - 1, y + i);
+			if(prev_x + l >= max_x) c->DrawHorizontalLine(L' ', x + l, max_x - 1, y + i);
+			else c->DrawHorizontalLine(L' ', x + l, prev_x + l - 1, y + i);
 			if (floor(x) < min_x) {
 				c->DrawString(sprite[i].substr(min_x - floor(x)), min_x, y + (int)i);
 			}
