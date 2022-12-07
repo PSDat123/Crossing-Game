@@ -49,7 +49,7 @@ void Console::GetMaximumConsoleSize(SHORT& width, SHORT& height) {
 void Console::SetConsoleSize(SHORT& width, SHORT& height) {
 	SMALL_RECT WindowSize = { 0, 0, 1, 1 };
 
-	//SetConsoleWindowInfo(console, TRUE, &WindowSize);
+	SetConsoleWindowInfo(handle, TRUE, &WindowSize);
 	SetConsoleScreenBufferSize(handle, {width, height});
 	SetConsoleActiveScreenBuffer(handle);
 	WindowSize.Right = width - 1;

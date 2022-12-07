@@ -268,7 +268,7 @@ void Map::drawLevelText(Console* c) {
 
 void Map::nextLevel(Console* c) {
 	for (int i = 0; i < num_lane; ++i) {
-		lanes.push_back(Lane(1, -10 - i * 6, side_x - 1, 5));
+		lanes.push_back(Lane(1, -height + 3 + (num_lane - i) * 6, side_x - 1, 5));
 		lanes.back().setDirection((i & 1 ? DIRECTION::LEFT : DIRECTION::RIGHT));
 		lanes.back().setMinDist(1 + (60 / (*cur_level + 1)));
 		lanes.back().setSpeed(0.2 + 0.1 * *cur_level);
