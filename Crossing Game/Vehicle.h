@@ -18,7 +18,7 @@ public:
 	int getLength();
 	int getHeight();
 	bool getState();
-	void update();
+	void update(float mult = 1);
 	void clear(Console*);
 	void draw(Console*);
 	bool checkCollision(People*);

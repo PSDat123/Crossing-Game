@@ -136,6 +136,7 @@ void Map::drawOutline(Console* c) {
 	c->DrawString(L"╔═══ PLAYER NAME ═══╗", (m - 21) / 2, 3);
 	c->DrawString(L"║                   ║", (m - 21) / 2, 4);
 	c->DrawString(L"╚═══════════════════╝", (m - 21) / 2, 5);
+
 	for (int i = 0; i < car.size(); ++i) {
 		c->DrawString(car[i], (m - car[0].size()) / 2, i + 6);
 	}
@@ -195,8 +196,10 @@ void Map::drawOutline(Console* c) {
 
 void Map::updateMain(Console* console) {
 	for (Lane& lane : lanes) {
-		if(lane.getY() > 0 && lane.getY() + lane.getHeight() < height - 1)
+		if (lane.getY() > 0 && lane.getY() + lane.getHeight() < height - 1) {
 			lane.updateVehicles(console);
+			lane.updateTraffic();
+		}
 	}
 	if (!lanes.empty() && lanes.front().getY() >= height - 1) {
 		lanes.pop_front();
@@ -207,8 +210,7 @@ void Map::updateMain(Console* console) {
 void Map::drawMain(Console* c) {
 	for (Lane& lane : lanes) {
 		if (lane.getY() + lane.getHeight() < height - 2) {
-			lane.drawLane(c);
-			lane.drawVehicles(c);
+			lane.drawAll(c);
 		}
 	}
 }

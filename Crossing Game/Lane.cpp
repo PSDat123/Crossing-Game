@@ -5,6 +5,9 @@ Lane::Lane(SHORT x, SHORT y, SHORT width, SHORT height) {
 	this->y = y;
 	this->width = width;
 	this->height = height;
+	defaultCD = 20 + rand() % 20;
+	CD = defaultCD - rand() % int(defaultCD - 7);
+	timeStamp = chrono::system_clock::now();
 }
 
 Lane::Lane() : Lane(0, 0, 100, 5) {}
@@ -64,11 +67,14 @@ Vehicle Lane::getRandomVehicle(int x, int y) {
 }
 
 void Lane::updateVehicles(Console* console) {
+	if (trafficState == TRAFFIC::RED) return;
 	int start_x = -1;
+	float mult = 1;
+	if (trafficState == TRAFFIC::YELLOW) mult = 0.5;
 	if (dir == DIRECTION::LEFT) start_x = x + width;
 	if (!qVehicle.empty()) {
 		for (Vehicle& car : qVehicle) {
-			car.update();
+			car.update(mult);
 		}
 		if (dir == DIRECTION::RIGHT && qVehicle.back().getVX() >= start_x + minDist) {
 			if (!(rand() % 30)) {
@@ -91,6 +97,23 @@ void Lane::updateVehicles(Console* console) {
 
 }
 
+void Lane::updateTraffic() {
+	chrono::system_clock::time_point t2 = std::chrono::system_clock::now();
+	chrono::duration<float> elapsed = t2 - timeStamp;
+	CD -= elapsed.count();
+	timeStamp = t2;
+	if (CD < 6) {
+		trafficState = TRAFFIC::RED;
+	}
+	else if (CD < 10) {
+		trafficState = TRAFFIC::YELLOW;
+	}
+	else {
+		trafficState = TRAFFIC::GREEN;
+	}
+	if (CD < 0) CD = defaultCD;
+}
+
 void Lane::drawVehicles(Console* console) {
 	for (Vehicle& v : qVehicle) {
 		v.draw(console);
@@ -102,6 +125,22 @@ void Lane::drawLane(Console* console) {
 	if (this->y + height > 0) console->DrawHorizontalLine(L'—', x, x + width - 1, y + height + 1);
 }
 
+void Lane::drawTrafficLight(Console* console) {
+	if (this->y > 0) {
+		if (dir == DIRECTION::RIGHT) {
+			console->DrawPixel(x + width - 1, y + 1, short(trafficState));
+		}
+		else {
+			console->DrawPixel(x, y + 1, short(trafficState));
+		}
+	}
+}
+
+void Lane::drawAll(Console* console) {
+	drawVehicles(console);
+	drawLane(console);
+	drawTrafficLight(console);
+}
 bool Lane::isInLane(People* p) {
 	int pos = p->getY() + p->getHeight() - 1;
 	if (pos > this->y && pos <= this->y + this->height) return true;

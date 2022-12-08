@@ -46,6 +46,8 @@ public:
 
 	void DrawChar(wchar_t c, int x, int y, short col = 240);
 
+	void DrawPixel(int x, int y, short col = 240);
+
 	void DrawString(wstring s, int x, int y, short col = 240);
 
 	void DrawHorizontalLine(wchar_t c, int start_x, int end_x, int y, short col = 240);

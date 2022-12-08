@@ -21,7 +21,8 @@ public:
 	void move(DIRECTION);
 	void update();
 	void draw(Console*);
-	void removeLife();
+	void removeLife(int);
+	void addLife(int);
 	//bool isImpact(Vehicle*);
 	//bool isImpact(Animal*);
 	bool isFinish();

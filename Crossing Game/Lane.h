@@ -22,8 +22,10 @@ public:
 	//void update();
 	void drawLane(Console* console);
 	void updateVehicles(Console* console);
+	void updateTraffic();
 	void drawVehicles(Console* console);
-
+	void drawTrafficLight(Console* console);
+	void drawAll(Console* console);
 	bool isInLane(People*);
 	bool checkCollison(People* p);
 private:
@@ -33,4 +35,7 @@ private:
 	DIRECTION dir = DIRECTION::RIGHT;
 	SHORT minDist = 10; // minimun distance between 2 vehichles
 	float speed = 1;
+	TRAFFIC trafficState = TRAFFIC::GREEN;
+	float defaultCD, CD;
+	chrono::system_clock::time_point timeStamp;
 };

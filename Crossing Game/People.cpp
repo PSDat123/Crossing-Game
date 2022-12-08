@@ -115,7 +115,11 @@ bool People::isDead() {
 	return !state;
 }
 
-void People::removeLife() {
-	this->life--;
-	if (!life) this->state = false;
+void People::removeLife(int n) {
+	this->life -= n;
+	if (life < 1) this->state = false;
+}
+
+void People::addLife(int n) {
+	this->life += n;
 }

@@ -30,5 +30,5 @@ private:
 	bool isRunning, isPaused, isTransition = false;
 	People character;
 	int level = 1;
-	int score = 0;
+	int score = 0, highScore = 0;
 };

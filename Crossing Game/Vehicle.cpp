@@ -31,15 +31,15 @@ Vehicle::Vehicle(float x, float y, SHORT min_x, SHORT max_x, float speed, vector
 
 Vehicle::~Vehicle() {}
 
-void Vehicle::update() {
+void Vehicle::update(float mult) {
 	switch (dir){
 	case DIRECTION::LEFT:
 		prev_x = x;
-		x -= speed;
+		x -= speed * mult;
 		break;
 	case DIRECTION::RIGHT:
 		prev_x = x;
-		x += speed;
+		x += speed * mult;
 		break;
 	default:
 		break;

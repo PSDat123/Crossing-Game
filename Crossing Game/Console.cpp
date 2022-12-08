@@ -112,6 +112,7 @@ void Console::ClearBackground() {
 	int n = bufferWidth * bufferHeight;
 	for (int i = 0; i < n; ++i) {
 		buffer[i].Char.UnicodeChar = 0;
+		buffer[i].Attributes = 240;
 	}
 }
 
@@ -121,6 +122,10 @@ void Console::UpdateScreen() {
 
 void Console::DrawChar(wchar_t c, int x, int y, short col) {
 	buffer[y * bufferWidth + x].Char.UnicodeChar = c;
+	buffer[y * bufferWidth + x].Attributes = col;
+}
+
+void Console::DrawPixel(int x, int y, short col) {
 	buffer[y * bufferWidth + x].Attributes = col;
 }
 

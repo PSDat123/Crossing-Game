@@ -34,6 +34,8 @@ void gameThread(Game* g) {
 			map.saveScore();
 			g->level += 1;
 			map.drawLevelText(g->console);
+			g->character.addLife(1);
+
 			g->isTransition = true;
 			map.nextLevel(g->console);
 			g->isTransition = false;
@@ -41,7 +43,8 @@ void gameThread(Game* g) {
 		}
 
 		if (map.checkCollision(&g->character)) {
-			g->character.removeLife();
+			g->character.removeLife(1);
+			//Play death animation
 			map.resetCharacter();
 		}
 
@@ -51,6 +54,15 @@ void gameThread(Game* g) {
 		this_thread::sleep_for(chrono::milliseconds(INTERVAL));
 	} while (g->isRunning);
 }
+
+void settingThread(Game* g) {
+
+}
+
+void loadGameThread(Game* g) {
+
+}
+
 
 void Game::exitGame(thread* t) {
 	console->ClearBackground();
@@ -82,14 +94,18 @@ menu:
 	OPTIONS opt = m.runMenu();
 	
 	switch (opt) {
-	case OPTIONS::CONTINUE:
+	case OPTIONS::CONTINUE: {
 		break;
-	case OPTIONS::NEW_GAME:
+	}
+	case OPTIONS::NEW_GAME: {
 		break;
-	case OPTIONS::LOAD_GAME:
+	}
+	case OPTIONS::LOAD_GAME: {
 		break;
-	case OPTIONS::SETTINGS:
+	}
+	case OPTIONS::SETTINGS: {
 		break;
+	}
 	case OPTIONS::CREDIT:{
 		console->ClearBackground();
 		printCredit((width / 2) - 16, (height / 2) - 5);
@@ -129,7 +145,7 @@ menu:
 			exitGame(&t1);
 			return;
 		}
-		this_thread::sleep_for(chrono::milliseconds(INTERVAL + 10));
+		this_thread::sleep_for(chrono::milliseconds(100));
 	}
 }
 
