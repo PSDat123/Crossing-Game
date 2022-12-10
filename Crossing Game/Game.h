@@ -5,6 +5,7 @@
 #include "Macro.h"
 #include "Map.h"
 #include "MainMenu.h"
+#include "Setting.h"
 
 class Game {
 public:
@@ -24,6 +25,7 @@ public:
 	void printCredit(int, int);
 
 	friend void gameThread(Game* g);
+	friend void soundThread(Game* g);
 private:
 	Console* console;
 	SHORT width, height;

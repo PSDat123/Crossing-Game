@@ -17,6 +17,7 @@ enum class DIRECTION{ UP, DOWN, LEFT, RIGHT };
 enum class TRAFFIC {RED = 79, YELLOW = 111, GREEN = 47};
 enum class GameState {MENUING, RUNNING, PAUSED, EXITED};
 enum class OPTIONS {CONTINUE, NEW_GAME, LOAD_GAME, SETTINGS, CREDIT, EXIT};
+enum class SETTING {SOUND_ON, SOUND_OFF};
 
 
 // (Dung xoa) unicode chars: ─ │

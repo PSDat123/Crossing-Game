@@ -5,7 +5,7 @@ Lane::Lane(SHORT x, SHORT y, SHORT width, SHORT height) {
 	this->y = y;
 	this->width = width;
 	this->height = height;
-	defaultCD = 20 + rand() % 20;
+	defaultCD = (float)(20 + rand() % 20);
 	CD = defaultCD - rand() % int(defaultCD - 7);
 	timeStamp = chrono::system_clock::now();
 }
@@ -94,7 +94,6 @@ void Lane::updateVehicles(Console* console) {
 	else {
 		qVehicle.push_back(getRandomVehicle(start_x, y + 1));
 	}
-
 }
 
 void Lane::updateTraffic() {

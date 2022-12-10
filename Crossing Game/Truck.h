@@ -4,6 +4,6 @@
 class Truck : public Vehicle {
 public:
 	static map<DIRECTION, vector<vector<wstring>>> spriteSheet;
-	Truck(int x, int y, int min_x, int max_x, float speed, DIRECTION dir = DIRECTION::RIGHT);
+	Truck(float x, float y, int min_x, int max_x, float speed, DIRECTION dir = DIRECTION::RIGHT);
 	string className();
 };

@@ -137,10 +137,6 @@ void Map::drawOutline(Console* c) {
 	c->DrawString(L"║                   ║", (m - 21) / 2, 4);
 	c->DrawString(L"╚═══════════════════╝", (m - 21) / 2, 5);
 
-	for (int i = 0; i < car.size(); ++i) {
-		c->DrawString(car[i], (m - car[0].size()) / 2, i + 6);
-	}
-
 	vector<wstring> level = numToAsciiDigits(*cur_level);
 	m = (width + side_x - level_text[0].size() - level[0].size() - 1) / 2;
 	for (size_t i = 0; i < level_text.size(); ++i) {
@@ -288,8 +284,6 @@ void Map::nextLevel(Console* c) {
 		c->UpdateScreen();
 		this_thread::sleep_for(chrono::milliseconds(INTERVAL));
 	}
-
-	
 	//if (lanes.size() == 0) {
 	//	this_thread::sleep_for(chrono::milliseconds(INTERVAL));
 	//}

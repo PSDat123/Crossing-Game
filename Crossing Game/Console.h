@@ -1,5 +1,5 @@
 #pragma once
-#pragma comment (lib, "winmm.lib") // Used to play sound
+#pragma comment (lib, "winmm.lib")
 #pragma execution_character_set( "utf-8" )
 #include <iostream>
 #include <Windows.h>
