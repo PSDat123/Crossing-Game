@@ -69,14 +69,14 @@ map<DIRECTION, vector<vector<wstring>>> Truck::spriteSheet = {
 		},
 		{
 			L" __________________ ",
-			L"|[_][_][_][_][_][_]|",
-			L"|o _         _  _  |",
-			L" `(_)-------(_)(_)-\""
+			L"│[_][_][_][_][_][_]│",
+			L"│o _          _  _ |",
+			L"╘═(O)════════(O)(O)╛\""
 		}
 	}
 }		 	 
 };		 
 
 
-Truck::Truck(int x, int y, int min_x, int max_x, float speed, DIRECTION dir) : 
+Truck::Truck(float x, float y, int min_x, int max_x, float speed, DIRECTION dir) : 
 	Vehicle(x, y, min_x, max_x, speed, spriteSheet[dir][rand() % spriteSheet[dir].size()], dir) {}

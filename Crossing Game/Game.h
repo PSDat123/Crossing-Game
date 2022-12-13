@@ -5,6 +5,7 @@
 #include "Macro.h"
 #include "Map.h"
 #include "MainMenu.h"
+#include "Setting.h"
 
 class Game {
 public:

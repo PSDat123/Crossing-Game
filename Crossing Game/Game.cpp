@@ -5,7 +5,7 @@ Game::Game(Console* screen) {
 	state = GAMESTATE::RUNNING;
 	console = screen;
 	console->GetConsoleSize(width, height);
-	character = People(0, 0, {0, 0, SHORT(width - 1), SHORT(height - 1)});
+	character = People(0, 0, { 0, 0, SHORT(width - 1), SHORT(height - 1) });
 }
 
 void Game::restartGame() {
@@ -109,7 +109,6 @@ startGame:
 			map.drawScoreText(g->console);
 		}
 
-
 		if (map.checkFinished(&g->character)) {
 			map.saveScore();
 			g->level += 1;
@@ -130,13 +129,8 @@ startGame:
 
 		g->console->UpdateScreen();
 
-
 		this_thread::sleep_for(chrono::milliseconds(INTERVAL));
 	} while (g->state == GAMESTATE::RUNNING);
-}
-
-void settingThread(Game* g) {
-
 }
 
 void loadGameThread(Game* g) {
@@ -168,10 +162,10 @@ void Game::printCredit(int x, int y) {
 
 void Game::startGame() {
 	MainMenu m(console);
-
+	mciSendString(_T("open \"Sound/background_music.wav \" type mpegvideo alias bgm"), NULL, 0, NULL);
+	mciSendStringA(LPCSTR("play bgm from 0"), NULL, 0, NULL);
 menu:
 	OPTIONS opt = m.runMenu();
-	
 	switch (opt) {
 	case OPTIONS::CONTINUE: {
 		break;
@@ -187,8 +181,25 @@ menu:
 		break;
 	}
 	case OPTIONS::SETTINGS: {
+		Setting s(console);
+		SETTING set = s.runSetting();
+		switch (set) {
+		case SETTING::SOUND_ON:
+			mciSendStringA(LPCSTR("play bgm"), NULL, 0, NULL);
+			break;
+		case SETTING::SOUND_OFF:
+			mciSendString(_T("pause bgm"), NULL, 0, NULL);
+			break;
+		}
+
+		int key;
+		do {
+			key = toupper(_getch());
+		} while (key != ENTER_KEY);
+		goto menu;
 		break;
 	}
+
 	case OPTIONS::CREDIT:{
 		console->ClearBackground();
 		printCredit((width / 2) - 16, (height / 2) - 5);
@@ -200,6 +211,7 @@ menu:
 		goto menu;
 		break;
 	}
+
 	case OPTIONS::EXIT:
 		console->ClearBackground();
 		console->UpdateScreen();
