@@ -20,15 +20,18 @@ public:
 	void pauseGame();
 	void resumeGame();
 
-	void exitGame(thread*);
+	void exitGame();
+	void restartGame();
 	void printCredit(int, int);
 
 	friend void gameThread(Game* g);
+	friend void gameOverThread(Game* g, bool* isRunning, int*, int*);
 private:
 	Console* console;
 	SHORT width, height;
-	bool isRunning, isPaused, isTransition = false;
+	bool isGameover = false, isPaused, isTransition = false;
+	GAMESTATE state;
 	People character;
-	int level = 1;
+	int level = 1, key = 0;
 	int score = 0, highScore = 0;
 };
