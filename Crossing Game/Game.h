@@ -15,6 +15,7 @@ public:
 	void startGame();
 	void saveGame();
 	void continueGame();
+	void newGame();
 	//void pauseGame();
 	//void resumeGame();
 

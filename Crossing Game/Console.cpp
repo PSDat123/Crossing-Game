@@ -11,6 +11,7 @@ Console::Console() {
 	MoveConsole(100, 0);
 	ChangeConsoleFontSize(18);
 	SetConsoleSize(bufferWidth, bufferHeight);
+	SetConsoleTextAttribute(handle, 240);
 	SetConsoleOutputCP(CP_UTF8);
 	ChangeBackgroundColor(240);
 	FixConsoleWindow();

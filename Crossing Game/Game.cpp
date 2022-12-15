@@ -103,9 +103,6 @@ startGame:
 	map.resetCharacter();
 	g->character.draw(g->console);
 	do{
-		map.updateMain(g->console);
-		map.drawMain(g->console);
-
 		if (g->isPaused) {
 			bool isRunning = true;
 			int  prevSelected = 0, curSelected = 0;
@@ -131,7 +128,7 @@ startGame:
 				}
 				if (g->key == ESC) {
 					prevSelected = curSelected;
-					curSelected = options.size() - 1;
+					curSelected = 0;
 					break;
 				}
 				this_thread::sleep_for(chrono::milliseconds(INTERVAL));
@@ -139,7 +136,6 @@ startGame:
 			isRunning = false;
 			t.join();
 			g->console->ClearBackground();
-			g->console->UpdateScreen();
 			g->isPaused = false;
 
 			switch (options[curSelected]) {
@@ -161,6 +157,8 @@ startGame:
 			}
 		}
 
+		map.updateMain(g->console);
+		map.drawMain(g->console);
 
 		if (!g->character.isDead()) {
 			g->character.draw(g->console);
@@ -217,6 +215,7 @@ startGame:
 
 			}
 		}
+
 
 		if (map.updateScore()) {
 			map.drawScoreText(g->console);
@@ -395,6 +394,32 @@ void Game::continueGame() {
 	highScore = curSave.highscore;
 }
 
+void Game::newGame() {
+	int x = (width - 37) / 2, y = height / 2;
+	console->ClearBackground();
+inputname:
+	console->GotoXY(x + 21, y);
+	console->DrawHorizontalLine(L'█', x - 3, x + 38, y - 2);
+	console->DrawVerticalLine(L'█', x - 3, y - 2, y + 2);
+	console->DrawString(L"Input player's name: ", x, y);
+	console->DrawHorizontalLine(L'█', x - 3, x + 38, y + 2);
+	console->DrawVerticalLine(L'█', x + 38, y - 2, y + 2);
+	console->UpdateScreen();
+	
+	string tempName;
+	while (getline(cin, tempName)) {
+		if (!tempName.size()) continue;
+		if (tempName.size() < 15) {
+			character.setName(&tempName[0]);
+			break;
+		}
+		console->ClearBackground();
+		console->DrawString(L"Name must be less than 16 characters!", x, y + 1);
+		goto inputname;
+	}
+	console->GotoXY(0, 0);
+
+}
 void Game::exitGame() {
 	console->ClearBackground();
 	console->UpdateScreen();
@@ -430,6 +455,7 @@ menu:
 		break;
 	}
 	case OPTIONS::NEW_GAME: {
+		newGame();
 		break;
 	}
 	case OPTIONS::LOAD_GAME: {
