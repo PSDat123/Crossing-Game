@@ -28,9 +28,7 @@ void Game::saveGame() {
 		saveFile.write((char*)&level, sizeof(level));
 		saveFile.write((char*)&score, sizeof(score));
 		saveFile.write((char*)&highScore, sizeof(highScore));
-		
 	}
-
 	saveFile.close();
 }
 
@@ -93,6 +91,24 @@ void pausedThread(Game* g, bool* isRunning, int* curSelected, int* prevSelected)
 
 		this_thread::sleep_for(chrono::milliseconds(INTERVAL));
 	} while (*isRunning);
+}
+
+void settingThread(Game* g, bool* isRunning, int* curSelected, int* prevSelected) {
+	SHORT sX = g->width / 2, sY = g->height / 2;
+	g->console->DrawString(L"Background music:    On", sX - 22, sY);
+	g->console->DrawString(L"                     Off", sX - 22, sY + 1);
+	g->console->DrawString(L"Press Enter to select and go back to menu", sX - 22, sY + 2);
+	g->console->DrawString(L"►", sX - 3, sY + *curSelected);
+	do {
+		if (*curSelected != *prevSelected) {
+			g->console->DrawString(L" ", sX - 3, sY + *prevSelected);
+			g->console->DrawString(L"►", sX - 3, sY + *curSelected);
+			*prevSelected = *curSelected;
+		}
+		g->console->UpdateScreen();
+		this_thread::sleep_for(chrono::milliseconds(INTERVAL));
+	} while (*isRunning);
+	if (g->state != GAMESTATE::SETTING) return;
 }
 
 void gameThread(Game* g) {
@@ -241,7 +257,6 @@ startGame:
 		}
 
 		g->console->UpdateScreen();
-
 		this_thread::sleep_for(chrono::milliseconds(INTERVAL));
 	} while (g->state == GAMESTATE::RUNNING);
 }
@@ -350,7 +365,6 @@ void loadGameThread(Game* g, bool* isRunning, int* curSelected, int* prevSelecte
 	g->highScore = curSave.highscore;
 }
 
-
 void Game::continueGame() {
 	wstring path = L"./Save";
 	vector<wstring> files = getSaveFiles(path);
@@ -442,11 +456,20 @@ void Game::printCredit(int x, int y) {
 	console->UpdateScreen();
 }
 
+void Game::playSound(bool soundOn) {
+	if (!soundOn) {
+		mciSendStringA(LPCSTR("close bgm"), NULL, 0, NULL);
+		return;
+	}
+	mciSendString(_T("open \"Sound/background_music.wav \" type mpegvideo alias bgm"), NULL, 0, NULL);
+	mciSendStringA(LPCSTR("play bgm repeat"), NULL, 0, NULL);
+	mciSendString(_T("setaudio bgm volume to 100"), NULL, 0, NULL);
+}
+
 void Game::startGame() {
 	MainMenu m(console);
-	//mciSendString(_T("open \"Sound/background_music.wav \" type mpegvideo alias bgm"), NULL, 0, NULL);
-	//mciSendStringA(LPCSTR("play bgm from 0"), NULL, 0, NULL);
 menu:
+	//playSound(this->soundOn);
 	state = GAMESTATE::MENUING;
 	OPTIONS opt = m.runMenu();
 	switch (opt) {
@@ -495,22 +518,42 @@ menu:
 		break;
 	}
 	case OPTIONS::SETTINGS: {
-		Setting s(console);
-		SETTING set = s.runSetting();
-		switch (set) {
-		case SETTING::SOUND_ON:
-			//mciSendStringA(LPCSTR("play bgm"), NULL, 0, NULL);
-			break;
-		case SETTING::SOUND_OFF:
-			//mciSendString(_T("pause bgm"), NULL, 0, NULL);
-			break;
-		}
-
+		console->ClearBackground();
+		int curSelected = 0;
+		int prevSelected = 0;
+		int choice = 0;
+		bool isRunning = true;
+		this->state = GAMESTATE::SETTING;
+		thread set(settingThread, this, &isRunning, &curSelected, &prevSelected);
 		int key;
 		do {
 			key = toupper(_getch());
+			if (key == UP_ARROW || key == W) {
+				prevSelected = curSelected;
+				this->soundOn = true;
+				curSelected--;
+				if (curSelected == -1) {
+					curSelected = 1;
+				}
+			}
+			if (key == DOWN_ARROW || key == S) {
+				prevSelected = curSelected;
+				this->soundOn = false;
+				curSelected++;
+				if (curSelected == 2) {
+					curSelected = 0;
+				}
+				key = 0;
+			}
+			if (key == ENTER_KEY) {
+				state = GAMESTATE::MENUING;
+				break;
+			}
+			this_thread::sleep_for(chrono::milliseconds(INTERVAL));
 		} while (key != ENTER_KEY);
-		goto menu;
+		isRunning = false;
+		set.join();
+		if (state == GAMESTATE::MENUING) goto menu;
 		break;
 	}
 
@@ -540,16 +583,16 @@ menu:
 		key = toupper(_getch());
 		if (isTransition) continue;
 		if (!isGameover && !isPaused) {
-			if (key == W) {
+			if (key == UP_ARROW || key == W) {
 				this->character.move(DIRECTION::UP);
 			}
-			else if (key == S) {
+			else if (key == DOWN_ARROW || key == S) {
 				this->character.move(DIRECTION::DOWN);
 			}
-			else if (key == A) {
+			else if (key == LEFT_ARROW || key == A) {
 				this->character.move(DIRECTION::LEFT);
 			}
-			else if (key == D) {
+			else if (key == RIGHT_ARROW || key == D) {
 				this->character.move(DIRECTION::RIGHT);
 			}
 		}
@@ -561,9 +604,7 @@ menu:
 		this_thread::sleep_for(chrono::milliseconds(100));
 	}
 	t1.join();
-	if (state == GAMESTATE::MENUING) {
-		goto menu;
-	}
+	if (state == GAMESTATE::MENUING) goto menu;
 	return;
 }
 

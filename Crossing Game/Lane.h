@@ -4,6 +4,7 @@
 #include "Car.h"
 #include "Truck.h"
 #include "Bike.h"
+#include "Bird.h"
 #include "People.h"
 
 class Lane {
