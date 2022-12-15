@@ -80,12 +80,9 @@ OPTIONS MainMenu::runMenu() {
 	console->ClearBackground();
 	isRunning = true;
 	thread mThread(menuThread, this);
-	//mciSendString(_T("open \"Sound/button.wav\" type mpegvideo alias button"), NULL, 0, NULL);
 	do {
 		key = toupper(_getch());
 		if (key == UP_ARROW || key == W) {
-			//mciSendStringA(LPCSTR("play button from 0"), NULL, 0, NULL);
-			//PlaySound(_T("Sound/button.wav"), NULL, SND_ASYNC | SND_FILENAME);
 			prevSelected = curSelected;
 			curSelected--;
 			if (curSelected == -1) {
@@ -93,8 +90,6 @@ OPTIONS MainMenu::runMenu() {
 			}
 		}
 		if (key == DOWN_ARROW || key == S) {
-			//mciSendStringA(LPCSTR("play button from 0"), NULL, 0, NULL);
-			//PlaySound(_T("Sound/button.wav"), NULL, SND_ASYNC | SND_FILENAME);
 			prevSelected = curSelected;
 			curSelected++;
 			if (curSelected == options.size()) {

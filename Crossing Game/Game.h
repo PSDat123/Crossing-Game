@@ -5,7 +5,6 @@
 #include "Macro.h"
 #include "Map.h"
 #include "MainMenu.h"
-#include "Setting.h"
 
 class Game {
 public:
@@ -15,21 +14,20 @@ public:
 	void startGame();
 	void saveGame();
 	void continueGame();
-	//void pauseGame();
-	//void resumeGame();
-
 	void exitGame();
 	void restartGame();
 	void printCredit(int, int);
+	void playSound(bool soundOn);
 
 	friend void gameThread(Game* g);
 	friend void gameOverThread(Game* g, bool* isRunning, int*, int*);
 	friend void pausedThread(Game* g, bool* isRunning, int*, int*);
 	friend void loadGameThread(Game* g, bool* isRunning, int*, int*, int*);
+	friend void settingThread(Game* g, bool* isRunning, int*, int*);
 private:
 	Console* console;
 	SHORT width, height;
-	bool isGameover = false, isPaused, isTransition = false;
+	bool isGameover = false, isPaused, isTransition = false, soundOn = true;
 	GAMESTATE state;
 	People character;
 	int level = 1, key = 0;
