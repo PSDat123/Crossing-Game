@@ -44,6 +44,14 @@ void People::setState(bool state) {
 	this->state = state;
 }
 
+void People::setName(char name[MAX_NAME_LENGTH]) {
+	strcpy_s(this->name, name);
+}
+void People::setLife(int life) {
+	this->life = life;
+}
+
+
 void People::move(DIRECTION dir) {
 	switch (dir){
 	case DIRECTION::UP:
@@ -107,6 +115,14 @@ int People::getHeight() {
 
 int People::getWidth() {
 	return this->width;
+}
+
+int People::getLife() {
+	return this->life;
+}
+
+char* People::getName() {
+	return this->name;
 }
 
 People::~People() {}

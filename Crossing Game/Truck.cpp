@@ -71,7 +71,7 @@ map<DIRECTION, vector<vector<wstring>>> Truck::spriteSheet = {
 			L" __________________ ",
 			L"│[_][_][_][_][_][_]│",
 			L"│o _          _  _ |",
-			L"╘═(O)════════(O)(O)╛\""
+			L"╘═(O)════════(O)(O)╛"
 		}
 	}
 }		 	 

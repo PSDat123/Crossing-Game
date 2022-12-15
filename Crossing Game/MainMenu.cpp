@@ -47,10 +47,6 @@ void menuThread(MainMenu* m) {
 
 	Lane lane(0, roadY, m->width, 5);
 	lane.drawLane(m->console);
-
-	auto t1 = chrono::system_clock::now();
-	auto t2 = t1;
-	
 	do {
 		if (m->curSelected != m->prevSelected) {
 			m->console->DrawString(L"  ", cx - offsetX + 3, optionY + m->prevSelected);
@@ -84,11 +80,11 @@ OPTIONS MainMenu::runMenu() {
 	console->ClearBackground();
 	isRunning = true;
 	thread mThread(menuThread, this);
-	mciSendString(_T("open \"Sound/button.wav\" type mpegvideo alias button"), NULL, 0, NULL);
+	//mciSendString(_T("open \"Sound/button.wav\" type mpegvideo alias button"), NULL, 0, NULL);
 	do {
 		key = toupper(_getch());
 		if (key == UP_ARROW || key == W) {
-			mciSendStringA(LPCSTR("play button from 0"), NULL, 0, NULL);
+			//mciSendStringA(LPCSTR("play button from 0"), NULL, 0, NULL);
 			//PlaySound(_T("Sound/button.wav"), NULL, SND_ASYNC | SND_FILENAME);
 			prevSelected = curSelected;
 			curSelected--;
@@ -97,7 +93,7 @@ OPTIONS MainMenu::runMenu() {
 			}
 		}
 		if (key == DOWN_ARROW || key == S) {
-			mciSendStringA(LPCSTR("play button from 0"), NULL, 0, NULL);
+			//mciSendStringA(LPCSTR("play button from 0"), NULL, 0, NULL);
 			//PlaySound(_T("Sound/button.wav"), NULL, SND_ASYNC | SND_FILENAME);
 			prevSelected = curSelected;
 			curSelected++;

@@ -124,9 +124,9 @@ void Map::drawOutline(Console* c) {
 	c->DrawHorizontalLine(L'═', 0, width - 1, 0);
 	c->DrawHorizontalLine(L'═', 0, width - 1, height - 1);
 
-	c->DrawVerticalLine(L'║', 0); // Left col
-	c->DrawVerticalLine(L'║', side_x); // Mid col
-	c->DrawVerticalLine(L'║', width - 1); //Right col
+	c->DrawVerticalLine(L'║', 0, 0, height - 1); // Left col
+	c->DrawVerticalLine(L'║', side_x, 0, height - 1); // Mid col
+	c->DrawVerticalLine(L'║', width - 1, 0, height - 1); //Right col
 
 	//Small title (Top panel)
 	m = width + side_x;
@@ -136,6 +136,8 @@ void Map::drawOutline(Console* c) {
 	c->DrawString(L"╔═══ PLAYER NAME ═══╗", (m - 21) / 2, 3);
 	c->DrawString(L"║                   ║", (m - 21) / 2, 4);
 	c->DrawString(L"╚═══════════════════╝", (m - 21) / 2, 5);
+	char* name = character->getName();
+	c->DrawString(wstring(name, name + strlen(name)), (m - strlen(name)) / 2 , 4);
 
 	vector<wstring> level = numToAsciiDigits(*cur_level);
 	m = (width + side_x - level_text[0].size() - level[0].size() - 1) / 2;

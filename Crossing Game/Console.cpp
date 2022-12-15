@@ -143,8 +143,8 @@ void Console::DrawHorizontalLine(wchar_t c, int start_x, int end_x, int y, short
 	}
 }
 
-void Console::DrawVerticalLine(wchar_t c, int x, short col) {
-	for (SHORT i = 0; i < bufferHeight; ++i) {
+void Console::DrawVerticalLine(wchar_t c, int x, int start_y, int end_y, short col) {
+	for (SHORT i = start_y; i <= end_y; ++i) {
 		buffer[i * bufferWidth + x].Char.UnicodeChar = c;
 		buffer[i * bufferWidth + x].Attributes = col;
 	}

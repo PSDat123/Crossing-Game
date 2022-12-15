@@ -150,6 +150,7 @@
     <ClCompile Include="MainMenu.cpp" />
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="People.cpp" />
+    <ClCompile Include="Setting.cpp" />
     <ClCompile Include="Truck.cpp" />
     <ClCompile Include="Vehicle.cpp" />
   </ItemGroup>
@@ -164,14 +165,17 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="People.h" />
+    <ClInclude Include="Setting.h" />
     <ClInclude Include="Truck.h" />
     <ClInclude Include="Vehicle.h" />
   </ItemGroup>
   <ItemGroup>
+    <Media Include="Sound\background_music.wav" />
     <Media Include="Sound\bird.wav" />
     <Media Include="Sound\button.wav" />
     <Media Include="Sound\car.wav" />
     <Media Include="Sound\dinosaur.wav" />
+    <Media Include="Sound\game_over.wav" />
     <Media Include="Sound\truck.wav" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -14,12 +14,9 @@ public:
 
 	void startGame();
 	void saveGame();
-
-	void loadGame();
-	void loadGameFile(string file);
-
-	void pauseGame();
-	void resumeGame();
+	void continueGame();
+	//void pauseGame();
+	//void resumeGame();
 
 	void exitGame();
 	void restartGame();
@@ -27,6 +24,8 @@ public:
 
 	friend void gameThread(Game* g);
 	friend void gameOverThread(Game* g, bool* isRunning, int*, int*);
+	friend void pausedThread(Game* g, bool* isRunning, int*, int*);
+	friend void loadGameThread(Game* g, bool* isRunning, int*, int*, int*);
 private:
 	Console* console;
 	SHORT width, height;

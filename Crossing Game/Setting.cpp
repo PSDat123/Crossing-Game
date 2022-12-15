@@ -23,6 +23,7 @@ void settingThread(Setting* s) {
 			s->console->DrawString(L"►", sX, sY);
 			s->prevSelected = s->curSelected;
 		}
+		s->console->UpdateScreen();
 	} while (s->isRunning);
 }
 
@@ -31,11 +32,11 @@ SETTING Setting::runSetting() {
 	this->console->ClearBackground();
 	this->isRunning = true;
 	thread t(settingThread, this);
-	mciSendString(_T("open \"Sound/button.wav\" type mpegvideo alias button"), NULL, 0, NULL);
+	//mciSendString(_T("open \"Sound/button.wav\" type mpegvideo alias button"), NULL, 0, NULL);
 	do {
 		key = toupper(_getch());
 		if (key == UP_ARROW || key == W) {
-			mciSendStringA(LPCSTR("play button from 1000"), NULL, 0, NULL);
+			//mciSendStringA(LPCSTR("play button from 1000"), NULL, 0, NULL);
 			prevSelected = curSelected;
 			curSelected--;
 			if (curSelected == -1) {
@@ -43,7 +44,7 @@ SETTING Setting::runSetting() {
 			}
 		}
 		if (key == DOWN_ARROW || key == S) {
-			mciSendStringA(LPCSTR("play button from 1000"), NULL, 0, NULL);
+			//mciSendStringA(LPCSTR("play button from 1000"), NULL, 0, NULL);
 			prevSelected = curSelected;
 			curSelected++;
 			if (curSelected == options.size()) {

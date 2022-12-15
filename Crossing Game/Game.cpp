@@ -14,6 +14,26 @@ void Game::restartGame() {
 	score = 0;
 }
 
+void Game::saveGame() {
+	string filename = string(this->character.getName()) + ".sav";
+	string dir = "./Save";
+	CreateDirectory(_T("./Save"), NULL);
+	ofstream saveFile(dir + "/" + filename, ios::binary);
+	if (saveFile.is_open()) {
+		time_t s = time(nullptr);
+		saveFile.write((char*)&s, sizeof(time_t));
+		saveFile.write(character.getName(), MAX_NAME_LENGTH);
+		int life = character.getLife();
+		saveFile.write((char*)&life, sizeof(life));
+		saveFile.write((char*)&level, sizeof(level));
+		saveFile.write((char*)&score, sizeof(score));
+		saveFile.write((char*)&highScore, sizeof(highScore));
+		
+	}
+
+	saveFile.close();
+}
+
 void gameOverThread(Game* g, bool* isRunning, int* curSelected, int* prevSelected) {
 	g->restartGame();
 	int x = (g->width / 2) - 15, y = (g->height / 2) - 5;
@@ -44,6 +64,36 @@ void gameOverThread(Game* g, bool* isRunning, int* curSelected, int* prevSelecte
 	} while (*isRunning);
 }
 
+void pausedThread(Game* g, bool* isRunning, int* curSelected, int* prevSelected) {
+	int x = (g->width / 2) - 15, y = (g->height / 2) - 5;
+	int optionY = y + 4;
+	g->console->DrawString(L"████████████████████████████╗", x, y++);
+	g->console->DrawString(L"█                          █║", x, y++);
+	g->console->DrawString(L"█          PAUSED          █║", x, y++);
+	g->console->DrawString(L"█                          █║", x, y++);
+	g->console->DrawString(L"█        Resume            █║", x, y++);
+	g->console->DrawString(L"█        Restart           █║", x, y++);
+	g->console->DrawString(L"█        Return to menu    █║", x, y++);
+	g->console->DrawString(L"█        Save game         █║", x, y++);
+	g->console->DrawString(L"█        Exit game         █║", x, y++);
+	g->console->DrawString(L"█                          █║", x, y++);
+	g->console->DrawString(L"█                          █║", x, y++);
+	g->console->DrawString(L"████████████████████████████║", x, y++);
+	g->console->DrawString(L"╚═══════════════════════════╝", x, y++);
+	g->console->DrawString(L"► ", x + 5, optionY + *curSelected);
+	g->console->UpdateScreen();
+
+	do {
+		if (*curSelected != *prevSelected) {
+			g->console->DrawString(L"  ", x + 5, optionY + *prevSelected);
+			g->console->DrawString(L"► ", x + 5, optionY + *curSelected);
+			*prevSelected = *curSelected;
+		}
+		g->console->UpdateScreen();
+
+		this_thread::sleep_for(chrono::milliseconds(INTERVAL));
+	} while (*isRunning);
+}
 
 void gameThread(Game* g) {
 	srand(static_cast<unsigned int>(time(NULL)));
@@ -55,6 +105,63 @@ startGame:
 	do{
 		map.updateMain(g->console);
 		map.drawMain(g->console);
+
+		if (g->isPaused) {
+			bool isRunning = true;
+			int  prevSelected = 0, curSelected = 0;
+			vector<OPTIONS> options = { OPTIONS::RESUME, OPTIONS::RESTART, OPTIONS::RETURN, OPTIONS::SAVE_GAME, OPTIONS::EXIT };
+			thread t(pausedThread, g, &isRunning, &curSelected, &prevSelected);
+			g->key = 0;
+			do {
+				if (g->key == UP_ARROW || g->key == W) {
+					prevSelected = curSelected;
+					curSelected--;
+					if (curSelected == -1) {
+						curSelected = options.size() - 1;
+					}
+					g->key = 0;
+				}
+				if (g->key == DOWN_ARROW || g->key == S) {
+					prevSelected = curSelected;
+					curSelected++;
+					if (curSelected == options.size()) {
+						curSelected = 0;
+					}
+					g->key = 0;
+				}
+				if (g->key == ESC) {
+					prevSelected = curSelected;
+					curSelected = options.size() - 1;
+					break;
+				}
+				this_thread::sleep_for(chrono::milliseconds(INTERVAL));
+			} while (g->key != ENTER_KEY);
+			isRunning = false;
+			t.join();
+			g->console->ClearBackground();
+			g->console->UpdateScreen();
+			g->isPaused = false;
+
+			switch (options[curSelected]) {
+			case OPTIONS::RESTART:
+				goto startGame;
+				break;
+			case OPTIONS::SAVE_GAME:
+				g->saveGame();
+			case OPTIONS::RESUME:
+				map.drawOutline(g->console);
+				map.drawMain(g->console);
+				break;
+			case OPTIONS::RETURN:
+				g->state = GAMESTATE::MENUING;
+				return;
+			case OPTIONS::EXIT:
+				g->state = GAMESTATE::EXITED;
+				return;
+			}
+		}
+
+
 		if (!g->character.isDead()) {
 			g->character.draw(g->console);
 			g->character.update();
@@ -64,8 +171,9 @@ startGame:
 			g->isGameover = true;
 			bool isRunning = true;
 			int  prevSelected = 0, curSelected = 0;
-			vector<string> options = { "Restart", "Return", "Exit"};
+			vector<OPTIONS> options = { OPTIONS::RESTART, OPTIONS::RETURN, OPTIONS::EXIT };
 			thread t(gameOverThread, g, &isRunning, &curSelected, &prevSelected);
+			g->key = 0;
 			do {
 				if (g->key == UP_ARROW || g->key == W) {
 					prevSelected = curSelected;
@@ -83,6 +191,11 @@ startGame:
 					}
 					g->key = 0;
 				}
+				if (g->key == ESC) {
+					prevSelected = curSelected;
+					curSelected = options.size() - 1;
+					break;
+				}
 				this_thread::sleep_for(chrono::milliseconds(INTERVAL));
 			} while (g->key != ENTER_KEY);
 			isRunning = false;
@@ -91,10 +204,10 @@ startGame:
 			g->console->UpdateScreen();
 			g->isGameover = false;
 
-			if (options[curSelected] == "Restart") {
+			if (options[curSelected] == OPTIONS::RESTART) {
 				goto startGame;
 			}
-			else if(options[curSelected] == "Return") {
+			else if(options[curSelected] == OPTIONS::RETURN) {
 				g->state = GAMESTATE::MENUING;
 				return;
 			}
@@ -111,6 +224,7 @@ startGame:
 
 		if (map.checkFinished(&g->character)) {
 			map.saveScore();
+			if (g->score > g->highScore) g->highScore = g->score;
 			g->level += 1;
 			map.drawLevelText(g->console);
 			g->character.addLife(1);
@@ -133,10 +247,149 @@ startGame:
 	} while (g->state == GAMESTATE::RUNNING);
 }
 
-void loadGameThread(Game* g) {
-
+vector<wstring> getSaveFiles(wstring folder){
+	vector<wstring> names;
+	wstring search_path = folder + L"/*.sav";
+	WIN32_FIND_DATA fd;
+	HANDLE hFind = ::FindFirstFile(search_path.c_str(), &fd);
+	if (hFind != INVALID_HANDLE_VALUE) {
+		do {
+			// read all (real) files in current folder
+			// , delete '!' read other 2 default folder . and ..
+			if (!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
+				names.push_back(fd.cFileName);
+			}
+		} while (::FindNextFile(hFind, &fd));
+		::FindClose(hFind);
+	}
+	return names;
 }
 
+void loadGameThread(Game* g, bool* isRunning, int* curSelected, int* prevSelected, int* numSaves) {
+	wstring path = L"./Save";
+	vector<wstring> files = getSaveFiles(path);
+	struct Save {
+		time_t timestamp;
+		char name[MAX_NAME_LENGTH];
+		int life;
+		int level;
+		int score;
+		int highscore;
+	};
+
+	Save curSave;
+
+	g->console->ClearBackground();
+	for (int i = 0; i < files.size(); ++i) {
+		ifstream fin(path + L"/" + files[i], ios::binary);
+		if (fin.is_open()) {
+			fin.read((char*)&curSave.timestamp, sizeof(time_t));
+			fin.read((char*)&curSave.name, MAX_NAME_LENGTH);
+			fin.read((char*)&curSave.life, sizeof(int));
+			fin.read((char*)&curSave.level, sizeof(int));
+			fin.read((char*)&curSave.score, sizeof(int));
+			fin.read((char*)&curSave.highscore, sizeof(int));
+
+			*numSaves = *numSaves + 1;
+			struct tm dt;
+			char t[30];
+			localtime_s(&dt, &curSave.timestamp);
+			strftime(t, sizeof(t), "%H:%M:%S %d/%m/%y", &dt);
+			wstring timestamp = wstring(t, t + strlen(t));
+			int y = 7 * i + 5, x = g->width / 2 - 32, namelength = strlen(curSave.name);
+			g->console->DrawHorizontalLine(L'█', x, g->width - x, y);
+			g->console->DrawChar(L'╗', g->width - x + 1, y);
+			g->console->DrawVerticalLine(L'║', g->width - x + 1, y + 1, y + 6);
+			g->console->DrawChar(L'╝', g->width - x + 1, y + 6);
+			g->console->DrawHorizontalLine(L'═', x + 1, g->width - x, y + 6);
+			g->console->DrawChar(L'╚', x, y + 6);
+			g->console->DrawVerticalLine(L'█', x, y, y + 5);
+			g->console->DrawVerticalLine(L'█', g->width - x, y, y + 5);
+			g->console->DrawHorizontalLine(L'█', x, g->width - x, y + 5);
+
+			g->console->DrawString(wstring(curSave.name, curSave.name + namelength), x + 5, y + 2);
+			g->console->DrawString(L"Life: " + to_wstring(curSave.life), x + namelength + 14, y + 2);
+			g->console->DrawString(L"Level: " + to_wstring(curSave.level), x + namelength + 34, y + 2);
+			g->console->DrawString(L"Score: " + to_wstring(curSave.score), x + 5, y + 3);
+			g->console->DrawString(L"High Score: " + to_wstring(curSave.highscore), x + namelength + 14, y + 3);
+			g->console->DrawString(timestamp, x + namelength + 34, y + 3);
+		}
+		fin.close();	
+	}
+	g->console->UpdateScreen();
+	int x = g->width / 2 - 35, y = 7;
+	g->console->DrawString(L"► ", x, y  + *curSelected * 7);
+	do {
+		if (*curSelected != *prevSelected) {
+			g->console->DrawString(L"  ", x, y + *prevSelected * 7);
+			g->console->DrawString(L"► ", x, y + *curSelected * 7);
+			*prevSelected = *curSelected;
+		}
+		g->console->UpdateScreen();
+		this_thread::sleep_for(chrono::milliseconds(INTERVAL));
+	} while (*isRunning);
+	
+	wstring filename = path + L'/' + files[*curSelected];
+	ifstream fin(filename, ios::binary);
+	if (fin.is_open()) {
+		fin.read((char*)&curSave.timestamp, sizeof(time_t));
+		fin.read((char*)&curSave.name, MAX_NAME_LENGTH);
+		fin.read((char*)&curSave.life, sizeof(int));
+		fin.read((char*)&curSave.level, sizeof(int));
+		fin.read((char*)&curSave.score, sizeof(int));
+		fin.read((char*)&curSave.highscore, sizeof(int));
+	}
+	fin.close();
+	g->character.setName(curSave.name);
+	g->character.setLife(curSave.life);
+	g->level = curSave.level;
+	g->score = curSave.score;
+	g->highScore = curSave.highscore;
+}
+
+
+void Game::continueGame() {
+	wstring path = L"./Save";
+	vector<wstring> files = getSaveFiles(path);
+	struct Save {
+		time_t timestamp;
+		char name[MAX_NAME_LENGTH];
+		int life;
+		int level;
+		int score;
+		int highscore;
+	};
+	Save curSave;
+	int maxSave = 0;
+	long long maxTime = 0;
+	for (int i = 0; i < files.size(); ++i) {
+		ifstream fin(path + L"/" + files[i], ios::binary);
+		if (fin.is_open()) {
+			fin.read((char*)&curSave.timestamp, sizeof(time_t));
+			if (curSave.timestamp > maxTime) {
+				maxTime = curSave.timestamp;
+				maxSave = i;
+			}
+		}
+		fin.close();
+	}
+	wstring filename = path + L'/' + files[maxSave];
+	ifstream fin(filename, ios::binary);
+	if (fin.is_open()) {
+		fin.read((char*)&curSave.timestamp, sizeof(time_t));
+		fin.read((char*)&curSave.name, MAX_NAME_LENGTH);
+		fin.read((char*)&curSave.life, sizeof(int));
+		fin.read((char*)&curSave.level, sizeof(int));
+		fin.read((char*)&curSave.score, sizeof(int));
+		fin.read((char*)&curSave.highscore, sizeof(int));
+	}
+	fin.close();
+	character.setName(curSave.name);
+	character.setLife(curSave.life);
+	level = curSave.level;
+	score = curSave.score;
+	highScore = curSave.highscore;
+}
 
 void Game::exitGame() {
 	console->ClearBackground();
@@ -162,22 +415,47 @@ void Game::printCredit(int x, int y) {
 
 void Game::startGame() {
 	MainMenu m(console);
-	mciSendString(_T("open \"Sound/background_music.wav \" type mpegvideo alias bgm"), NULL, 0, NULL);
-	mciSendStringA(LPCSTR("play bgm from 0"), NULL, 0, NULL);
+	//mciSendString(_T("open \"Sound/background_music.wav \" type mpegvideo alias bgm"), NULL, 0, NULL);
+	//mciSendStringA(LPCSTR("play bgm from 0"), NULL, 0, NULL);
 menu:
+	state = GAMESTATE::MENUING;
 	OPTIONS opt = m.runMenu();
 	switch (opt) {
 	case OPTIONS::CONTINUE: {
+		continueGame();
 		break;
 	}
 	case OPTIONS::NEW_GAME: {
 		break;
 	}
 	case OPTIONS::LOAD_GAME: {
-		state = GAMESTATE::MENUING;
+		bool isRunning = true;
+		int curSelected = 0;
+		int prevSelected = 0;
+		int numSaves = 0;
+		thread loadThread(loadGameThread, this, &isRunning, &curSelected, &prevSelected, &numSaves);
+		int key;
 		do {
-
-		} while (state == GAMESTATE::MENUING);
+			key = toupper(_getch());
+			if (key == UP_ARROW || key == W) {
+				prevSelected = curSelected;
+				curSelected--;
+				if (curSelected == -1) {
+					curSelected = numSaves - 1;
+				}
+			}
+			if (key == DOWN_ARROW || key == S) {
+				prevSelected = curSelected;
+				curSelected++;
+				if (curSelected == numSaves) {
+					curSelected = 0;
+				}
+				key = 0;
+			}
+			this_thread::sleep_for(chrono::milliseconds(INTERVAL));
+		} while (key != ENTER_KEY);
+		isRunning = false;
+		loadThread.join();
 		break;
 	}
 	case OPTIONS::SETTINGS: {
@@ -185,10 +463,10 @@ menu:
 		SETTING set = s.runSetting();
 		switch (set) {
 		case SETTING::SOUND_ON:
-			mciSendStringA(LPCSTR("play bgm"), NULL, 0, NULL);
+			//mciSendStringA(LPCSTR("play bgm"), NULL, 0, NULL);
 			break;
 		case SETTING::SOUND_OFF:
-			mciSendString(_T("pause bgm"), NULL, 0, NULL);
+			//mciSendString(_T("pause bgm"), NULL, 0, NULL);
 			break;
 		}
 
@@ -225,25 +503,24 @@ menu:
 	while (state == GAMESTATE::RUNNING) {
 		key = toupper(_getch());
 		if (isTransition) continue;
-		if (key == W) {
-			if(!isGameover) 
+		if (!isGameover && !isPaused) {
+			if (key == W) {
 				this->character.move(DIRECTION::UP);
-		}
-		else if (key == S) {
-			if (!isGameover)
+			}
+			else if (key == S) {
 				this->character.move(DIRECTION::DOWN);
-		}
-		else if (key == A) {
-			if (!isGameover)
+			}
+			else if (key == A) {
 				this->character.move(DIRECTION::LEFT);
-		}
-		else if (key == D) {
-			
+			}
+			else if (key == D) {
 				this->character.move(DIRECTION::RIGHT);
+			}
 		}
 		if (key == ESC) {
-			if (!isGameover)
-				exitGame();
+			if (!isPaused) {
+				isPaused = true;
+			}
 		}
 		this_thread::sleep_for(chrono::milliseconds(100));
 	}

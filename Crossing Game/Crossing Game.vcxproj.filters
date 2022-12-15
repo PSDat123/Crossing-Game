@@ -51,6 +51,9 @@
     <ClCompile Include="Bike.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Setting.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Console.h">
@@ -89,6 +92,9 @@
     <ClInclude Include="Bike.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Setting.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Media Include="Sound\bird.wav">
@@ -104,6 +110,12 @@
       <Filter>Resource Files</Filter>
     </Media>
     <Media Include="Sound\truck.wav">
+      <Filter>Resource Files</Filter>
+    </Media>
+    <Media Include="Sound\background_music.wav">
+      <Filter>Resource Files</Filter>
+    </Media>
+    <Media Include="Sound\game_over.wav">
       <Filter>Resource Files</Filter>
     </Media>
   </ItemGroup>

@@ -7,6 +7,7 @@
 #include <ctime>
 #include <string>
 #include <tchar.h>
+#include <fstream>
 #include <vector>
 #include <chrono>
 #include <thread>
@@ -14,7 +15,6 @@
 #include <map>
 
 using namespace std;
-
 
 class Console {
 public:
@@ -52,7 +52,7 @@ public:
 
 	void DrawHorizontalLine(wchar_t c, int start_x, int end_x, int y, short col = 240);
 
-	void DrawVerticalLine(wchar_t c, int x, short col = 240);
+	void DrawVerticalLine(wchar_t c, int x, int start_y, int end_y, short col = 240);
 
 	void ShiftUp(SMALL_RECT rect);
 
