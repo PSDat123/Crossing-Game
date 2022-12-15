@@ -140,8 +140,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Animal.cpp" />
     <ClCompile Include="Bike.cpp" />
+    <ClCompile Include="Bird.cpp" />
     <ClCompile Include="Car.cpp" />
     <ClCompile Include="Console.cpp" />
     <ClCompile Include="Game.cpp" />
@@ -150,13 +150,12 @@
     <ClCompile Include="MainMenu.cpp" />
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="People.cpp" />
-    <ClCompile Include="Setting.cpp" />
     <ClCompile Include="Truck.cpp" />
     <ClCompile Include="Vehicle.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Animal.h" />
     <ClInclude Include="Bike.h" />
+    <ClInclude Include="Bird.h" />
     <ClInclude Include="Car.h" />
     <ClInclude Include="Console.h" />
     <ClInclude Include="Lane.h" />
@@ -165,7 +164,6 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="People.h" />
-    <ClInclude Include="Setting.h" />
     <ClInclude Include="Truck.h" />
     <ClInclude Include="Vehicle.h" />
   </ItemGroup>

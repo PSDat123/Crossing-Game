@@ -491,6 +491,7 @@ menu:
 		int key;
 		do {
 			key = toupper(_getch());
+			if(key == 224) key = toupper(_getch());
 			if (key == UP_ARROW || key == W) {
 				prevSelected = curSelected;
 				curSelected--;
@@ -528,6 +529,7 @@ menu:
 		int key;
 		do {
 			key = toupper(_getch());
+			if (key == 224) key = toupper(_getch());
 			if (key == UP_ARROW || key == W) {
 				prevSelected = curSelected;
 				this->soundOn = true;
@@ -581,9 +583,10 @@ menu:
 	thread t1(gameThread, this);
 	while (state == GAMESTATE::RUNNING) {
 		key = toupper(_getch());
+		if (key == 224) key = toupper(_getch());
 		if (isTransition) continue;
 		if (!isGameover && !isPaused) {
-			if (key == UP_ARROW || key == W) {
+			if (key == UP_ARROW ||key == W) {
 				this->character.move(DIRECTION::UP);
 			}
 			else if (key == DOWN_ARROW || key == S) {

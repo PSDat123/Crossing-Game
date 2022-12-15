@@ -36,9 +36,6 @@
     <ClCompile Include="MainMenu.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Animal.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Car.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -51,7 +48,7 @@
     <ClCompile Include="Bike.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Setting.cpp">
+    <ClCompile Include="Bird.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -77,9 +74,6 @@
     <ClInclude Include="Macro.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Animal.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Car.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -92,7 +86,7 @@
     <ClInclude Include="Bike.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Setting.h">
+    <ClInclude Include="Bird.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

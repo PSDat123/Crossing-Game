@@ -82,6 +82,7 @@ OPTIONS MainMenu::runMenu() {
 	thread mThread(menuThread, this);
 	do {
 		key = toupper(_getch());
+		if (key == 224) key = toupper(_getch());
 		if (key == UP_ARROW || key == W) {
 			prevSelected = curSelected;
 			curSelected--;
