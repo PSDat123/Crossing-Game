@@ -278,9 +278,13 @@ void loadGameThread(Game* g, bool* isRunning, int* curSelected, int* prevSelecte
 	};
 
 	Save curSave;
+	int n;
+	if (files.size() > 6) n = 6;
+	else n = files.size();
 
 	g->console->ClearBackground();
-	for (int i = 0; i < files.size(); ++i) {
+	
+	for (int i = 0; i < n; ++i) {
 		ifstream fin(path + L"/" + files[i], ios::binary);
 		if (fin.is_open()) {
 			fin.read((char*)&curSave.timestamp, sizeof(time_t));
@@ -328,7 +332,7 @@ void loadGameThread(Game* g, bool* isRunning, int* curSelected, int* prevSelecte
 		g->console->UpdateScreen();
 		this_thread::sleep_for(chrono::milliseconds(INTERVAL));
 	} while (*isRunning);
-	
+	if (g->state != GAMESTATE::LOADING) return;
 	wstring filename = path + L'/' + files[*curSelected];
 	ifstream fin(filename, ios::binary);
 	if (fin.is_open()) {
@@ -430,6 +434,7 @@ menu:
 	}
 	case OPTIONS::LOAD_GAME: {
 		bool isRunning = true;
+		state = GAMESTATE::LOADING;
 		int curSelected = 0;
 		int prevSelected = 0;
 		int numSaves = 0;
@@ -452,10 +457,15 @@ menu:
 				}
 				key = 0;
 			}
+			if (key == ESC) {
+				state = GAMESTATE::MENUING;
+				break;
+			}
 			this_thread::sleep_for(chrono::milliseconds(INTERVAL));
 		} while (key != ENTER_KEY);
 		isRunning = false;
 		loadThread.join();
+		if (state == GAMESTATE::MENUING) goto menu;
 		break;
 	}
 	case OPTIONS::SETTINGS: {
