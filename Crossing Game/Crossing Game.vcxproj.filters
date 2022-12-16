@@ -112,5 +112,6 @@
     <Media Include="Sound\game_over.wav">
       <Filter>Resource Files</Filter>
     </Media>
+    <Media Include="Sound\death.mp3" />
   </ItemGroup>
 </Project>

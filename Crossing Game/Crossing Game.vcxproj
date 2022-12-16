@@ -172,6 +172,7 @@
     <Media Include="Sound\bird.wav" />
     <Media Include="Sound\button.wav" />
     <Media Include="Sound\car.wav" />
+    <Media Include="Sound\death.mp3" />
     <Media Include="Sound\dinosaur.wav" />
     <Media Include="Sound\game_over.wav" />
     <Media Include="Sound\truck.wav" />
