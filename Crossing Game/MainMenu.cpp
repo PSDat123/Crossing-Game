@@ -53,10 +53,14 @@ void menuThread(MainMenu* m) {
 			m->console->DrawString(L"► ", cx - offsetX + 3, optionY + m->curSelected);
 			m->prevSelected = m->curSelected;
 		}
+		
+
 		lane.updateVehicles(m->console);
 		lane.drawVehicles(m->console);
 		m->console->UpdateScreen();
+		//Sleep(INTERVAL);
 		this_thread::sleep_for(chrono::milliseconds(INTERVAL));
+
 	} while (m->isRunning);
 }
 

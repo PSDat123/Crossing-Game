@@ -15,6 +15,7 @@ public:
 	void setDirection(DIRECTION);
 	void setMinDist(SHORT);
 	void setSpeed(float);
+	void increaseSpeed(float);
 	void move(DIRECTION);
 	
 	SHORT getX();

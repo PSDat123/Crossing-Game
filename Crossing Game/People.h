@@ -25,6 +25,7 @@ public:
 	void move(DIRECTION);
 	void update();
 	void draw(Console*);
+	void erase(Console*);
 	void removeLife(int);
 	void addLife(int);
 	//bool isImpact(Vehicle*);
@@ -34,7 +35,7 @@ public:
 private:
 	int x, y, prev_x, prev_y, speed;
 	int height, width, life=3;
-	char name[MAX_NAME_LENGTH] = "Dat2Phit";
+	char name[MAX_NAME_LENGTH] = "Guest";
 	SMALL_RECT bounds;
 	bool state; // dead/alive
 	//bool checkFrame(int, int);

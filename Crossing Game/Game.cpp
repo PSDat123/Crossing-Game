@@ -94,21 +94,28 @@ void pausedThread(Game* g, bool* isRunning, int* curSelected, int* prevSelected)
 }
 
 void settingThread(Game* g, bool* isRunning, int* curSelected, int* prevSelected) {
-	SHORT sX = g->width / 2, sY = g->height / 2;
-	g->console->DrawString(L"Background music:    On", sX - 22, sY);
-	g->console->DrawString(L"                     Off", sX - 22, sY + 1);
-	g->console->DrawString(L"Press Enter to select and go back to menu", sX - 22, sY + 2);
-	g->console->DrawString(L"►", sX - 3, sY + *curSelected);
+	SHORT sX = g->width / 2, sY = g->height / 2 - 3;
+	g->console->DrawString(L"█████████████████████████████████████████████████╗", sX - 25, sY++);
+	g->console->DrawString(L"█                                               █║", sX - 25, sY++);
+	g->console->DrawString(L"█   Background music:    On                     █║", sX - 25, sY++);
+	g->console->DrawString(L"█                        Off                    █║", sX - 25, sY++);
+	g->console->DrawString(L"█   Press Enter to select and go back to menu   █║", sX - 25, sY++);
+	g->console->DrawString(L"█                                               █║", sX - 25, sY++);
+	g->console->DrawString(L"█████████████████████████████████████████████████║", sX - 25, sY++);
+	g->console->DrawString(L"╚════════════════════════════════════════════════╝", sX - 25, sY++);
+	g->console->DrawString(L"►", sX - 2, sY + *curSelected - 6);							
 	do {
 		if (*curSelected != *prevSelected) {
-			g->console->DrawString(L" ", sX - 3, sY + *prevSelected);
-			g->console->DrawString(L"►", sX - 3, sY + *curSelected);
+			g->console->DrawString(L" ", sX - 2, sY + *prevSelected - 6);
+			g->console->DrawString(L"►", sX - 2, sY + *curSelected - 6);
 			*prevSelected = *curSelected;
 		}
 		g->console->UpdateScreen();
 		this_thread::sleep_for(chrono::milliseconds(INTERVAL));
 	} while (*isRunning);
-	if (g->state != GAMESTATE::SETTING) return;
+	if (*curSelected == 0) g->soundOn = true;
+	else g->soundOn = false;
+	/*if (g->state != GAMESTATE::SETTING) return;*/
 }
 
 void gameThread(Game* g) {
@@ -182,6 +189,7 @@ startGame:
 		}
 		else {
 			// Game over
+			mciSendString(L"play Sound/game_over.wav from 0 to 1000", NULL, 0, NULL);
 			g->isGameover = true;
 			bool isRunning = true;
 			int  prevSelected = 0, curSelected = 0;
@@ -252,7 +260,11 @@ startGame:
 
 		if (map.checkCollision(&g->character)) {
 			g->character.removeLife(1);
+			map.drawLiveText(g->console);
 			//Play death animation
+			mciSendString(L"play Sound/death.mp3 from 300 to 600", NULL, 0, NULL);
+			g->character.erase(g->console);
+
 			map.resetCharacter();
 		}
 
@@ -292,13 +304,11 @@ void loadGameThread(Game* g, bool* isRunning, int* curSelected, int* prevSelecte
 	};
 
 	Save curSave;
-	int n;
-	if (files.size() > 6) n = 6;
-	else n = files.size();
-
+	int maxfile = (g->height - 5) / 7;
+	if (files.size() <= maxfile) maxfile = files.size();
 	g->console->ClearBackground();
 	
-	for (int i = 0; i < n; ++i) {
+	for (int i = 0; i < maxfile; ++i) {
 		ifstream fin(path + L"/" + files[i], ios::binary);
 		if (fin.is_open()) {
 			fin.read((char*)&curSave.timestamp, sizeof(time_t));
@@ -419,7 +429,7 @@ inputname:
 	console->DrawHorizontalLine(L'█', x - 3, x + 38, y + 2);
 	console->DrawVerticalLine(L'█', x + 38, y - 2, y + 2);
 	console->UpdateScreen();
-	
+	restartGame();
 	string tempName;
 	while (getline(cin, tempName)) {
 		if (!tempName.size()) continue;
@@ -458,18 +468,22 @@ void Game::printCredit(int x, int y) {
 
 void Game::playSound(bool soundOn) {
 	if (!soundOn) {
-		mciSendStringA(LPCSTR("close bgm"), NULL, 0, NULL);
+		mciSendStringA(LPCSTR("pause bgm"), NULL, 0, NULL);
 		return;
 	}
-	mciSendString(_T("open \"Sound/background_music.wav \" type mpegvideo alias bgm"), NULL, 0, NULL);
+	mciSendString(L"open \"Sound/background_music.wav \" type mpegvideo alias bgm", NULL, 0, NULL);
 	mciSendStringA(LPCSTR("play bgm repeat"), NULL, 0, NULL);
-	mciSendString(_T("setaudio bgm volume to 100"), NULL, 0, NULL);
+	mciSendString(L"setaudio bgm volume to 100", NULL, 0, NULL);
 }
+
+//void soundThread(Game* g) {
+//	playSound()
+//}
 
 void Game::startGame() {
 	MainMenu m(console);
 menu:
-	//playSound(this->soundOn);
+	playSound(this->soundOn);
 	state = GAMESTATE::MENUING;
 	OPTIONS opt = m.runMenu();
 	switch (opt) {
@@ -522,7 +536,6 @@ menu:
 		console->ClearBackground();
 		int curSelected = 0;
 		int prevSelected = 0;
-		int choice = 0;
 		bool isRunning = true;
 		this->state = GAMESTATE::SETTING;
 		thread set(settingThread, this, &isRunning, &curSelected, &prevSelected);
@@ -532,7 +545,6 @@ menu:
 			if (key == 224) key = toupper(_getch());
 			if (key == UP_ARROW || key == W) {
 				prevSelected = curSelected;
-				this->soundOn = true;
 				curSelected--;
 				if (curSelected == -1) {
 					curSelected = 1;
@@ -540,7 +552,6 @@ menu:
 			}
 			if (key == DOWN_ARROW || key == S) {
 				prevSelected = curSelected;
-				this->soundOn = false;
 				curSelected++;
 				if (curSelected == 2) {
 					curSelected = 0;

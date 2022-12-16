@@ -28,6 +28,7 @@ public:
 	friend void pausedThread(Game* g, bool* isRunning, int*, int*);
 	friend void loadGameThread(Game* g, bool* isRunning, int*, int*, int*);
 	friend void settingThread(Game* g, bool* isRunning, int*, int*);
+	//friend void soundThread(Game* g)
 private:
 	Console* console;
 	SHORT width, height;

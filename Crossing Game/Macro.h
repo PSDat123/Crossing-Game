@@ -1,5 +1,5 @@
 ﻿#pragma once
-#define INTERVAL 17
+#define INTERVAL 30
 #define MAX_NAME_LENGTH 15
 enum KEY {
 	ENTER_KEY = 13,

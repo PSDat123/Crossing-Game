@@ -14,7 +14,10 @@ Map::Map(int w, int h, int num_lane, People* character, int* level, int* score) 
 		lanes.push_back(Lane(1, 4 + i * 6, side_x - 1, 5));
 		lanes.back().setDirection((i & 1 ? DIRECTION::LEFT : DIRECTION::RIGHT));
 		lanes.back().setMinDist(1 + (60 / (*cur_level + 1)));
-		lanes.back().setSpeed(0.2 + 0.1 * *cur_level);
+		lanes.back().setSpeed(0.3);
+		for (int j = 1; j <= *level; ++j) {
+			lanes.back().increaseSpeed(1.0f / (3.0f * (j + 1)));
+		}
 		visited.push_back(false);
 	}
 }
@@ -94,11 +97,11 @@ vector<wstring> Map::score_text = {
 };
 
 vector<wstring> Map::level_text = {
-		L"╔    ╔═══╗╔   ╗╔═══╗╔       ",
-		L"║    ║    ║   ║║    ║      □",
-		L"║    ╠═══ ║   ║╠═══ ║       ",
-		L"║    ║    ╚╗ ╔╝║    ║      □",
-		L"╚═══╝╚═══╝ ╚═╝ ╚═══╝╚═══╝   "
+		L"╔    ╔═══╗╔   ╗╔═══╗╔    ",
+		L"║    ║    ║   ║║    ║    ",
+		L"║    ╠═══ ║   ║╠═══ ║    ",
+		L"║    ║    ╚╗ ╔╝║    ║    ",
+		L"╚═══╝╚═══╝ ╚═╝ ╚═══╝╚═══╝"
 	};
 
 vector<wstring> numToAsciiDigits(int n) {
@@ -119,7 +122,7 @@ void Map::drawOutline(Console* c) {
 	vector<wstring> car = Car::spriteSheet[DIRECTION::RIGHT][1];
 
 	
-	int controlY = 31, m;
+	int controlY = height - 8, m;
 	//Top and bottom line
 	c->DrawHorizontalLine(L'═', 0, width - 1, 0);
 	c->DrawHorizontalLine(L'═', 0, width - 1, height - 1);
@@ -137,37 +140,41 @@ void Map::drawOutline(Console* c) {
 	c->DrawString(L"║                   ║", (m - 21) / 2, 4);
 	c->DrawString(L"╚═══════════════════╝", (m - 21) / 2, 5);
 	char* name = character->getName();
+	wstring tmp = L"LIVE: " + to_wstring(character->getLife()) + L" ♥";
 	c->DrawString(wstring(name, name + strlen(name)), (m - strlen(name)) / 2 , 4);
+	c->DrawString(tmp, (m - tmp.size()) / 2, 6);
+
 
 	vector<wstring> level = numToAsciiDigits(*cur_level);
-	m = (width + side_x - level_text[0].size() - level[0].size() - 1) / 2;
+	m = (width + side_x - level_text[0].size() + 2) / 2;
 	for (size_t i = 0; i < level_text.size(); ++i) {
-		c->DrawString(level_text[i], m, i + 10);
+		c->DrawString(level_text[i], m, i + 8);
 	}
+	m = (width + side_x - level[0].size()) / 2;
 	for (size_t i = 0; i < level.size() ;++i) {
-		c->DrawString(level[i], m + level_text[0].size() + 1, i + 10);
+		c->DrawString(level[i], m, i + 14);
 	}
 	//Score box
-	c->DrawHorizontalLine(L'═', side_x + 1, width - 2, 15);
-	c->DrawChar(L'╠', side_x, 15);
-	c->DrawChar(L'╣', width - 1, 15);
+	c->DrawHorizontalLine(L'═', side_x + 1, width - 2, height - 23);
+	c->DrawChar(L'╠', side_x, height - 23);
+	c->DrawChar(L'╣', width - 1, height - 23);
 
 	
 	//Score panel (Middle panel)
 	vector<wstring> score = numToAsciiDigits(temp_score);
 	m = (width + side_x - score_text[0].size()) / 2;
 	for (size_t i = 0; i < score_text.size(); ++i) {
-		c->DrawString(score_text[i], m, i + 17);
+		c->DrawString(score_text[i], m, i + 22);
 	}
 	m = (width + side_x - score[0].size()) / 2;
 	for (size_t i = 0; i < score.size(); ++i) {
-		c->DrawString(score[i], m, i + 23);
+		c->DrawString(score[i], m, i + 28);
 	}
 
 	//Center box
-	c->DrawHorizontalLine(L'═', side_x + 1, width - 2, 30);
-	c->DrawChar(L'╠', side_x, 30);
-	c->DrawChar(L'╣', width - 1, 30);
+	c->DrawHorizontalLine(L'═', side_x + 1, width - 2, height - 9);
+	c->DrawChar(L'╠', side_x, height - 9);
+	c->DrawChar(L'╣', width - 1, height - 9);
 
 	//Keyboard control (Bottom panel)
 	m = width + side_x;
@@ -176,9 +183,7 @@ void Map::drawOutline(Console* c) {
 	c->DrawString(L"S to go down", (m - 12) / 2, controlY++);
 	c->DrawString(L"A to go left", (m - 12) / 2, controlY++);
 	c->DrawString(L"D to go right", (m - 13) / 2, controlY++);
-	c->DrawString(L"P to pause/unpause game", (m - 23) / 2, controlY++);
-	c->DrawString(L"S to save game", (m - 14) / 2, controlY++);
-	c->DrawString(L"L to load game", (m - 14) / 2, controlY++);
+	c->DrawString(L"ESC to pause/unpause game", (m - 23) / 2, controlY++);
 	//Corner and T pieces
 	c->DrawChar(L'╔', 0, 0);
 	c->DrawChar(L'╗', width - 1, 0);
@@ -242,7 +247,7 @@ void Map::drawScoreText(Console* c) {
 	vector<wstring> score = numToAsciiDigits(temp_score);
 	int m = (width + side_x - score[0].size()) / 2;
 	for (size_t i = 0; i < score.size(); ++i) {
-		c->DrawString(score[i], m, i + 23);
+		c->DrawString(score[i], m, i + 28);
 	}
 }
 
@@ -257,13 +262,16 @@ void Map::saveScore() {
 
 void Map::drawLevelText(Console* c) {
 	vector<wstring> level = numToAsciiDigits(*cur_level);
-	int m = (width + side_x - level_text[0].size() - level[0].size() - 1) / 2;
-	for (size_t i = 0; i < level_text.size(); ++i) {
-		c->DrawString(level_text[i], m, i + 10);
-	}
+	int m = (width + side_x - level[0].size()) / 2;
 	for (size_t i = 0; i < level.size(); ++i) {
-		c->DrawString(level[i], m + level_text[0].size() + 1, i + 10);
+		c->DrawString(level[i], m, i + 14);
 	}
+}
+
+void Map::drawLiveText(Console* c) {
+	wstring tmp = L"LIVE: " + to_wstring(character->getLife()) + L" ♥";
+	int m = width + side_x;
+	c->DrawString(tmp, (m - tmp.size()) / 2, 6);
 }
 
 void Map::nextLevel(Console* c) {
@@ -271,7 +279,7 @@ void Map::nextLevel(Console* c) {
 		lanes.push_back(Lane(1, -height + 3 + (num_lane - i) * 6, side_x - 1, 5));
 		lanes.back().setDirection((i & 1 ? DIRECTION::LEFT : DIRECTION::RIGHT));
 		lanes.back().setMinDist(1 + (60 / (*cur_level + 1)));
-		lanes.back().setSpeed(0.2 + 0.1 * *cur_level);
+		lanes.back().increaseSpeed(1.0f / (3.0f * (*cur_level + 1)));
 		visited.push_back(false);
 	}
 	this_thread::sleep_for(chrono::milliseconds(INTERVAL * 3));

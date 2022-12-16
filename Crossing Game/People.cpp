@@ -96,6 +96,11 @@ void People::draw(Console* c) {
 	}
 }
 
+void People::erase(Console* c) {
+	for (size_t i = 0; i < height; ++i) {
+		c->DrawHorizontalLine(L' ', x, x + width - 1, y + i);
+	}
+}
 
 bool People::isFinish() {
 	return (x == 0);

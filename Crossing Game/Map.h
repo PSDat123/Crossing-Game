@@ -21,6 +21,7 @@ public:
 	void drawScoreText(Console* c);
 	void saveScore();
 	void drawLevelText(Console* c);
+	void drawLiveText(Console* c);
 	void nextLevel(Console* c);
 private:
 	int side_x;

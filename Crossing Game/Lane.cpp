@@ -21,6 +21,9 @@ void Lane::setMinDist(SHORT minDist) {
 void Lane::setSpeed(float speed) {
 	this->speed = speed;
 }
+void Lane::increaseSpeed(float inc) {
+	this->speed += inc;
+}
 SHORT Lane::getX() {
 	return this->x;
 }
@@ -51,12 +54,17 @@ void Lane::move(DIRECTION dir) {
 
 Vehicle Lane::getRandomVehicle(int x, int y) {
 	int r = rand() % 10;
-	if (r < 2) {
+	if (!r) {
+		Bird t = Bird(x, y, this->x, this->x + width, this->speed, this->dir);
+		t.setVY(t.getVY() + rand() % (this->height - t.getHeight() + 1));
+		return t;
+	}
+	if (r < 3) {
 		Truck t = Truck(x, y, this->x, this->x + width, this->speed, this->dir);
 		t.setVY(t.getVY() + rand() % (this->height - t.getHeight() + 1));
 		return t;
 	}
-	if (r < 4) {
+	if (r < 6) {
 		Bike b = Bike(x, y, this->x, this->x + width, this->speed, this->dir);
 		b.setVY(b.getVY() + rand() % (this->height - b.getHeight() + 1));
 		return b;
