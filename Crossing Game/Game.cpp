@@ -292,6 +292,24 @@ vector<wstring> getSaveFiles(wstring folder){
 void loadGameThread(Game* g, bool* isRunning, int* curSelected, int* prevSelected, int* numSaves) {
 	wstring path = L"./Save";
 	vector<wstring> files = getSaveFiles(path);
+	if (!files.size()) {
+		int x = (g->width - 52) / 2, y = g->height / 2;
+		g->console->ClearBackground();
+		g->console->DrawHorizontalLine(L'█', x - 3, x + 53, y - 2);
+		g->console->DrawVerticalLine(L'█', x - 3, y - 2, y + 2);
+		g->console->DrawString(L"No save file available! Press ESC to return to menu.", x, y);
+		g->console->DrawHorizontalLine(L'█', x - 3, x + 53, y + 2);
+		g->console->DrawVerticalLine(L'█', x + 53, y - 2, y + 2);
+		g->console->DrawChar(L'╗', x + 54, y - 2);
+		g->console->DrawVerticalLine(L'║', x + 54, y - 1, y + 2);
+		g->console->DrawChar(L'╝', x + 54, y + 3);
+		g->console->DrawHorizontalLine(L'═', x - 2, x + 53, y + 3);
+		g->console->DrawChar(L'╚', x - 3, y + 3);
+		g->console->UpdateScreen();
+
+		/**isRunning = false;*/
+		return;
+	}
 	struct Save {
 		time_t timestamp;
 		char name[MAX_NAME_LENGTH];
@@ -300,13 +318,13 @@ void loadGameThread(Game* g, bool* isRunning, int* curSelected, int* prevSelecte
 		int score;
 		int highscore;
 	};
-
+	vector<Save> allSaves;
 	Save curSave;
 	int maxfile = (g->height - 5) / 7;
 	if (files.size() <= maxfile) maxfile = files.size();
 	g->console->ClearBackground();
 	
-	for (int i = 0; i < maxfile; ++i) {
+	for (int i = 0; i < files.size(); ++i) {
 		ifstream fin(path + L"/" + files[i], ios::binary);
 		if (fin.is_open()) {
 			fin.read((char*)&curSave.timestamp, sizeof(time_t));
@@ -315,32 +333,48 @@ void loadGameThread(Game* g, bool* isRunning, int* curSelected, int* prevSelecte
 			fin.read((char*)&curSave.level, sizeof(int));
 			fin.read((char*)&curSave.score, sizeof(int));
 			fin.read((char*)&curSave.highscore, sizeof(int));
-
 			*numSaves = *numSaves + 1;
-			struct tm dt;
-			char t[30];
-			localtime_s(&dt, &curSave.timestamp);
-			strftime(t, sizeof(t), "%H:%M:%S %d/%m/%y", &dt);
-			wstring timestamp = wstring(t, t + strlen(t));
-			int y = 7 * i + 5, x = g->width / 2 - 32, namelength = strlen(curSave.name);
-			g->console->DrawHorizontalLine(L'█', x, g->width - x, y);
-			g->console->DrawChar(L'╗', g->width - x + 1, y);
-			g->console->DrawVerticalLine(L'║', g->width - x + 1, y + 1, y + 6);
-			g->console->DrawChar(L'╝', g->width - x + 1, y + 6);
-			g->console->DrawHorizontalLine(L'═', x + 1, g->width - x, y + 6);
-			g->console->DrawChar(L'╚', x, y + 6);
-			g->console->DrawVerticalLine(L'█', x, y, y + 5);
-			g->console->DrawVerticalLine(L'█', g->width - x, y, y + 5);
-			g->console->DrawHorizontalLine(L'█', x, g->width - x, y + 5);
-
-			g->console->DrawString(wstring(curSave.name, curSave.name + namelength), x + 5, y + 2);
-			g->console->DrawString(L"Life: " + to_wstring(curSave.life), x + namelength + 14, y + 2);
-			g->console->DrawString(L"Level: " + to_wstring(curSave.level), x + namelength + 34, y + 2);
-			g->console->DrawString(L"Score: " + to_wstring(curSave.score), x + 5, y + 3);
-			g->console->DrawString(L"High Score: " + to_wstring(curSave.highscore), x + namelength + 14, y + 3);
-			g->console->DrawString(timestamp, x + namelength + 34, y + 3);
+			allSaves.push_back(curSave);	
+		}
+		else {
+			--i;
 		}
 		fin.close();	
+	}
+	for (int i = 1; i < allSaves.size(); ++i) {
+		Save s = allSaves[i];
+		int j = i - 1;
+		while (j >= 0 && allSaves[j].timestamp < s.timestamp) {
+			allSaves[j + 1] = allSaves[j];
+			--j;
+		}
+		allSaves[j + 1] = s;
+	}
+
+	for(int i = 0; i < maxfile; ++i){
+		Save curSave = allSaves[i];
+		struct tm dt;
+		char t[30];
+		localtime_s(&dt, &curSave.timestamp);
+		strftime(t, sizeof(t), "%H:%M:%S %d/%m/%y", &dt);
+		wstring timestamp = wstring(t, t + strlen(t));
+		int y = 7 * i + 5, x = g->width / 2 - 32, namelength = strlen(curSave.name);
+		g->console->DrawHorizontalLine(L'█', x, g->width - x, y);
+		g->console->DrawChar(L'╗', g->width - x + 1, y);
+		g->console->DrawVerticalLine(L'║', g->width - x + 1, y + 1, y + 6);
+		g->console->DrawChar(L'╝', g->width - x + 1, y + 6);
+		g->console->DrawHorizontalLine(L'═', x + 1, g->width - x, y + 6);
+		g->console->DrawChar(L'╚', x, y + 6);
+		g->console->DrawVerticalLine(L'█', x, y, y + 5);
+		g->console->DrawVerticalLine(L'█', g->width - x, y, y + 5);
+		g->console->DrawHorizontalLine(L'█', x, g->width - x, y + 5);
+
+		g->console->DrawString(wstring(curSave.name, curSave.name + namelength), x + 5, y + 2);
+		g->console->DrawString(L"Life: " + to_wstring(curSave.life), x + MAX_NAME_LENGTH + 9, y + 2);
+		g->console->DrawString(L"Level: " + to_wstring(curSave.level), x + MAX_NAME_LENGTH + 29, y + 2);
+		g->console->DrawString(L"Score: " + to_wstring(curSave.score), x + 5, y + 3);
+		g->console->DrawString(L"High Score: " + to_wstring(curSave.highscore), x + MAX_NAME_LENGTH + 9, y + 3);
+		g->console->DrawString(timestamp, x + MAX_NAME_LENGTH + 29, y + 3);
 	}
 	g->console->UpdateScreen();
 	int x = g->width / 2 - 35, y = 7;
@@ -385,7 +419,7 @@ void Game::continueGame() {
 		int highscore;
 	};
 	Save curSave;
-	int maxSave = 0;
+	int maxSave = -1;
 	long long maxTime = 0;
 	for (int i = 0; i < files.size(); ++i) {
 		ifstream fin(path + L"/" + files[i], ios::binary);
@@ -398,6 +432,7 @@ void Game::continueGame() {
 		}
 		fin.close();
 	}
+	if (maxSave == -1) return;
 	wstring filename = path + L'/' + files[maxSave];
 	ifstream fin(filename, ios::binary);
 	if (fin.is_open()) {
@@ -426,17 +461,24 @@ inputname:
 	console->DrawString(L"Input player's name: ", x, y);
 	console->DrawHorizontalLine(L'█', x - 3, x + 38, y + 2);
 	console->DrawVerticalLine(L'█', x + 38, y - 2, y + 2);
+
+	console->DrawChar(L'╗', x + 39, y - 2);
+	console->DrawVerticalLine(L'║', x + 39, y - 1, y + 2);
+	console->DrawChar(L'╝', x + 39, y + 3);
+	console->DrawHorizontalLine(L'═', x - 3, x + 38, y + 3);
+	console->DrawChar(L'╚', x - 3, y + 3);
 	console->UpdateScreen();
+
 	restartGame();
 	string tempName;
 	while (getline(cin, tempName)) {
 		if (!tempName.size()) continue;
-		if (tempName.size() < 15) {
+		if (tempName.size() < MAX_NAME_LENGTH) {
 			character.setName(&tempName[0]);
 			break;
 		}
 		console->ClearBackground();
-		console->DrawString(L"Name must be less than 16 characters!", x, y + 1);
+		console->DrawString(L"Name must be less than " + to_wstring(MAX_NAME_LENGTH) + L" characters!", x, y + 1);
 		goto inputname;
 	}
 	console->GotoXY(0, 0);
