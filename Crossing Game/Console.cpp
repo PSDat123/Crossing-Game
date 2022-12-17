@@ -4,10 +4,8 @@ Console::Console() {
 	bufferWidth = 140;
 	bufferHeight = 50;
 	handle = GetStdHandle(STD_OUTPUT_HANDLE);
-
 	buffer = new CHAR_INFO[bufferWidth * bufferHeight];
 	memset(buffer, 0, sizeof(CHAR_INFO) * bufferWidth * bufferHeight);
-
 	MoveConsole(100, 0);
 	ChangeConsoleFontSize(18);
 	SetConsoleSize(bufferWidth, bufferHeight);
@@ -49,7 +47,6 @@ void Console::GetMaximumConsoleSize(SHORT& width, SHORT& height) {
 
 void Console::SetConsoleSize(SHORT& width, SHORT& height) {
 	SMALL_RECT WindowSize = { 0, 0, 1, 1 };
-
 	SetConsoleWindowInfo(handle, TRUE, &WindowSize);
 	SetConsoleScreenBufferSize(handle, {width, height});
 	SetConsoleActiveScreenBuffer(handle);

@@ -148,11 +148,11 @@ void Map::drawOutline(Console* c) {
 	vector<wstring> level = numToAsciiDigits(*cur_level);
 	m = (width + side_x - level_text[0].size() + 2) / 2;
 	for (size_t i = 0; i < level_text.size(); ++i) {
-		c->DrawString(level_text[i], m, i + 8);
+		c->DrawString(level_text[i], m, i + 7);
 	}
 	m = (width + side_x - level[0].size()) / 2;
 	for (size_t i = 0; i < level.size() ;++i) {
-		c->DrawString(level[i], m, i + 14);
+		c->DrawString(level[i], m, i + 13);
 	}
 	//Score box
 	c->DrawHorizontalLine(L'═', side_x + 1, width - 2, height - 23);
@@ -164,11 +164,11 @@ void Map::drawOutline(Console* c) {
 	vector<wstring> score = numToAsciiDigits(temp_score);
 	m = (width + side_x - score_text[0].size()) / 2;
 	for (size_t i = 0; i < score_text.size(); ++i) {
-		c->DrawString(score_text[i], m, i + 22);
+		c->DrawString(score_text[i], m, i + 20);
 	}
 	m = (width + side_x - score[0].size()) / 2;
 	for (size_t i = 0; i < score.size(); ++i) {
-		c->DrawString(score[i], m, i + 28);
+		c->DrawString(score[i], m, i + 26);
 	}
 
 	//Center box
@@ -247,7 +247,7 @@ void Map::drawScoreText(Console* c) {
 	vector<wstring> score = numToAsciiDigits(temp_score);
 	int m = (width + side_x - score[0].size()) / 2;
 	for (size_t i = 0; i < score.size(); ++i) {
-		c->DrawString(score[i], m, i + 28);
+		c->DrawString(score[i], m, i + 26);
 	}
 }
 
@@ -264,7 +264,7 @@ void Map::drawLevelText(Console* c) {
 	vector<wstring> level = numToAsciiDigits(*cur_level);
 	int m = (width + side_x - level[0].size()) / 2;
 	for (size_t i = 0; i < level.size(); ++i) {
-		c->DrawString(level[i], m, i + 14);
+		c->DrawString(level[i], m, i + 13);
 	}
 }
 

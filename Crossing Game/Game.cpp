@@ -115,7 +115,6 @@ void settingThread(Game* g, bool* isRunning, int* curSelected, int* prevSelected
 	} while (*isRunning);
 	if (*curSelected == 0) g->soundOn = true;
 	else g->soundOn = false;
-	/*if (g->state != GAMESTATE::SETTING) return;*/
 }
 
 void gameThread(Game* g) {
@@ -264,7 +263,6 @@ startGame:
 			//Play death animation
 			mciSendString(L"play Sound/death.mp3 from 300 to 600", NULL, 0, NULL);
 			g->character.erase(g->console);
-
 			map.resetCharacter();
 		}
 
@@ -473,12 +471,8 @@ void Game::playSound(bool soundOn) {
 	}
 	mciSendString(L"open \"Sound/background_music.wav \" type mpegvideo alias bgm", NULL, 0, NULL);
 	mciSendStringA(LPCSTR("play bgm repeat"), NULL, 0, NULL);
-	mciSendString(L"setaudio bgm volume to 100", NULL, 0, NULL);
+	mciSendString(L"setaudio bgm volume to 50", NULL, 0, NULL);
 }
-
-//void soundThread(Game* g) {
-//	playSound()
-//}
 
 void Game::startGame() {
 	MainMenu m(console);

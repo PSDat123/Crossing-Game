@@ -30,9 +30,27 @@ void MainMenu::printTitle(int x, int y) {
 
 void menuThread(MainMenu* m) {
 	srand(static_cast<unsigned int>(time(NULL)));
-	SHORT cx, optionY = 16, offsetX = 11, roadY;
+	SHORT cx, optionY = 16, offsetX = 11, roadY, decorY;
 	roadY = m->height - 10;
+	decorY = roadY - 13;
 	cx = m->width / 2;
+
+	//Background decor
+	m->console->DrawString(L"┌——————————————┐                                   .————.                       .———————.",                                                      0, decorY++);
+	m->console->DrawString(L"│[]  []  []  []│         .————————————————.    .———'    '———.                 .' .—————. '.                 ┌——————————————————————————————┐",   0, decorY++);
+	m->console->DrawString(L"│[]  []  []  []│         │  GRAND  HOTEL  │    │|| ||  || ||│               .'  │       │  '.               │            HOSPITAL          │",   0, decorY++);
+    m->console->DrawString(L"│[]  []  []  []│     .-——┴————————————————┴——-.│|| ||  || ||│               │   │       │   │               │   [_] [_] [_]  [_] [_] [_]   │",   0, decorY++);
+	m->console->DrawString(L"│[]  []  []  []│     │ [_]  [_]  []  [_]  [_] ││|| ||  || ||│               │    '—————'    │               │   [_] [_] [_]  [_] [_] [_]   │",   0, decorY++);
+	m->console->DrawString(L"│[]  []  []  []│     │ [_]  [_]  []  [_]  [_] ││|| ||  || ||│               │  HIGH  SCHOOL │               │   [_] [_] [_]  [_] [_] [_]   │",   0, decorY++);
+	m->console->DrawString(L"│[]  []  []  []│     │ [_]  [_]  []  [_]  [_] ││|| ||  || ||│  /\\  ┌————————┤  || || || ||  ├————————┐  /\\  │   [_] [_] [_]  [_] [_] [_]   │", 0, decorY++);
+	m->console->DrawString(L"│[]  []  []  []│     │ [_]  [_]  []  [_]  [_] ││|| ||  || ||│ /  \\ │ []  [] │  || || || ||  │ []  [] │ /  \\ │   [_] [_] [_]  [_] [_] [_]   │", 0, decorY++);
+	m->console->DrawString(L"│[]  []  []  []│     │ [_]  [_]  []  [_]  [_] ││|| ||  || ||│ /  \\ │ []  [] │  || || || ||  │ []  [] │ /  \\ │   [_] [_] [_]  [_] [_] [_]   │", 0, decorY++);
+	m->console->DrawString(L"│[]  []  []  []├———— │ [_]  [_]  []  [_]  [_] ││|| ||  || ||│ /  \\ │ []  [] │  || || || ||  │ []  [] │ /  \\ │   [_] [_] [_]  [_] [_] [_]   │", 0, decorY++);
+	m->console->DrawString(L"│[]  ┌————┐  []│||||\\│          ┌——┐          ││|| ||  || ||│ '┐┌' │ []  [] │     ┌———┐     │ []  [] │ '┐┌' │   [_] [_]  ┌————┐  [_] [_]   │",  0, decorY++);
+	m->console->DrawString(L"│    │ .. │    │    ││          │  │          ││|| ||  || ||│  ││  │ []  [] │     │   │     │ []  [] │  ││  │            │    │            │",   0, decorY++);
+	m->console->DrawString(L"└————┴————┴————┴————┴┴——————————┴——┴——————————┴┴————————————┴——┴┴——┴————————┴—————┴———┴—————┴————————┴——┴┴——┴————————————┴————┴————————————┘",   0, decorY);
+
+	//Menu box
 	m->printTitle(cx - (int)(m->title[0].size()) / 2, 5);
 	m->console->DrawString(L"█████████████████████╗", cx - offsetX, optionY - 2);
 	m->console->DrawString(L"█                   █║", cx - offsetX, optionY - 1);
@@ -45,22 +63,20 @@ void menuThread(MainMenu* m) {
 	m->console->DrawString(L"╚════════════════════╝", cx - offsetX, optionY + (int)m->options.size() + 2);
 	m->console->DrawString(L"► ", cx - offsetX + 3, optionY + m->curSelected);
 
+	//Road
 	Lane lane(0, roadY, m->width, 5);
 	lane.drawLane(m->console);
+
 	do {
 		if (m->curSelected != m->prevSelected) {
 			m->console->DrawString(L"  ", cx - offsetX + 3, optionY + m->prevSelected);
 			m->console->DrawString(L"► ", cx - offsetX + 3, optionY + m->curSelected);
 			m->prevSelected = m->curSelected;
 		}
-		
-
 		lane.updateVehicles(m->console);
 		lane.drawVehicles(m->console);
 		m->console->UpdateScreen();
-		//Sleep(INTERVAL);
 		this_thread::sleep_for(chrono::milliseconds(INTERVAL));
-
 	} while (m->isRunning);
 }
 
@@ -105,7 +121,6 @@ OPTIONS MainMenu::runMenu() {
 	} while (key != ENTER_KEY);
 	this->isRunning = false;
 	mThread.join();
-	animateExit(this);
 	return this->options[this->curSelected].first;
 }
 

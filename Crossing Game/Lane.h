@@ -21,7 +21,6 @@ public:
 	SHORT getX();
 	SHORT getY();
 	SHORT getHeight();
-	//void update();
 	void drawLane(Console* console);
 	void updateVehicles(Console* console);
 	void updateTraffic();
