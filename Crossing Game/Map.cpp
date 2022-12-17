@@ -142,6 +142,7 @@ void Map::drawOutline(Console* c) {
 	char* name = character->getName();
 	wstring tmp = L"LIVE: " + to_wstring(character->getLife()) + L" ♥";
 	c->DrawString(wstring(name, name + strlen(name)), (m - strlen(name)) / 2 , 4);
+	c->DrawHorizontalLine(L' ', (m - tmp.size()) / 2 - 1, (m + tmp.size()) / 2, 6);
 	c->DrawString(tmp, (m - tmp.size()) / 2, 6);
 
 
@@ -164,11 +165,11 @@ void Map::drawOutline(Console* c) {
 	vector<wstring> score = numToAsciiDigits(temp_score);
 	m = (width + side_x - score_text[0].size()) / 2;
 	for (size_t i = 0; i < score_text.size(); ++i) {
-		c->DrawString(score_text[i], m, i + 20);
+		c->DrawString(score_text[i], m, i + 22);
 	}
 	m = (width + side_x - score[0].size()) / 2;
 	for (size_t i = 0; i < score.size(); ++i) {
-		c->DrawString(score[i], m, i + 26);
+		c->DrawString(score[i], m, i + 28);
 	}
 
 	//Center box
@@ -247,7 +248,7 @@ void Map::drawScoreText(Console* c) {
 	vector<wstring> score = numToAsciiDigits(temp_score);
 	int m = (width + side_x - score[0].size()) / 2;
 	for (size_t i = 0; i < score.size(); ++i) {
-		c->DrawString(score[i], m, i + 26);
+		c->DrawString(score[i], m, i + 28);
 	}
 }
 
@@ -271,6 +272,7 @@ void Map::drawLevelText(Console* c) {
 void Map::drawLiveText(Console* c) {
 	wstring tmp = L"LIVE: " + to_wstring(character->getLife()) + L" ♥";
 	int m = width + side_x;
+	c->DrawHorizontalLine(L' ', (m - tmp.size()) / 2 - 1, (m + tmp.size()) / 2, 6);
 	c->DrawString(tmp, (m - tmp.size()) / 2, 6);
 }
 

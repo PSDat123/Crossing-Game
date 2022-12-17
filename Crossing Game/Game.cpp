@@ -15,9 +15,9 @@ void Game::restartGame() {
 }
 
 void Game::saveGame() {
-	string filename = string(this->character.getName()) + ".sav";
+	string filename = string(character.getName()) + ".sav";
 	string dir = "./Save";
-	CreateDirectory(_T("./Save"), NULL);
+	CreateDirectoryW(L"./Save", NULL);
 	ofstream saveFile(dir + "/" + filename, ios::binary);
 	if (saveFile.is_open()) {
 		time_t s = time(nullptr);
@@ -34,8 +34,7 @@ void Game::saveGame() {
 
 void gameOverThread(Game* g, bool* isRunning, int* curSelected, int* prevSelected) {
 	g->restartGame();
-	int x = (g->width / 2) - 15, y = (g->height / 2) - 5;
-	int optionY = y + 4;
+	int x = (g->width / 2) - 15, y = (g->height / 2) - 5, optionY = y + 4;
 	g->console->DrawString(L"████████████████████████████╗", x, y++);
 	g->console->DrawString(L"█                          █║", x, y++);
 	g->console->DrawString(L"█        GAME OVER!        █║", x, y++);
@@ -63,8 +62,7 @@ void gameOverThread(Game* g, bool* isRunning, int* curSelected, int* prevSelecte
 }
 
 void pausedThread(Game* g, bool* isRunning, int* curSelected, int* prevSelected) {
-	int x = (g->width / 2) - 15, y = (g->height / 2) - 5;
-	int optionY = y + 4;
+	int x = (g->width / 2) - 15, y = (g->height / 2) - 5, optionY = y + 4;
 	g->console->DrawString(L"████████████████████████████╗", x, y++);
 	g->console->DrawString(L"█                          █║", x, y++);
 	g->console->DrawString(L"█          PAUSED          █║", x, y++);
@@ -94,7 +92,7 @@ void pausedThread(Game* g, bool* isRunning, int* curSelected, int* prevSelected)
 }
 
 void settingThread(Game* g, bool* isRunning, int* curSelected, int* prevSelected) {
-	SHORT sX = g->width / 2, sY = g->height / 2 - 3;
+	int sX = g->width / 2, sY = g->height / 2 - 3;
 	g->console->DrawString(L"█████████████████████████████████████████████████╗", sX - 25, sY++);
 	g->console->DrawString(L"█                                               █║", sX - 25, sY++);
 	g->console->DrawString(L"█   Background music:    On                     █║", sX - 25, sY++);
@@ -113,8 +111,10 @@ void settingThread(Game* g, bool* isRunning, int* curSelected, int* prevSelected
 		g->console->UpdateScreen();
 		this_thread::sleep_for(chrono::milliseconds(INTERVAL));
 	} while (*isRunning);
-	if (*curSelected == 0) g->soundOn = true;
-	else g->soundOn = false;
+	if (g->state == GAMESTATE::SETTING) {
+		if (*curSelected == 0) g->soundOn = true;
+		else g->soundOn = false;
+	}
 }
 
 void gameThread(Game* g) {
@@ -248,13 +248,13 @@ startGame:
 			map.saveScore();
 			if (g->score > g->highScore) g->highScore = g->score;
 			g->level += 1;
-			map.drawLevelText(g->console);
 			g->character.addLife(1);
+			map.drawLevelText(g->console);
+			map.drawLiveText(g->console);
 
 			g->isTransition = true;
 			map.nextLevel(g->console);
 			g->isTransition = false;
-			//g->isRunning = false;
 		}
 
 		if (map.checkCollision(&g->character)) {
@@ -278,8 +278,6 @@ vector<wstring> getSaveFiles(wstring folder){
 	HANDLE hFind = ::FindFirstFile(search_path.c_str(), &fd);
 	if (hFind != INVALID_HANDLE_VALUE) {
 		do {
-			// read all (real) files in current folder
-			// , delete '!' read other 2 default folder . and ..
 			if (!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
 				names.push_back(fd.cFileName);
 			}
@@ -306,8 +304,7 @@ void loadGameThread(Game* g, bool* isRunning, int* curSelected, int* prevSelecte
 		g->console->DrawHorizontalLine(L'═', x - 2, x + 53, y + 3);
 		g->console->DrawChar(L'╚', x - 3, y + 3);
 		g->console->UpdateScreen();
-
-		/**isRunning = false;*/
+		*isRunning = false;
 		return;
 	}
 	struct Save {
@@ -389,22 +386,11 @@ void loadGameThread(Game* g, bool* isRunning, int* curSelected, int* prevSelecte
 		this_thread::sleep_for(chrono::milliseconds(INTERVAL));
 	} while (*isRunning);
 	if (g->state != GAMESTATE::LOADING) return;
-	wstring filename = path + L'/' + files[*curSelected];
-	ifstream fin(filename, ios::binary);
-	if (fin.is_open()) {
-		fin.read((char*)&curSave.timestamp, sizeof(time_t));
-		fin.read((char*)&curSave.name, MAX_NAME_LENGTH);
-		fin.read((char*)&curSave.life, sizeof(int));
-		fin.read((char*)&curSave.level, sizeof(int));
-		fin.read((char*)&curSave.score, sizeof(int));
-		fin.read((char*)&curSave.highscore, sizeof(int));
-	}
-	fin.close();
-	g->character.setName(curSave.name);
-	g->character.setLife(curSave.life);
-	g->level = curSave.level;
-	g->score = curSave.score;
-	g->highScore = curSave.highscore;
+	g->character.setName(allSaves[*curSelected].name);
+	g->character.setLife(allSaves[*curSelected].life);
+	g->level = allSaves[*curSelected].level;
+	g->score = allSaves[*curSelected].score;
+	g->highScore = allSaves[*curSelected].highscore;
 }
 
 void Game::continueGame() {
@@ -519,7 +505,7 @@ void Game::playSound(bool soundOn) {
 void Game::startGame() {
 	MainMenu m(console);
 menu:
-	playSound(this->soundOn);
+	playSound(soundOn);
 	state = GAMESTATE::MENUING;
 	OPTIONS opt = m.runMenu();
 	switch (opt) {
@@ -534,11 +520,8 @@ menu:
 	case OPTIONS::LOAD_GAME: {
 		bool isRunning = true;
 		state = GAMESTATE::LOADING;
-		int curSelected = 0;
-		int prevSelected = 0;
-		int numSaves = 0;
+		int curSelected = 0, prevSelected = 0, numSaves = 0, key;
 		thread loadThread(loadGameThread, this, &isRunning, &curSelected, &prevSelected, &numSaves);
-		int key;
 		do {
 			key = toupper(_getch());
 			if(key == 224) key = toupper(_getch());
@@ -570,12 +553,10 @@ menu:
 	}
 	case OPTIONS::SETTINGS: {
 		console->ClearBackground();
-		int curSelected = 0;
-		int prevSelected = 0;
+		int curSelected = 0, prevSelected = 0, key;
 		bool isRunning = true;
 		this->state = GAMESTATE::SETTING;
 		thread set(settingThread, this, &isRunning, &curSelected, &prevSelected);
-		int key;
 		do {
 			key = toupper(_getch());
 			if (key == 224) key = toupper(_getch());
@@ -594,7 +575,7 @@ menu:
 				}
 				key = 0;
 			}
-			if (key == ENTER_KEY) {
+			if (key == ESC) {
 				state = GAMESTATE::MENUING;
 				break;
 			}
@@ -602,7 +583,8 @@ menu:
 		} while (key != ENTER_KEY);
 		isRunning = false;
 		set.join();
-		if (state == GAMESTATE::MENUING) goto menu;
+		state == GAMESTATE::MENUING;
+		goto menu;
 		break;
 	}
 
@@ -622,7 +604,6 @@ menu:
 		console->ClearBackground();
 		console->UpdateScreen();
 		return;
-		break;
 	}
 
 	console->ClearBackground();
@@ -655,6 +636,8 @@ menu:
 	}
 	t1.join();
 	if (state == GAMESTATE::MENUING) goto menu;
+	console->ClearBackground();
+	console->UpdateScreen();
 	return;
 }
 

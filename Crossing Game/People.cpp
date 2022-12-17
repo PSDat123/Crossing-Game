@@ -25,9 +25,6 @@ People::People(int cur_x, int cur_y, SMALL_RECT bounds) {
 }
 
 People::People() : People(0, 0, {0, 0, 0, 0}) {}
-//bool People::checkFrame(int a, int b) {
-//	return true;
-//}
 
 void People::setPos(int x, int y) {
 	this->x = x;

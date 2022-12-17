@@ -80,21 +80,6 @@ void menuThread(MainMenu* m) {
 	} while (m->isRunning);
 }
 
-void animateExit(MainMenu* m) {
-	//short offset = 4;
-	//short h = m->title.size();
-	//for (short i = 0; i <= offset; ++i) {
-	//	m->console->ShiftUp({ 0, (short)(offset - i), (short)(m->width - 1),  (short)(offset + h - i) });
-	//	m->console->UpdateScreen();
-	//	Sleep(INTERVAL);
-	//}
-	//for (short i = 0; i <= h; ++i) {
-	//	m->console->ShiftUp({ 0, 0, (short)(m->width - 1),  (short)(h - i) });
-	//	m->console->UpdateScreen();
-	//	Sleep(INTERVAL);
-	//}
-}
-
 OPTIONS MainMenu::runMenu() {
 	int key = 0;
 	console->ClearBackground();

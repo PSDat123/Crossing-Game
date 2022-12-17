@@ -1,6 +1,5 @@
 #pragma once
 #include "Console.h"
-#include "Macro.h"
 
 class People {
 public:
@@ -28,8 +27,6 @@ public:
 	void erase(Console*);
 	void removeLife(int);
 	void addLife(int);
-	//bool isImpact(Vehicle*);
-	//bool isImpact(Animal*);
 	bool isFinish();
 	bool isDead();
 private:
@@ -38,5 +35,4 @@ private:
 	char name[MAX_NAME_LENGTH] = "Guest";
 	SMALL_RECT bounds;
 	bool state; // dead/alive
-	//bool checkFrame(int, int);
 };

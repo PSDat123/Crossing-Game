@@ -1,4 +1,20 @@
 ﻿#pragma once
+#pragma comment (lib, "winmm.lib")
+#pragma execution_character_set( "utf-8" )
+#include <Windows.h>
+#include <iostream>
+#include <conio.h>
+#include <tchar.h>
+#include <fstream>
+#include <fcntl.h>
+#include <vector>
+#include <chrono>
+#include <thread>
+#include <string>
+#include <ctime>
+#include <deque>
+#include <io.h>
+#include <map>
 #define INTERVAL 30
 #define MAX_NAME_LENGTH 15
 enum KEY {

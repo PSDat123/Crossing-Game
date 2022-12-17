@@ -1,5 +1,4 @@
 #pragma once
-#include "Macro.h"
 #include "Console.h"
 #include "Lane.h"
 
@@ -10,7 +9,6 @@ public:
 	OPTIONS runMenu();
 	 
 	friend void menuThread(MainMenu* m);
-	friend void animateExit(MainMenu* m);
 private:
 	SHORT width, height;
 	vector<pair<OPTIONS, wstring>> options;

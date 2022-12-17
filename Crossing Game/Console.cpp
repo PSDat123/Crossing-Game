@@ -32,10 +32,6 @@ void Console::FixConsoleWindow() {
 void Console::GetConsoleSize(SHORT& width, SHORT& height) {
 	width = bufferWidth;
 	height = bufferHeight;
-	//CONSOLE_SCREEN_BUFFER_INFO info;
-	//GetConsoleScreenBufferInfo(console, &info);
-	//width = info.dwSize.X;
-	//height = info.dwSize.Y;
 }
 
 void Console::GetMaximumConsoleSize(SHORT& width, SHORT& height) {
@@ -94,7 +90,7 @@ void Console::ChangeConsoleFontSize(SHORT h) {
 	cfi.dwFontSize.Y = h;                  
 	cfi.FontFamily = FF_DONTCARE;
 	cfi.FontWeight = FW_BOLD;
-	wcscpy_s(cfi.FaceName, L"Consolas"); // Choose your font
+	wcscpy_s(cfi.FaceName, L"Consolas");
 	SetCurrentConsoleFontEx(handle, FALSE, &cfi);
 }
 
@@ -103,7 +99,6 @@ void Console::ChangeBackgroundColor(int colorCode) {
 	for (int i = 0; i < n; ++i) {
 		buffer[i].Attributes = colorCode;
 	}
-	//SetConsoleTextAttribute(handle, colorCode);
 }
 
 void Console::ClearBackground() {
@@ -150,7 +145,6 @@ void Console::DrawVerticalLine(wchar_t c, int x, int start_y, int end_y, short c
 
 void Console::ShiftUp(SMALL_RECT rect) {
 	SHORT i = rect.Top;
-	//if (rect.Top - 1 < 0) i = 1;
 	for (; i < rect.Bottom; ++i) {
 		for (SHORT j = rect.Left; j <= rect.Right; ++j) {
 			buffer[i * bufferWidth + j] = buffer[(i + 1) * bufferWidth + j];
@@ -161,7 +155,6 @@ void Console::ShiftUp(SMALL_RECT rect) {
 
 void Console::ShiftDown(SMALL_RECT rect) {
 	SHORT i = rect.Bottom;
-	/*if (rect.Bottom + 1 >= bufferHeight) i = 1;*/
 	for (; i > rect.Top; --i) {
 		for (SHORT j = rect.Left; j <= rect.Right; ++j) {
 			buffer[i * bufferWidth + j] = buffer[(i - 1) * bufferWidth + j];

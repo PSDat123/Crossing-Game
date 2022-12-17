@@ -1,9 +1,5 @@
 ﻿#include "Car.h"
 
-string Car::className() {
-	return "Car";
-}
-
 map<DIRECTION, vector<vector<wstring>>> Car::spriteSheet= {
 {	
 	DIRECTION::RIGHT,

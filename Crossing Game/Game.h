@@ -1,8 +1,6 @@
 #pragma once
-#pragma execution_character_set( "utf-8" )
 #include "Console.h"
 #include "People.h"
-#include "Macro.h"
 #include "Map.h"
 #include "MainMenu.h"
 
@@ -15,8 +13,6 @@ public:
 	void saveGame();
 	void continueGame();
 	void newGame();
-	//void pauseGame();
-	//void resumeGame();
 
 	void exitGame();
 	void restartGame();
@@ -25,10 +21,9 @@ public:
 
 	friend void gameThread(Game* g);
 	friend void gameOverThread(Game* g, bool* isRunning, int*, int*);
-	friend void pausedThread(Game* g, bool* isRunning, int*, int*);
+	friend void pausedThread(Game* g, bool* isPausing, int*, int*);
 	friend void loadGameThread(Game* g, bool* isRunning, int*, int*, int*);
 	friend void settingThread(Game* g, bool* isRunning, int*, int*);
-	//friend void soundThread(Game* g)
 private:
 	Console* console;
 	SHORT width, height;

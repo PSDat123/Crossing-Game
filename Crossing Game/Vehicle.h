@@ -1,7 +1,6 @@
 #pragma once
-#include "Console.h"
-#include "People.h"
 #include "Macro.h"
+#include "People.h"
 
 using namespace std;
 

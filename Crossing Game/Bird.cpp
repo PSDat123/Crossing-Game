@@ -1,9 +1,5 @@
 ﻿#include "Bird.h"
 
-string Bird::className() {
-	return "Bird";
-}
-
 map<DIRECTION, vector<vector<wstring>>> Bird::spriteSheet = {
 {
 	DIRECTION::RIGHT,

@@ -1,20 +1,5 @@
 #pragma once
-#pragma comment (lib, "winmm.lib")
-#pragma execution_character_set( "utf-8" )
-#include <Windows.h>
-#include <iostream>
-#include <conio.h>
-#include <tchar.h>
-#include <fstream>
-#include <fcntl.h>
-#include <vector>
-#include <chrono>
-#include <thread>
-#include <string>
-#include <ctime>
-#include <deque>
-#include <io.h>
-#include <map>
+#include "Macro.h"
 using namespace std;
 
 class Console {
@@ -38,8 +23,8 @@ public:
 	void DrawString(wstring s, int x, int y, short col = 240);
 	void DrawHorizontalLine(wchar_t c, int start_x, int end_x, int y, short col = 240);
 	void DrawVerticalLine(wchar_t c, int x, int start_y, int end_y, short col = 240);
-	void ShiftUp(SMALL_RECT rect);
-	void ShiftDown(SMALL_RECT rect);
+	void ShiftUp(SMALL_RECT);
+	void ShiftDown(SMALL_RECT);
 private:
 	SHORT bufferWidth, bufferHeight;
 	CHAR_INFO* buffer;
