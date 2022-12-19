@@ -29,10 +29,8 @@ enum KEY {
 	S = 83,
 	D = 68
 };
-enum class DIRECTION{ UP, DOWN, LEFT, RIGHT };
+enum class DIRECTION{UP, DOWN, LEFT, RIGHT};
 enum class TRAFFIC {RED = 79, YELLOW = 111, GREEN = 47};
 enum class GAMESTATE {MENUING, RUNNING, PAUSED, EXITED, LOADING, SETTING};
-enum class OPTIONS {CONTINUE, NEW_GAME, SAVE_GAME, LOAD_GAME, SETTINGS, CREDIT, EXIT, RESUME, RESTART, RETURN};
-
-// (Dung xoa) unicode chars: ─ │
-// https://www.piliapp.com/symbol/line
+enum class OPTIONS {CONTINUE, NEW_GAME, SAVE_GAME, LOAD_GAME, SETTINGS,
+ 										CREDIT, EXIT, RESUME, RESTART, RETURN};

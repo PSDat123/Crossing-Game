@@ -7,7 +7,10 @@ using namespace std;
 class Vehicle {
 public:
 	Vehicle();
-	Vehicle(float x, float y, SHORT min_x, SHORT max_x, float speed, vector<wstring> sprite, DIRECTION dir = DIRECTION::RIGHT);
+	Vehicle(float x, float y,
+	 				SHORT min_x, SHORT max_x,
+	  			float speed, vector<wstring> sprite,
+					DIRECTION dir = DIRECTION::RIGHT);
 	virtual ~Vehicle();
 	void setVX(SHORT);
 	void setVY(SHORT);
