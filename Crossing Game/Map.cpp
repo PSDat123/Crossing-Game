@@ -156,9 +156,9 @@ void Map::drawOutline(Console* c) {
 		c->DrawString(level[i], m, i + 13);
 	}
 	//Score box
-	c->DrawHorizontalLine(L'═', side_x + 1, width - 2, height - 23);
-	c->DrawChar(L'╠', side_x, height - 23);
-	c->DrawChar(L'╣', width - 1, height - 23);
+	c->DrawHorizontalLine(L'═', side_x + 1, width - 2, 20);
+	c->DrawChar(L'╠', side_x, 20);
+	c->DrawChar(L'╣', width - 1, 20);
 
 	
 	//Score panel (Middle panel)
@@ -296,8 +296,5 @@ void Map::nextLevel(Console* c) {
 		c->UpdateScreen();
 		this_thread::sleep_for(chrono::milliseconds(INTERVAL));
 	}
-	//if (lanes.size() == 0) {
-	//	this_thread::sleep_for(chrono::milliseconds(INTERVAL));
-	//}
 }
 Map::~Map() {}
