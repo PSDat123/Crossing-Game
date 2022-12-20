@@ -9,7 +9,9 @@ Game::Game(Console* screen) {
 }
 
 void Game::restartGame() {
+	string name = character.getName();
 	character = People(0, 0, { 0, 0, SHORT(width - 1), SHORT(height - 1) });
+	character.setName(&name[0]);
 	level = 1;
 	score = 0;
 }

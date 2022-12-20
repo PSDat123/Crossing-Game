@@ -27,7 +27,6 @@ public:
 	void erase(Console*);
 	void removeLife(int);
 	void addLife(int);
-	bool isFinish();
 	bool isDead();
 private:
 	int x, y, prev_x, prev_y, speed;

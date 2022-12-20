@@ -99,10 +99,6 @@ void People::erase(Console* c) {
 	}
 }
 
-bool People::isFinish() {
-	return (x == 0);
-}
-
 int People::getX() {
 	return this->x;
 }
